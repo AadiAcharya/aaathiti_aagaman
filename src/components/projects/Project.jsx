@@ -2,7 +2,9 @@ import React from 'react'
 
 const Project = () => {
   return (
-    <div>Project</div>
+    <div>making changes
+        
+    </div>
   )
 }
 
