@@ -2,7 +2,7 @@ import React from 'react'
 
 const Project = () => {
   return (
-    <div>making changes
+    <div className='bg-black'>making changes
         
     </div>
   )
