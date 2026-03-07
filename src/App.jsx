@@ -28,7 +28,7 @@ function App() {
           </Link>
           <Link to="/contact">
             <span className="text-primary">#</span>
-            <span>contac</span>
+            <span>contact</span>
           </Link>
         </div>
       </nav>
