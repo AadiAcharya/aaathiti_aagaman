@@ -62,7 +62,7 @@ export default function Home() {
       <div className="bg-bg-secondary py-24">
         <div className="max-w-6xl mx-auto px-6">
           <h1 className="text-6xl font-bold text-text-muted opacity-20 mb-8">
-            DISCOVER LUXURY
+            Aatithi Aagaman
           </h1>
 
           {/* Search Bar */}
