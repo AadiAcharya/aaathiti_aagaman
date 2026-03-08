@@ -1,3 +1,6 @@
+import { useState, useEffect } from "react";
+import { properties, blogs } from "../data/propertyData";
+
 // FUNCTIONS YOU NEED TO ADD:
 // 1. const [searchTab, setSearchTab] = useState('rooms'); - For tab switching
 // 2. Form submission handlers for search, newsletter, etc.
@@ -55,7 +58,26 @@ const BlogCard = ({ title, category, image }) => (
   </div>
 );
 
+const extractPrice = (priceString) => {
+  const numbers = priceString.match(/\d+/g);
+  if (numbers && numbers.length > 0) {
+    return Math.max(...numbers.map(Number));
+  }
+};
+
 export default function Home() {
+  const [selectedTab, setSelectedTab] = useState("rooms");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [maxPrice, setMaxPrice] = useState(10000);
+  const [sortBy, setSortBy] = useState("default");
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+  }, []);
+
   return (
     <div className="w-full bg-background min-h-screen">
       {/* Banner Section */}
@@ -74,16 +96,44 @@ export default function Home() {
                   FIND
                 </p>
                 <div className="flex gap-6">
-                  <button className="text-primary border-b-2 border-primary capitalize font-semibold pb-2 transition">
+                  <button
+                    onClick={() => setSelectedTab("rooms")}
+                    className={`capitalize font-semibold pb-2 transition ${
+                      selectedTab === "rooms"
+                        ? "text-primary border-b-2 border-primary"
+                        : "text-text-secondary hover:text-primary"
+                    }`}
+                  >
                     rooms
                   </button>
-                  <button className="text-text-secondary hover:text-primary capitalize font-semibold pb-2 transition">
-                    flats
+                  <button
+                    onClick={() => setSelectedTab("flats")}
+                    className={`capitalize font-semibold pb-2 transition ${
+                      selectedTab === "flats"
+                        ? "text-primary border-b-2 border-primary"
+                        : "text-text-secondary hover:text-primary"
+                    }`}
+                  >
+                    Flats
                   </button>
-                  <button className="text-text-secondary hover:text-primary capitalize font-semibold pb-2 transition">
-                    hostels
+                  <button
+                    onClick={() => setSelectedTab("hostels")}
+                    className={`capitalize font-semibold pb-2 transition ${
+                      selectedTab === "hostels"
+                        ? "text-primary border-b-2 border-primary"
+                        : "text-text-secondary hover:text-primary"
+                    }`}
+                  >
+                    Hostels
                   </button>
-                  <button className="text-text-secondary hover:text-primary capitalize font-semibold pb-2 transition">
+                  <button
+                    onClick={() => setSelectedTab("villas")}
+                    className={`capitalize font-semibold pb-2 transition ${
+                      selectedTab === "villas"
+                        ? "text-primary border-b-2 border-primary"
+                        : "text-text-secondary hover:text-primary"
+                    }`}
+                  >
                     villas
                   </button>
                 </div>
@@ -97,6 +147,8 @@ export default function Home() {
                   Location
                 </label>
                 <input
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   type="text"
                   placeholder="Which city do you prefer?"
                   className="w-full bg-bg-secondary text-text-primary placeholder-text-muted rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary"
@@ -132,6 +184,34 @@ export default function Home() {
                   className="w-full bg-bg-secondary text-text-primary placeholder-text-muted rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
+              <div>
+                <label className="text-text-secondary text-sm font-semibold block mb-2">
+                  Sort By{" "}
+                </label>
+                <select className="w-full bg-bg-secondary text-text-primary rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary">
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  <option value="default">Default</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="name">Name: A to Z</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-text-secondary text-sm font-semibold block mb-2">
+                  Max Price: ${maxPrice}{" "}
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="20000"
+                  step={500}
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(Number(e.target.value))}
+                  placeholder="Add Guests"
+                  className="w-full"
+                />
+              </div>
             </div>
 
             {/* Search Button - YOU ADD: onClick handler */}
@@ -150,50 +230,32 @@ export default function Home() {
           <h2 className="text-4xl font-bold text-text-primary mb-4">
             Latest on the Property Listing
           </h2>
+          {isLoading ? (
+            <div className="text-center py-20">
+              <div className="text-primary text-2xl animate-pulse">
+                Loading Properties.....
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {properties.slice(0, 4).map((property) => (
+                <PropertyCard
+                  key={property.id}
+                  // title={property.title}
+                  // location={property.location}
+                  // bedrooms={property.bedrooms}
+                  // bathrooms={property.bathrooms}
+                  // parking={property.parking}
+                  // pets={property.pets}
+                  // price={property.price}
+                  // image={property.image}
+                  // isTopRated={property.isTopRated}
+                  {...property}
+                />
+              ))}
+            </div>
+          )}
           <div className="w-32 h-1.5 bg-primary rounded"></div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <PropertyCard
-            title="Well Furnished Apartment"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            image="/images/property1.svg"
-          />
-          <PropertyCard
-            title="Comfortable Family Flat"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            image="/images/property2.svg"
-          />
-          <PropertyCard
-            title="Beach House Summer"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            image="/images/property3.svg"
-          />
-          <PropertyCard
-            title="Double Size Room"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            image="/images/property4.svg"
-          />
         </div>
       </div>
 
@@ -212,46 +274,33 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <PropertyCard
-            title="Well Furnished Apartment"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            image="/images/property1.svg"
-          />
-          <PropertyCard
-            title="Comfortable Family Flat"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            image="/images/property2.svg"
-          />
-          <PropertyCard
-            title="Beach House Summer"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            image="/images/property3.svg"
-          />
-          <PropertyCard
-            title="Double Size Room"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            image="/images/property4.svg"
-          />
+          {properties
+            .filter((property) => {
+              const matchesCategory = property.category === selectedTab;
+
+              const matchesSearch =
+                searchTerm === "" ||
+                property.location
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase()) ||
+                property.title.toLowerCase().includes(searchTerm.toLowerCase());
+              const matchesPrice = extractPrice(property.price) <= maxPrice;
+              return matchesCategory && matchesSearch && matchesPrice;
+            })
+            .slice(0, 4)
+            .map((property) => (
+              <PropertyCard
+                key={property.id}
+                title={property.title}
+                location={property.location}
+                bedrooms={property.bedrooms}
+                bathrooms={property.bathrooms}
+                parking={property.parking}
+                pets={property.pets}
+                price={property.price}
+                image={property.image}
+              />
+            ))}
         </div>
       </div>
 
@@ -265,50 +314,23 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <PropertyCard
-            title="Well Furnished Apartment"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            isTopRated={true}
-            image="/images/property1.svg"
-          />
-          <PropertyCard
-            title="Comfortable Family Flat"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            isTopRated={true}
-            image="/images/property2.svg"
-          />
-          <PropertyCard
-            title="Beach House Summer"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            isTopRated={true}
-            image="/images/property3.svg"
-          />
-          <PropertyCard
-            title="Double Size Room"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            isTopRated={true}
-            image="/images/property4.svg"
-          />
+          {properties
+            .filter((property) => property.isTopRated === true)
+            .slice(0, 4)
+            .map((property) => (
+              <PropertyCard
+                key={property.id}
+                title={property.title}
+                location={property.location}
+                bedrooms={property.bedrooms}
+                bathrooms={property.bathrooms}
+                parking={property.parking}
+                pets={property.pets}
+                price={property.price}
+                isTopRated={property.isTopRated}
+                image={property.image}
+              />
+            ))}
         </div>
       </div>
 
@@ -391,21 +413,14 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <BlogCard
-            title="Choose the right property!"
-            category="Economy"
-            image="/images/blog1.svg"
-          />
-          <BlogCard
-            title="Best environment for rental"
-            category="Lifestyle"
-            image="/images/blog2.svg"
-          />
-          <BlogCard
-            title="Boys Hostel Apartment"
-            category="Property"
-            image="/images/blog3.svg"
-          />
+          {blogs.slice(0, 3).map((blog) => (
+            <BlogCard
+              key={blog.id}
+              title={blog.title}
+              category={blog.category}
+              image={blog.image}
+            />
+          ))}
         </div>
 
         <div className="text-center">

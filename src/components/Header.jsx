@@ -1,68 +1,99 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="w-full bg-bg-secondary shadow-sm" data-name="Main Header" data-node-id="2:3639">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between" data-name="Header" data-node-id="2:3640">
+    <header
+      className="w-full bg-bg-secondary shadow-sm"
+      data-name="Main Header"
+      data-node-id="2:3639"
+    >
+      <div
+        className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"
+        data-name="Header"
+        data-node-id="2:3640"
+      >
         {/* Logo */}
-        <Link to="/" className="text-3xl font-extrabold text-text-primary hover:text-accent transition" data-node-id="2:3641">
+        <Link
+          to="/"
+          className="text-3xl font-extrabold text-text-primary hover:text-accent transition"
+          data-node-id="2:3641"
+        >
           LOGO
         </Link>
 
         {/* Navigation Links - Desktop */}
-        <nav className="hidden md:flex items-center gap-8 text-text-secondary font-semibold text-base" data-name="header navigations" data-node-id="2:3647">
-          <Link to="/" className="hover:text-text-primary transition" data-node-id="2:3648">
-            Home
-          </Link>
-          <Link to="/about" className="hover:text-text-primary transition" data-node-id="2:3649">
-            About
-          </Link>
-          <Link to="/projects" className="hover:text-text-primary transition" data-node-id="2:3650">
-            Projects
-          </Link>
-          <Link to="/contact" className="hover:text-text-primary transition" data-node-id="2:3651">
-            Contact
-          </Link>
-          <svg
-            className="w-5 h-5 text-text-secondary cursor-pointer hover:text-text-primary transition"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            data-node-id="2:3652"
+        <nav
+          className="hidden md:flex items-center gap-8 text-text-primary font-semibold text-base"
+          data-name="header navigations"
+          data-node-id="2:3647"
+        >
+          <Link
+            to="/properties"
+            className="hover:text-accent transition"
+            data-node-id="2:3648"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"
-            />
-          </svg>
+            Find a Property
+          </Link>
+          <Link
+            to="/"
+            className="hover:text-accent transition"
+            data-node-id="2:3649"
+          >
+            Share Stories
+          </Link>
+          <Link
+            to="/"
+            className="hover:text-accent transition"
+            data-node-id="2:3650"
+          >
+            Rental Guides
+          </Link>
+          <Link
+            to="/"
+            className="hover:text-accent transition"
+            data-node-id="2:3651"
+          >
+            Download Mobile App
+          </Link>
         </nav>
 
         {/* Right Section - Desktop */}
-        <div className="hidden md:flex items-center gap-4" data-name="initial-options" data-node-id="2:3657">
+        <div
+          className="hidden md:flex items-center gap-4"
+          data-name="right-section"
+          data-node-id="2:3657"
+        >
+          {/* Become A Host Button */}
+          <button
+            className="bg-gray-900 hover:bg-gray-800 text-white rounded-full px-6 py-2 font-semibold transition"
+            data-node-id="2:3645"
+          >
+            Become A Host
+          </button>
+
           {/* Auth Section */}
           <div
-            className="flex items-center gap-3 bg-background border border-bg-secondary rounded-full px-3 py-2"
+            className="flex items-center gap-3 bg-white border border-bg-secondary rounded-full px-3 py-2"
             data-name="auth btn"
             data-node-id="2:3658"
           >
-            {/* Menu Icon */}
+            {/* Menu Icon (Hamburger) */}
             <svg
-              className="w-6 h-6 text-text-secondary cursor-pointer"
-              fill="currentColor"
+              className="w-6 h-6 text-gray-700 cursor-pointer"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
               data-node-id="2:3662"
             >
-              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
 
             {/* User Avatar */}
             <svg
-              className="w-8 h-8 text-text-muted cursor-pointer"
+              className="w-8 h-8 text-gray-600 cursor-pointer"
               fill="currentColor"
               viewBox="0 0 24 24"
               data-node-id="2:3660"
@@ -74,7 +105,7 @@ export default function Header() {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-text-secondary"
+          className="md:hidden text-text-primary"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -97,18 +128,33 @@ export default function Header() {
       {/* Mobile Menu */}
       {menuOpen && (
         <nav className="md:hidden bg-background border-t border-bg-secondary px-6 py-4 space-y-3">
-          <Link to="/" className="block text-text-secondary font-semibold hover:text-text-primary">
-            Home
+          <Link
+            to="/properties"
+            className="block text-text-primary font-semibold hover:text-accent"
+          >
+            Find a Property
           </Link>
-          <Link to="/about" className="block text-text-secondary font-semibold hover:text-text-primary">
-            About
+          <Link
+            to="/"
+            className="block text-text-primary font-semibold hover:text-accent"
+          >
+            Share Stories
           </Link>
-          <Link to="/projects" className="block text-text-secondary font-semibold hover:text-text-primary">
-            Projects
+          <Link
+            to="/"
+            className="block text-text-primary font-semibold hover:text-accent"
+          >
+            Rental Guides
           </Link>
-          <Link to="/contact" className="block text-text-secondary font-semibold hover:text-text-primary">
-            Contact
+          <Link
+            to="/"
+            className="block text-text-primary font-semibold hover:text-accent"
+          >
+            Download Mobile App
           </Link>
+          <button className="w-full mt-4 bg-gray-900 hover:bg-gray-800 text-white rounded-full px-6 py-2 font-semibold transition">
+            Become A Host
+          </button>
         </nav>
       )}
     </header>
