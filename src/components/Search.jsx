@@ -58,9 +58,6 @@ export default function Search() {
 
   return (
     <div className="w-full bg-white min-h-screen overflow-x-hidden">
-      {/* Header Bar */}
-      <div className="fixed top-0 left-0 right-0 h-20 bg-gray-100 z-40"></div>
-
       {/* Main Content */}
       <div className="pt-24">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -127,7 +124,7 @@ export default function Search() {
                       alt={property.title}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.target.style.display = 'none';
+                        e.target.style.display = "none";
                       }}
                     />
                     {/* Heart Button */}
@@ -185,8 +182,12 @@ export default function Search() {
                     <div className="flex gap-6 items-center mb-4">
                       {/* Bedrooms */}
                       <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V6H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/>
+                        <svg
+                          className="w-5 h-5 text-gray-600"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V6H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z" />
                         </svg>
                         <span className="text-base font-semibold text-gray-800">
                           {property.bedrooms}
@@ -195,8 +196,12 @@ export default function Search() {
 
                       {/* Bathrooms */}
                       <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 3c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm13 17H4v-2h16v2zm0-5H4V8h16v7z"/>
+                        <svg
+                          className="w-5 h-5 text-gray-600"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 3c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm13 17H4v-2h16v2zm0-5H4V8h16v7z" />
                         </svg>
                         <span className="text-base font-semibold text-gray-800">
                           {property.bathrooms}
@@ -205,8 +210,12 @@ export default function Search() {
 
                       {/* Parking */}
                       <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M13 3H6v18h4v-6h3c3.31 0 6-2.69 6-6s-2.69-6-6-6zm.2 8H10V7h3.2c1.1 0 2 .9 2 2s-.9 2-2 2z"/>
+                        <svg
+                          className="w-5 h-5 text-gray-600"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M13 3H6v18h4v-6h3c3.31 0 6-2.69 6-6s-2.69-6-6-6zm.2 8H10V7h3.2c1.1 0 2 .9 2 2s-.9 2-2 2z" />
                         </svg>
                         <span className="text-base font-semibold text-gray-800">
                           {property.parking}
@@ -215,8 +224,12 @@ export default function Search() {
 
                       {/* Pets */}
                       <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M4.5 9.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0M9 5.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0M15 5.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0M19.5 9.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0M17.34 14.86c-.87-1.02-1.6-1.89-2.48-2.91c-.46-.54-1.05-1.08-1.75-1.32c-.11-.04-.22-.07-.33-.09c-.25-.04-.52-.04-.78-.04s-.53 0-.79.05c-.11.02-.22.05-.33.09c-.7.24-1.28.78-1.75 1.32c-.87 1.02-1.6 1.89-2.48 2.91c-1.31 1.31-2.92 2.76-2.62 4.79c.29 1.02 1.02 2.03 2.33 2.32c.73.15 3.06-.44 5.54-.44h.18c2.48 0 4.81.58 5.54.44c1.31-.29 2.04-1.31 2.33-2.32c.31-2.04-1.3-3.49-2.61-4.8z"/>
+                        <svg
+                          className="w-5 h-5 text-gray-600"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M4.5 9.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0M9 5.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0M15 5.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0M19.5 9.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0M17.34 14.86c-.87-1.02-1.6-1.89-2.48-2.91c-.46-.54-1.05-1.08-1.75-1.32c-.11-.04-.22-.07-.33-.09c-.25-.04-.52-.04-.78-.04s-.53 0-.79.05c-.11.02-.22.05-.33.09c-.7.24-1.28.78-1.75 1.32c-.87 1.02-1.6 1.89-2.48 2.91c-1.31 1.31-2.92 2.76-2.62 4.79c.29 1.02 1.02 2.03 2.33 2.32c.73.15 3.06-.44 5.54-.44h.18c2.48 0 4.81.58 5.54.44c1.31-.29 2.04-1.31 2.33-2.32c.31-2.04-1.3-3.49-2.61-4.8z" />
                         </svg>
                         <span className="text-base font-semibold text-gray-800">
                           {property.pets}
@@ -325,7 +338,7 @@ export default function Search() {
                   <div className="relative w-12 h-12">
                     {/* Pin Circle */}
                     <div className="absolute inset-0 rounded-full bg-blue-600 shadow-lg flex items-center justify-center text-white text-sm font-bold border-4 border-white hover:bg-blue-700 transition">
-                      ${property.price.split(' ')[1]}k
+                      ${property.price.split(" ")[1]}k
                     </div>
                   </div>
 
@@ -339,7 +352,7 @@ export default function Search() {
                           alt={property.title}
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            e.target.style.display = 'none';
+                            e.target.style.display = "none";
                           }}
                         />
                       </div>
