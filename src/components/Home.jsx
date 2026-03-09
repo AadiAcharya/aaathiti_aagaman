@@ -65,18 +65,40 @@ const extractPrice = (priceString) => {
   }
 };
 
+const sortProperties = (properties, sortBy) => {
+  const sorted = [...properties];
+
+  if (sortBy === "price-low") {
+    return sorted.sort((a, b) => extractPrice(a.price) - extractPrice(b.price));
+  }
+  if (sortBy === "price-high") {
+    return sorted.sort((a, b) => extractPrice(b.price) - extractPrice(a.price));
+  }
+  if (sortBy === "name") {
+    return sorted.sort((a, b) => a.title.localeCompare(b.title));
+  }
+  return sorted;
+};
+
 export default function Home() {
   const [selectedTab, setSelectedTab] = useState("rooms");
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [maxPrice, setMaxPrice] = useState(10000);
   const [sortBy, setSortBy] = useState("default");
+  // eslint-disable-next-line no-unused-vars
+  const [visibleCount, setVisibleCount] = useState(3);
 
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
     }, 1500);
   }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line
+    setVisibleCount(3);
+  }, [selectedTab, searchTerm, maxPrice, sortBy]);
 
   return (
     <div className="w-full bg-background min-h-screen">
@@ -188,9 +210,11 @@ export default function Home() {
                 <label className="text-text-secondary text-sm font-semibold block mb-2">
                   Sort By{" "}
                 </label>
-                <select className="w-full bg-bg-secondary text-text-primary rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary">
+                <select
+                  className="w-full bg-bg-secondary text-text-primary rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
+                >
                   <option value="default">Default</option>
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
@@ -274,8 +298,8 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {properties
-            .filter((property) => {
+          {sortProperties(
+            properties.filter((property) => {
               const matchesCategory = property.category === selectedTab;
 
               const matchesSearch =
@@ -286,8 +310,10 @@ export default function Home() {
                 property.title.toLowerCase().includes(searchTerm.toLowerCase());
               const matchesPrice = extractPrice(property.price) <= maxPrice;
               return matchesCategory && matchesSearch && matchesPrice;
-            })
-            .slice(0, 4)
+            }),
+            sortBy,
+          )
+            .slice(0, visibleCount)
             .map((property) => (
               <PropertyCard
                 key={property.id}
@@ -301,6 +327,27 @@ export default function Home() {
                 image={property.image}
               />
             ))}
+        </div>
+        <div className="flex justify-center mt-8">
+          {visibleCount <
+            properties.filter((property) => {
+              const matchesCategory = property.category === selectedTab;
+              const matchesSearch =
+                searchTerm === "" ||
+                property.location
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase()) ||
+                property.title.toLowerCase().includes(searchTerm.toLowerCase());
+              const matchesPrice = extractPrice(property.price) <= maxPrice;
+              return matchesCategory && matchesSearch && matchesPrice;
+            }).length && (
+            <button
+              onClick={() => setVisibleCount((prev) => prev + 3)}
+              className="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-full font-semibold transition"
+            >
+              load More Properties
+            </button>
+          )}
         </div>
       </div>
 
