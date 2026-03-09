@@ -96,7 +96,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line
+    // eslint-disable-next-lin
     setVisibleCount(3);
   }, [selectedTab, searchTerm, maxPrice, sortBy]);
 
