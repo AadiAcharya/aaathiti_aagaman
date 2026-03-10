@@ -4,6 +4,7 @@ import Home_Example from "../addditinal data/files/Home_EXAMPLE";
 import Home from "./components/Home";
 import Properties from "./components/Properties";
 import Search from "./components/Search";
+import Rooms from "./components/Rooms";
 import "./App.css";
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/home" element={<Home_Example />} />
         <Route path="/properties" element={<Properties />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/rooms" element={<Rooms />} />
         {/* Add more routes here as needed */}
       </Routes>
     </Router>
