@@ -3,6 +3,8 @@ export const roomsData = [
     id: 1,
     name: "Well Furnished Apartment",
     location: "100 Smart Street, LA, USA",
+    image:
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     bedrooms: 3,
@@ -36,6 +38,8 @@ export const roomsData = [
     id: 2,
     name: "Luxury Beachfront Villa",
     location: "250 Ocean Drive, Miami, FL, USA",
+    image:
+      "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&h=600&fit=crop",
     description:
       "Experience luxury at its finest in this stunning beachfront villa with breathtaking ocean views. Featuring premium amenities and world-class service.",
     bedrooms: 5,
@@ -71,6 +75,8 @@ export const roomsData = [
     id: 3,
     name: "Modern City Studio",
     location: "500 Downtown Ave, NYC, NY, USA",
+    image:
+      "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
     description:
       "Sleek and modern studio apartment in the heart of the city. Perfect for business travelers and those seeking urban convenience.",
     bedrooms: 1,
@@ -105,6 +111,8 @@ export const roomsData = [
     id: 4,
     name: "Cozy Mountain Retreat",
     location: "45 Alpine Road, Denver, CO, USA",
+    image:
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop",
     description:
       "Nestled in the mountains with stunning views and direct access to hiking trails. Perfectly designed for nature lovers and adventure seekers.",
     bedrooms: 4,
@@ -138,6 +146,8 @@ export const roomsData = [
     id: 5,
     name: "Tropical Paradise Estate",
     location: "320 Island Way, Hawaii, HI, USA",
+    image:
+      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=600&fit=crop",
     description:
       "Exclusive tropical estate with direct beach access, lush gardens, and infinity pool. Experience the ultimate island living.",
     bedrooms: 6,
@@ -171,6 +181,8 @@ export const roomsData = [
     id: 6,
     name: "Historic Victorian Mansion",
     location: "780 Heritage Lane, Boston, MA, USA",
+    image:
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
     description:
       "Beautifully restored Victorian mansion with period features and modern amenities. Perfect for those who appreciate history and elegance.",
     bedrooms: 7,
@@ -204,6 +216,8 @@ export const roomsData = [
     id: 7,
     name: "Seattle Waterfront Loft",
     location: "150 Waterfront Blvd, Seattle, WA, USA",
+    image:
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
     description:
       "Contemporary waterfront loft with floor-to-ceiling windows overlooking the sound. Modern design meets natural beauty.",
     bedrooms: 2,
@@ -232,6 +246,8 @@ export const roomsData = [
     id: 8,
     name: "Austin Eco-Friendly Home",
     location: "290 Green Lane, Austin, TX, USA",
+    image:
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
     description:
       "Sustainable living at its best with solar panels, rainwater collection, and organic gardens. Eco-conscious travelers welcome.",
     bedrooms: 3,
@@ -265,6 +281,8 @@ export const roomsData = [
     id: 9,
     name: "Las Vegas Strip Penthouse",
     location: "500 Strip Avenue, Las Vegas, NV, USA",
+    image:
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop",
     description:
       "Luxury penthouse in the heart of the Strip with stunning city views. Perfect for entertainment and nightlife enthusiasts.",
     bedrooms: 4,
@@ -298,6 +316,8 @@ export const roomsData = [
     id: 10,
     name: "Portland Craftsman Cottage",
     location: "220 Oak Street, Portland, OR, USA",
+    image:
+      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop",
     description:
       "Charming craftsman cottage with exposed beams, hardwood floors, and a cozy fireplace. Ideal for couples seeking intimate getaway.",
     bedrooms: 2,
@@ -331,6 +351,8 @@ export const roomsData = [
     id: 11,
     name: "San Francisco Victorian",
     location: "410 Painted Lady Lane, San Francisco, CA, USA",
+    image:
+      "https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=800&h=600&fit=crop",
     description:
       "Iconic San Francisco Victorian with bay windows and classic San Francisco charm. Located in the heart of the city.",
     bedrooms: 3,
@@ -364,6 +386,8 @@ export const roomsData = [
     id: 12,
     name: "New Orleans French Quarter Apartment",
     location: "670 Royal Street, New Orleans, LA, USA",
+    image:
+      "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
     description:
       "Authentic New Orleans experience in the heart of the French Quarter. Live like a local with this charming period apartment.",
     bedrooms: 2,
@@ -397,6 +421,8 @@ export const roomsData = [
     id: 13,
     name: "Napa Valley Wine Country Estate",
     location: "150 Vineyard Lane, Napa Valley, CA, USA",
+    image:
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop",
     description:
       "Exclusive wine country estate with private vineyard views, wine cellar, and gourmet kitchen. Perfect for wine enthusiasts.",
     bedrooms: 5,
@@ -430,6 +456,8 @@ export const roomsData = [
     id: 14,
     name: "Miami Art Deco Condo",
     location: "800 Ocean Drive, Miami, FL, USA",
+    image:
+      "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&h=600&fit=crop",
     description:
       "Stylish Art Deco condo in iconic Miami location. Blend of retro charm and modern luxury with beach access.",
     bedrooms: 2,
@@ -463,6 +491,8 @@ export const roomsData = [
     id: 15,
     name: "Park City Ski Lodge",
     location: "600 Mountain Road, Park City, UT, USA",
+    image:
+      "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop",
     description:
       "Luxurious ski lodge steps from world-class slopes. Comfortable luxury living with ski-in/ski-out convenience.",
     bedrooms: 4,

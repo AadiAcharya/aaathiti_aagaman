@@ -30,20 +30,24 @@ export default function Rooms() {
   const currentRoom = roomsData[0];
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-background min-h-screen">
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-8 py-12">
         {/* Image Gallery */}
         <div className="grid grid-cols-3 gap-4 mb-12">
           <div className="col-span-1 row-span-2">
-            <div className="bg-gray-300 h-96 rounded-2xl"></div>
+            <img
+              src={currentRoom.image}
+              alt="main"
+              className="w-full h-96 rounded-2xl object-cover"
+            />
           </div>
-          <div className="bg-gray-300 h-40 rounded-lg"></div>
-          <div className="bg-gray-300 h-40 rounded-lg"></div>
-          <div className="bg-gray-300 h-40 rounded-lg"></div>
-          <div className="bg-gray-300 h-40 rounded-lg relative flex items-center justify-center">
-            <span className="text-4xl font-bold text-gray-700">+2</span>
-            <span className="text-sm font-semibold text-gray-700">
+          <div className="bg-bg-secondary h-40 rounded-lg"></div>
+          <div className="bg-bg-secondary h-40 rounded-lg"></div>
+          <div className="bg-bg-secondary h-40 rounded-lg"></div>
+          <div className="bg-bg-secondary h-40 rounded-lg relative flex flex-col items-center justify-center">
+            <span className="text-4xl font-bold text-accent">+2</span>
+            <span className="text-sm font-semibold text-text-primary">
               More Photos
             </span>
           </div>
@@ -55,16 +59,16 @@ export default function Rooms() {
             {/* Title Section */}
             <div className="mb-8 flex justify-between items-start">
               <div>
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                <h1 className="text-3xl font-bold text-text-primary mb-2">
                   {currentRoom.name}
                 </h1>
-                <p className="text-gray-500">{currentRoom.location}</p>
+                <p className="text-text-secondary">{currentRoom.location}</p>
               </div>
               <div className="flex gap-4">
-                <button className="p-2">
+                <button className="p-2 hover:opacity-80">
                   <img src={imgHeart} alt="like" className="w-6 h-6" />
                 </button>
-                <button className="p-2">
+                <button className="p-2 hover:opacity-80">
                   <img src={imgShare} alt="share" className="w-6 h-6" />
                 </button>
               </div>
@@ -72,47 +76,47 @@ export default function Rooms() {
 
             {/* Main Amenities */}
             <div className="mb-12">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <h2 className="text-xl font-bold text-text-primary mb-4">
                 Main Amenities
               </h2>
               <div className="grid grid-cols-4 gap-4">
-                <div className="bg-gray-100 p-6 rounded-lg text-center">
+                <div className="bg-bg-secondary p-6 rounded-lg text-center border border-text-muted/20">
                   <img
                     src={imgBed}
                     alt="bedrooms"
                     className="w-10 h-10 mx-auto mb-2"
                   />
-                  <p className="font-semibold text-gray-800">
+                  <p className="font-semibold text-text-primary">
                     {currentRoom.bedrooms} Bedrooms
                   </p>
                 </div>
-                <div className="bg-gray-100 p-6 rounded-lg text-center">
+                <div className="bg-bg-secondary p-6 rounded-lg text-center border border-text-muted/20">
                   <img
                     src={imgVector}
                     alt="bathrooms"
                     className="w-10 h-10 mx-auto mb-2"
                   />
-                  <p className="font-semibold text-gray-800">
+                  <p className="font-semibold text-text-primary">
                     {currentRoom.bathrooms} Bathrooms
                   </p>
                 </div>
-                <div className="bg-gray-100 p-6 rounded-lg text-center">
+                <div className="bg-bg-secondary p-6 rounded-lg text-center border border-text-muted/20">
                   <img
                     src={imgGroup1}
                     alt="parking"
                     className="w-10 h-10 mx-auto mb-2"
                   />
-                  <p className="font-semibold text-gray-800">
+                  <p className="font-semibold text-text-primary">
                     {currentRoom.parking}
                   </p>
                 </div>
-                <div className="bg-gray-100 p-6 rounded-lg text-center">
+                <div className="bg-bg-secondary p-6 rounded-lg text-center border border-text-muted/20">
                   <img
                     src={imgPetIcon}
                     alt="pets"
                     className="w-10 h-10 mx-auto mb-2"
                   />
-                  <p className="font-semibold text-gray-800">
+                  <p className="font-semibold text-text-primary">
                     {currentRoom.pets} Pets
                   </p>
                 </div>
@@ -121,84 +125,88 @@ export default function Rooms() {
 
             {/* Apartment Description */}
             <div className="mb-12">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <h2 className="text-xl font-bold text-text-primary mb-4">
                 Apartment Description
               </h2>
-              <p className="text-gray-500 text-sm leading-relaxed mb-4">
+              <p className="text-text-secondary text-sm leading-relaxed mb-4">
                 {currentRoom.description}
               </p>
             </div>
 
             {/* Offered Amenities */}
             <div className="mb-12">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <h2 className="text-xl font-bold text-text-primary mb-4">
                 Offered Amenities
               </h2>
               <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <img src={imgKitchen} alt="kitchen" className="w-6 h-6" />
-                    <span className="text-gray-700">Kitchen</span>
+                    <span className="text-text-secondary">Kitchen</span>
                   </div>
                   <div className="flex items-center gap-4">
                     <img src={imgVector} alt="ac" className="w-6 h-6" />
-                    <span className="text-gray-700">Air Conditioner</span>
+                    <span className="text-text-secondary">Air Conditioner</span>
                   </div>
                   <div className="flex items-center gap-4">
                     <img src={imgLaundry1} alt="washer" className="w-6 h-6" />
-                    <span className="text-gray-700">Washer</span>
+                    <span className="text-text-secondary">Washer</span>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <img src={imgTv} alt="tv" className="w-6 h-6" />
-                    <span className="text-gray-700">
+                    <span className="text-text-secondary">
                       Television with Netflix
                     </span>
                   </div>
                   <div className="flex items-center gap-4">
                     <img src={imgWifi} alt="wifi" className="w-6 h-6" />
-                    <span className="text-gray-700">
+                    <span className="text-text-secondary">
                       Free Wireless Internet
                     </span>
                   </div>
                   <div className="flex items-center gap-4">
                     <img src={imgBalcony1} alt="balcony" className="w-6 h-6" />
-                    <span className="text-gray-700">Balcony or Patio</span>
+                    <span className="text-text-secondary">
+                      Balcony or Patio
+                    </span>
                   </div>
                 </div>
               </div>
-              <button className="mt-6 px-6 py-3 border-2 border-gray-800 rounded-lg font-semibold text-gray-800 hover:bg-gray-50">
+              <button className="mt-6 px-6 py-3 border-2 border-accent rounded-lg font-semibold text-accent hover:bg-accent hover:text-background">
                 Show All 10 Amenities
               </button>
             </div>
 
             {/* Safety and Hygiene */}
             <div className="mb-12">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <h2 className="text-xl font-bold text-text-primary mb-4">
                 Safety and Hygiene
               </h2>
               <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-6 h-6 bg-gray-300 rounded"></div>
-                    <span className="text-gray-700">Daily Cleaning</span>
+                    <div className="w-6 h-6 bg-text-muted rounded"></div>
+                    <span className="text-text-secondary">Daily Cleaning</span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <div className="w-6 h-6 bg-gray-300 rounded"></div>
-                    <span className="text-gray-700">
+                    <div className="w-6 h-6 bg-text-muted rounded"></div>
+                    <span className="text-text-secondary">
                       Disinfections and Sterilizations
                     </span>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-6 h-6 bg-gray-300 rounded"></div>
-                    <span className="text-gray-700">Fire Extinguishers</span>
+                    <div className="w-6 h-6 bg-text-muted rounded"></div>
+                    <span className="text-text-secondary">
+                      Fire Extinguishers
+                    </span>
                   </div>
                   <div className="flex items-center gap-4">
-                    <div className="w-6 h-6 bg-gray-300 rounded"></div>
-                    <span className="text-gray-700">Smoke Detectors</span>
+                    <div className="w-6 h-6 bg-text-muted rounded"></div>
+                    <span className="text-text-secondary">Smoke Detectors</span>
                   </div>
                 </div>
               </div>
@@ -206,8 +214,9 @@ export default function Rooms() {
 
             {/* Reviews */}
             <div className="mb-12">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
-                Reviews <span className="ml-4 text-2xl font-bold">5.0</span>
+              <h2 className="text-xl font-bold text-text-primary mb-4">
+                Reviews{" "}
+                <span className="ml-4 text-2xl font-bold text-accent">5.0</span>
               </h2>
               <div className="space-y-6">
                 {[
@@ -226,22 +235,24 @@ export default function Rooms() {
                 ].map((reviewer, idx) => (
                   <div
                     key={idx}
-                    className="flex gap-4 p-4 bg-gray-50 rounded-lg"
+                    className="flex gap-4 p-4 bg-bg-secondary rounded-lg border border-text-muted/20"
                   >
-                    <div className="w-16 h-16 bg-gray-300 rounded-full shrink-0"></div>
+                    <div className="w-16 h-16 bg-text-muted rounded-full shrink-0"></div>
                     <div>
-                      <h3 className="font-bold text-gray-800">
+                      <h3 className="font-bold text-text-primary">
                         {reviewer.name}
                       </h3>
-                      <p className="text-gray-500 text-sm">{reviewer.date}</p>
-                      <p className="text-gray-600 text-sm mt-2">
+                      <p className="text-text-secondary text-sm">
+                        {reviewer.date}
+                      </p>
+                      <p className="text-text-secondary text-sm mt-2">
                         {reviewer.review}
                       </p>
                     </div>
                   </div>
                 ))}
               </div>
-              <button className="mt-6 px-6 py-3 border-2 border-gray-800 rounded-lg font-semibold text-gray-800 hover:bg-gray-50">
+              <button className="mt-6 px-6 py-3 border-2 border-accent rounded-lg font-semibold text-accent hover:bg-accent hover:text-background">
                 Show All Reviews
               </button>
             </div>
@@ -249,43 +260,43 @@ export default function Rooms() {
 
           {/* Right Column - Sidebar */}
           <div className="col-span-1">
-            <div className="bg-white border-2 border-gray-200 rounded-lg p-6 sticky top-32">
-              <p className="text-2xl font-bold text-gray-800 mb-6">
+            <div className="bg-bg-secondary border-2 border-text-muted/20 rounded-lg p-6 sticky top-32">
+              <p className="text-2xl font-bold text-accent mb-6">
                 ${currentRoom.priceMin} - ${currentRoom.priceMax}
               </p>
 
-              <div className="border-t border-gray-200 py-4 mb-4">
-                <p className="text-sm text-gray-600 mb-2">
+              <div className="border-t border-text-muted/20 py-4 mb-4">
+                <p className="text-sm text-text-secondary mb-2">
                   Short Period: ${currentRoom.shortPeriod}
                 </p>
-                <p className="text-sm text-gray-600 mb-2">
+                <p className="text-sm text-text-secondary mb-2">
                   Medium Period: ${currentRoom.mediumPeriod}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-text-secondary">
                   Long Period: ${currentRoom.longPeriod}
                 </p>
               </div>
 
-              <button className="w-full bg-gray-800 text-white font-bold py-3 rounded-full mb-4 hover:bg-gray-700">
+              <button className="w-full bg-primary text-background font-bold py-3 rounded-full mb-4 hover:bg-primary-hover">
                 Reserve Now
               </button>
 
               <div className="space-y-4">
-                <button className="w-full text-left text-sm font-semibold text-gray-800 p-3 border border-gray-300 rounded flex items-center gap-2 hover:bg-gray-50">
+                <button className="w-full text-left text-sm font-semibold text-accent p-3 border border-accent rounded flex items-center gap-2 hover:bg-accent hover:text-background">
                   <span>🏢</span> Property Inquiry
                 </button>
-                <button className="w-full text-left text-sm font-semibold text-gray-800 p-3 border border-gray-300 rounded flex items-center gap-2 hover:bg-gray-50">
+                <button className="w-full text-left text-sm font-semibold text-accent p-3 border border-accent rounded flex items-center gap-2 hover:bg-accent hover:text-background">
                   <span>📞</span> Contact Host
                 </button>
               </div>
 
               {/* Host Info */}
-              <div className="mt-8 pt-8 border-t border-gray-200">
-                <p className="text-xs text-gray-500 mb-2">Listed By:</p>
-                <h3 className="text-lg font-bold text-gray-800 mb-2">
+              <div className="mt-8 pt-8 border-t border-text-muted/20">
+                <p className="text-xs text-text-muted mb-2">Listed By:</p>
+                <h3 className="text-lg font-bold text-text-primary mb-2">
                   {currentRoom.listedBy}
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-text-secondary">
                   For: ${currentRoom.priceMin} - ${currentRoom.priceMax}
                 </p>
               </div>
@@ -295,7 +306,7 @@ export default function Rooms() {
 
         {/* Nearby Services */}
         <div className="mt-16 mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          <h2 className="text-2xl font-bold text-text-primary mb-6">
             Nearby Services
           </h2>
           <div className="grid grid-cols-3 gap-6">
@@ -306,37 +317,41 @@ export default function Rooms() {
             ].map((service, idx) => (
               <div
                 key={idx}
-                className="bg-white border border-gray-200 rounded-lg p-4"
+                className="bg-bg-secondary border border-text-muted/20 rounded-lg p-4"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <img src={imgFiveStars} alt="stars" className="w-16" />
                 </div>
-                <h3 className="font-bold text-gray-800">{service.name}</h3>
-                <p className="text-sm text-gray-500">{service.distance}</p>
+                <h3 className="font-bold text-text-primary">{service.name}</h3>
+                <p className="text-sm text-text-secondary">
+                  {service.distance}
+                </p>
               </div>
             ))}
           </div>
-          <button className="mt-6 px-8 py-3 bg-gray-600 text-white rounded-full font-semibold hover:bg-gray-700">
+          <button className="mt-6 px-8 py-3 bg-primary text-background rounded-full font-semibold hover:bg-primary-hover">
             Show On Map
           </button>
         </div>
       </div>
 
       {/* Newsletter */}
-      <div className="bg-gray-100 py-8 mt-12">
+      <div className="bg-bg-secondary py-8 mt-12 border-t border-text-muted/20">
         <div className="max-w-7xl mx-auto px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-bold text-gray-800">NEWSLETTER</h3>
-              <p className="text-sm text-gray-600">Stay Updated</p>
+              <h3 className="text-lg font-bold text-text-primary">
+                NEWSLETTER
+              </h3>
+              <p className="text-sm text-text-secondary">Stay Updated</p>
             </div>
             <div className="flex gap-4">
               <input
                 type="email"
                 placeholder="Your Email..."
-                className="px-6 py-3 rounded-full border border-gray-300 w-96"
+                className="px-6 py-3 rounded-full bg-background text-text-primary border border-text-muted/20 w-96 placeholder-text-muted focus:outline-none focus:border-accent"
               />
-              <button className="px-6 py-3 bg-gray-800 text-white rounded-full font-semibold hover:bg-gray-700">
+              <button className="px-6 py-3 bg-primary text-background rounded-full font-semibold hover:bg-primary-hover">
                 →
               </button>
             </div>
