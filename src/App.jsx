@@ -5,6 +5,7 @@ import Home from "./components/Home";
 import Properties from "./components/Properties";
 import Search from "./components/Search";
 import Rooms from "./components/Rooms";
+import Hosting from "./components/Hosting";
 import "./App.css";
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/properties" element={<Properties />} />
         <Route path="/search" element={<Search />} />
         <Route path="/rooms" element={<Rooms />} />
+        <Route path="/hosting" element={<Hosting />} />
         {/* Add more routes here as needed */}
       </Routes>
     </Router>
