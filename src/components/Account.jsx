@@ -1,53 +1,71 @@
-import React from "react";
+import React, { useState } from "react";
+
+const imgCarbonUserAvatarFilled = "https://www.figma.com/api/mcp/asset/1d3bc9bb-0284-40e6-a302-2326fb0f2edf";
+const imgCheckmark = "https://www.figma.com/api/mcp/asset/d4935f1f-e5fe-46b1-80a4-74d31a44a19e";
+const imgClose = "https://www.figma.com/api/mcp/asset/cd41964c-4514-4ca7-b0d5-7b10ab5c2070";
 
 export default function Account() {
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Main Account Content */}
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        {/* Hello greeting */}
-        <h1
-          className="font-['Montserrat:Bold',sans-serif] font-bold text-[28px] text-[#484848] mb-8"
-          data-node-id="2:2026"
-        >
-          Hello, John Doe
-        </h1>
+  const [formData, setFormData] = useState({
+    about: "",
+    location: "",
+    work: ""
+  });
 
-        {/* Profile and Details Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = () => {
+    console.log("Saving profile data:", formData);
+  };
+
+  const handleCancel = () => {
+    setFormData({ about: "", location: "", work: "" });
+  };
+
+  return (
+    <div className="min-h-screen bg-white" data-name="account-edit" data-node-id="2:1645">
+      {/* Edit Profile Section */}
+      <div className="px-16 py-32 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left Sidebar - Profile Card */}
           <div className="lg:col-span-1">
-            <div className="bg-[#eff0f2] rounded-lg p-8" data-node-id="2:2028">
-              {/* Profile Avatar Placeholder */}
-              <div className="bg-gray-400 rounded-full w-40 h-40 mx-auto mb-6 flex items-center justify-center">
-                <span className="text-white text-4xl">👤</span>
+            <div className="bg-[#eff0f2] rounded-lg p-8 h-fit">
+              {/* Profile Avatar */}
+              <div className="w-40 h-40 mx-auto mb-6">
+                <img
+                  alt="User Avatar"
+                  className="w-full h-full"
+                  src={imgCarbonUserAvatarFilled}
+                />
               </div>
 
               {/* Upload Photo */}
               <p
-                className="font-['Montserrat:SemiBold',sans-serif] font-semibold text-[16px] text-[#484848] text-center mb-8"
-                data-node-id="2:2032"
+                className="font-semibold text-[16px] text-[#484848] text-center mb-8"
+                data-node-id="2:1666"
               >
                 Upload a Photo
               </p>
 
               {/* Name */}
               <p
-                className="font-['Montserrat:Bold',sans-serif] font-bold text-[22px] text-[#484848] mb-4"
-                data-node-id="2:2034"
+                className="font-bold text-[22px] text-[#484848] mb-4"
+                data-node-id="2:1667"
               >
                 John Doe
               </p>
 
               {/* Joined Date */}
               <p
-                className="font-['Montserrat:Medium',sans-serif] font-medium text-[14px] text-[#9a9a9a] mb-6"
-                data-node-id="2:2038"
+                className="font-medium text-[14px] text-[#9a9a9a] mb-6"
+                data-node-id="2:1669"
               >
                 Joined in 2021
               </p>
 
-              {/* Edit Profile Button */}
+              {/* Confirmations */}
               <button
                 className="w-full border-2 border-[#484848] text-[#484848] font-['Montserrat:SemiBold',sans-serif] font-semibold py-3 rounded-lg hover:bg-[#484848] hover:text-white transition-colors mb-8"
                 data-node-id="2:2035"
@@ -72,224 +90,159 @@ export default function Account() {
                 </p>
               </div>
 
-              {/* Confirmations */}
-              <div className="space-y-3">
-                {/* Email Confirmed */}
-                <div className="flex items-center gap-3" data-node-id="2:2039">
-                  <span className="text-green-500 text-lg">✓</span>
-                  <p
-                    className="font-['Montserrat:Medium',sans-serif] font-medium text-[15px] text-[#9a9a9a]"
-                    data-node-id="2:2040"
-                  >
-                    Email Confirmed
-                  </p>
-                </div>
-
-                {/* Mobile Confirmed */}
-                <div className="flex items-center gap-3" data-node-id="2:2044">
-                  <span className="text-green-500 text-lg">✓</span>
-                  <p
-                    className="font-['Montserrat:Medium',sans-serif] font-medium text-[15px] text-[#9a9a9a]"
-                    data-node-id="2:2045"
-                  >
-                    Mobile Confirmed
-                  </p>
-                </div>
-              </div>
-
-              {/* Reviews Count */}
-              <div className="mt-6 pt-6 border-t border-[#484848]/20">
+              {/* Email Confirmed */}
+              <div className="flex items-center gap-3 mb-4" data-node-id="2:1670">
+                <img
+                  alt="checkmark"
+                  className="w-5 h-5"
+                  src={imgCheckmark}
+                />
                 <p
-                  className="font-['Montserrat:Bold',sans-serif] font-bold text-[18px] text-[#484848]"
-                  data-node-id="2:2052"
+                  className="font-medium text-[15px] text-[#9a9a9a]"
+                  data-node-id="2:1671"
                 >
-                  0 Reviews
-                </p>
-                <p
-                  className="font-['Montserrat:SemiBold',sans-serif] font-semibold text-[15px] text-[#484848] underline mt-2"
-                  data-node-id="2:2033"
-                >
-                  Reviewed By You
+                  Email Confirmed
                 </p>
               </div>
+
+              {/* Mobile Confirmed */}
+              <div className="flex items-center gap-3 mb-6" data-node-id="2:1675">
+                <img
+                  alt="checkmark"
+                  className="w-5 h-5"
+                  src={imgCheckmark}
+                />
+                <p
+                  className="font-medium text-[15px] text-[#9a9a9a]"
+                  data-node-id="2:1676"
+                >
+                  Mobile Confirmed
+                </p>
+              </div>
+
+              {/* Identity Verification */}
+              <p
+                className="font-bold text-[18px] text-[#484848] mb-3"
+                data-node-id="2:1680"
+              >
+                Identity Verification
+              </p>
+              <p
+                className="font-normal text-[14px] text-[#9a9a9a] leading-5"
+                data-node-id="2:1681"
+              >
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
+              </p>
             </div>
           </div>
 
-          {/* Right Section - Account Details (Placeholder for additional content) */}
-          <div className="lg:col-span-2">
-            <div className="bg-bg-secondary rounded-lg p-8 border border-text-muted/20">
-              <h2 className="font-bold text-2xl text-text-primary mb-6">
-                Account Information
-              </h2>
+          {/* Right Section - Edit Profile Form */}
+          <div className="lg:col-span-3">
+            <div>
+              {/* Greeting */}
+              <p
+                className="font-bold text-[28px] text-[#484848] mb-2"
+                data-node-id="2:1668"
+              >
+                Hello, John Doe
+              </p>
+              <p
+                className="font-medium text-[14px] text-[#9a9a9a] mb-8"
+                data-node-id="2:1669"
+              >
+                Joined in 2021
+              </p>
 
-              <div className="space-y-6">
-                {/* Personal Information Section */}
-                <div>
-                  <h3 className="font-semibold text-lg text-text-primary mb-4">
-                    Personal Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm text-text-secondary block mb-2">
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="John"
-                        className="w-full bg-background border border-text-muted/20 rounded px-3 py-2 text-text-primary"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm text-text-secondary block mb-2">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Doe"
-                        className="w-full bg-background border border-text-muted/20 rounded px-3 py-2 text-text-primary"
-                      />
-                    </div>
-                  </div>
-                </div>
+              {/* About Section */}
+              <div className="mb-6">
+                <label
+                  className="font-semibold text-[15px] text-[#484848] mb-2 block"
+                  data-node-id="2:1683"
+                >
+                  About
+                </label>
+                <textarea
+                  name="about"
+                  value={formData.about}
+                  onChange={handleInputChange}
+                  className="w-full h-31 bg-white border border-[#c2c6cc] rounded-lg px-4 py-3 text-[#484848] focus:outline-none focus:ring-2 focus:ring-[#484848]"
+                  data-node-id="2:1682"
+                />
+              </div>
 
-                {/* Contact Information Section */}
-                <div>
-                  <h3 className="font-semibold text-lg text-text-primary mb-4">
-                    Contact Information
-                  </h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm text-text-secondary block mb-2">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        placeholder="john.doe@example.com"
-                        className="w-full bg-background border border-text-muted/20 rounded px-3 py-2 text-text-primary"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm text-text-secondary block mb-2">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        placeholder="+1 234 567 890"
-                        className="w-full bg-background border border-text-muted/20 rounded px-3 py-2 text-text-primary"
-                      />
-                    </div>
-                  </div>
-                </div>
+              {/* Location Section */}
+              <div className="mb-6">
+                <label
+                  className="font-semibold text-[15px] text-[#484848] mb-2 block"
+                  data-node-id="2:1685"
+                >
+                  Location
+                </label>
+                <input
+                  type="text"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  className="w-full h-11 bg-white border border-[#c2c6cc] rounded-lg px-4 py-2 text-[#484848] focus:outline-none focus:ring-2 focus:ring-[#484848]"
+                  data-node-id="2:1684"
+                />
+              </div>
 
-                {/* Address Information Section */}
-                <div>
-                  <h3 className="font-semibold text-lg text-text-primary mb-4">
-                    Address
-                  </h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm text-text-secondary block mb-2">
-                        Street Address
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="100 Smart Street"
-                        className="w-full bg-background border border-text-muted/20 rounded px-3 py-2 text-text-primary"
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="text-sm text-text-secondary block mb-2">
-                          City
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="Los Angeles"
-                          className="w-full bg-background border border-text-muted/20 rounded px-3 py-2 text-text-primary"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm text-text-secondary block mb-2">
-                          State
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="CA"
-                          className="w-full bg-background border border-text-muted/20 rounded px-3 py-2 text-text-primary"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm text-text-secondary block mb-2">
-                          ZIP Code
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="90001"
-                          className="w-full bg-background border border-text-muted/20 rounded px-3 py-2 text-text-primary"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              {/* Work Section */}
+              <div className="mb-8">
+                <label
+                  className="font-semibold text-[15px] text-[#484848] mb-2 block"
+                  data-node-id="2:1687"
+                >
+                  Work
+                </label>
+                <input
+                  type="text"
+                  name="work"
+                  value={formData.work}
+                  onChange={handleInputChange}
+                  className="w-full h-[46px] bg-white border border-[#c2c6cc] rounded-lg px-4 py-2 text-[#484848] focus:outline-none focus:ring-2 focus:ring-[#484848]"
+                  data-node-id="2:1686"
+                />
+              </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-4 pt-6">
-                  <button className="bg-primary hover:bg-primary-hover text-white font-semibold px-6 py-2 rounded transition-colors">
-                    Save Changes
-                  </button>
-                  <button className="border border-primary text-primary hover:bg-primary/10 font-semibold px-6 py-2 rounded transition-colors">
-                    Cancel
-                  </button>
-                </div>
+              {/* Helper Text */}
+              <p
+                className="font-semibold text-[15px] text-[#9a9a9a] mb-6"
+                data-node-id="2:1695"
+              >
+                All the required user information can be added here...
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end gap-4">
+                {/* Cancel Button */}
+                <button
+                  onClick={handleCancel}
+                  className="flex items-center gap-2 text-[#484848] font-bold text-[15px] hover:opacity-70 transition"
+                  data-node-id="2:1691"
+                >
+                  <img
+                    alt="close"
+                    className="w-[30px] h-[30px]"
+                    src={imgUilTimes}
+                  />
+                  Cancel
+                </button>
+
+                {/* Save Button */}
+                <button
+                  onClick={handleSave}
+                  className="bg-[#9a9a9a] hover:bg-[#7a7a7a] text-white font-bold text-[15px] px-8 py-3 rounded-full transition"
+                  data-node-id="2:1688"
+                >
+                  Save
+                </button>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Divider */}
-        <hr className="my-12 border-text-muted/20" data-node-id="2:2027" />
-
-        {/* Additional Account Options */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-          <div className="bg-bg-secondary rounded-lg p-6 border border-text-muted/20">
-            <h3 className="font-bold text-lg text-text-primary mb-2">
-              Account Settings
-            </h3>
-            <p className="text-text-secondary text-sm mb-4">
-              Manage your account preferences and security.
-            </p>
-            <button className="text-primary hover:underline font-semibold text-sm">
-              Go to Settings →
-            </button>
-          </div>
-
-          <div className="bg-bg-secondary rounded-lg p-6 border border-text-muted/20">
-            <h3 className="font-bold text-lg text-text-primary mb-2">
-              Privacy & Security
-            </h3>
-            <p className="text-text-secondary text-sm mb-4">
-              Control your privacy and security settings.
-            </p>
-            <button className="text-primary hover:underline font-semibold text-sm">
-              Go to Privacy →
-            </button>
-          </div>
-
-          <div className="bg-bg-secondary rounded-lg p-6 border border-text-muted/20">
-            <h3 className="font-bold text-lg text-text-primary mb-2">
-              Notification Center
-            </h3>
-            <p className="text-text-secondary text-sm mb-4">
-              Manage your notification preferences.
-            </p>
-            <button className="text-primary hover:underline font-semibold text-sm">
-              Go to Notifications →
-            </button>
           </div>
         </div>
       </div>
-
-      {/* Footer would go here */}
     </div>
   );
 }
