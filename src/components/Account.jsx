@@ -1,19 +1,22 @@
 import React, { useState } from "react";
 
-const imgCarbonUserAvatarFilled = "https://www.figma.com/api/mcp/asset/1d3bc9bb-0284-40e6-a302-2326fb0f2edf";
-const imgCheckmark = "https://www.figma.com/api/mcp/asset/d4935f1f-e5fe-46b1-80a4-74d31a44a19e";
-const imgClose = "https://www.figma.com/api/mcp/asset/cd41964c-4514-4ca7-b0d5-7b10ab5c2070";
+const imgCarbonUserAvatarFilled =
+  "https://www.figma.com/api/mcp/asset/1d3bc9bb-0284-40e6-a302-2326fb0f2edf";
+const imgCheckmark =
+  "https://www.figma.com/api/mcp/asset/d4935f1f-e5fe-46b1-80a4-74d31a44a19e";
+const imgClose =
+  "https://www.figma.com/api/mcp/asset/cd41964c-4514-4ca7-b0d5-7b10ab5c2070";
 
 export default function Account() {
   const [formData, setFormData] = useState({
     about: "",
     location: "",
-    work: ""
+    work: "",
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = () => {
@@ -25,7 +28,11 @@ export default function Account() {
   };
 
   return (
-    <div className="min-h-screen bg-white" data-name="account-edit" data-node-id="2:1645">
+    <div
+      className="min-h-screen bg-white"
+      data-name="account-edit"
+      data-node-id="2:1645"
+    >
       {/* Edit Profile Section */}
       <div className="px-16 py-32 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -65,38 +72,12 @@ export default function Account() {
                 Joined in 2021
               </p>
 
-              {/* Confirmations */}
-              <button
-                className="w-full border-2 border-[#484848] text-[#484848] font-['Montserrat:SemiBold',sans-serif] font-semibold py-3 rounded-lg hover:bg-[#484848] hover:text-white transition-colors mb-8"
-                data-node-id="2:2035"
-              >
-                <span data-node-id="2:2037">Edit Profile</span>
-              </button>
-
-              {/* Verification Section */}
-              <div className="mb-6">
-                <h3
-                  className="font-['Montserrat:Bold',sans-serif] font-bold text-[18px] text-[#484848] mb-2"
-                  data-node-id="2:2049"
-                >
-                  Identity Verification
-                </h3>
-                <p
-                  className="font-['Montserrat:Regular',sans-serif] font-normal text-[14px] text-[#9a9a9a] leading-6"
-                  data-node-id="2:2050"
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor.
-                </p>
-              </div>
-
               {/* Email Confirmed */}
-              <div className="flex items-center gap-3 mb-4" data-node-id="2:1670">
-                <img
-                  alt="checkmark"
-                  className="w-5 h-5"
-                  src={imgCheckmark}
-                />
+              <div
+                className="flex items-center gap-3 mb-4"
+                data-node-id="2:1670"
+              >
+                <img alt="checkmark" className="w-5 h-5" src={imgCheckmark} />
                 <p
                   className="font-medium text-[15px] text-[#9a9a9a]"
                   data-node-id="2:1671"
@@ -106,12 +87,11 @@ export default function Account() {
               </div>
 
               {/* Mobile Confirmed */}
-              <div className="flex items-center gap-3 mb-6" data-node-id="2:1675">
-                <img
-                  alt="checkmark"
-                  className="w-5 h-5"
-                  src={imgCheckmark}
-                />
+              <div
+                className="flex items-center gap-3 mb-6"
+                data-node-id="2:1675"
+              >
+                <img alt="checkmark" className="w-5 h-5" src={imgCheckmark} />
                 <p
                   className="font-medium text-[15px] text-[#9a9a9a]"
                   data-node-id="2:1676"
@@ -131,7 +111,8 @@ export default function Account() {
                 className="font-normal text-[14px] text-[#9a9a9a] leading-5"
                 data-node-id="2:1681"
               >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor.
               </p>
             </div>
           </div>
@@ -222,11 +203,7 @@ export default function Account() {
                   className="flex items-center gap-2 text-[#484848] font-bold text-[15px] hover:opacity-70 transition"
                   data-node-id="2:1691"
                 >
-                  <img
-                    alt="close"
-                    className="w-7 h-7"
-                    src={imgClose}
-                  />
+                  <img alt="close" className="w-7 h-7" src={imgClose} />
                   Cancel
                 </button>
 
