@@ -201,7 +201,7 @@ export default function Account() {
                   name="work"
                   value={formData.work}
                   onChange={handleInputChange}
-                  className="w-full h-[46px] bg-white border border-[#c2c6cc] rounded-lg px-4 py-2 text-[#484848] focus:outline-none focus:ring-2 focus:ring-[#484848]"
+                  className="w-full h-11 bg-white border border-[#c2c6cc] rounded-lg px-4 py-2 text-[#484848] focus:outline-none focus:ring-2 focus:ring-[#484848]"
                   data-node-id="2:1686"
                 />
               </div>
@@ -224,8 +224,8 @@ export default function Account() {
                 >
                   <img
                     alt="close"
-                    className="w-[30px] h-[30px]"
-                    src={imgUilTimes}
+                    className="w-7 h-7"
+                    src={imgClose}
                   />
                   Cancel
                 </button>
