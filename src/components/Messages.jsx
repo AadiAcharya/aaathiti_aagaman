@@ -35,7 +35,7 @@ export default function Messages() {
 
               {/* Message Items */}
               <div className="space-y-0">
-                {messages.map((msg, index) => (
+                {messages.map((msg) => (
                   <div
                     key={msg.id}
                     onClick={() => setSelectedMessage(msg)}
@@ -49,7 +49,7 @@ export default function Messages() {
                     <img
                       src={msg.avatar}
                       alt={msg.name}
-                      className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                      className="w-16 h-16 rounded-full object-cover shrink-0"
                     />
 
                     {/* Message Info */}
@@ -84,7 +84,7 @@ export default function Messages() {
               {/* Send Button */}
               <button
                 onClick={handleSendMessage}
-                className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-400 hover:bg-gray-500 transition-colors flex-shrink-0"
+                className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-400 hover:bg-gray-500 transition-colors shrink-0"
               >
                 <img src={imgEllipse18} alt="Send" className="w-full h-full rounded-full" />
                 <svg
