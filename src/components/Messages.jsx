@@ -39,7 +39,7 @@ export default function Messages() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#eff0f2" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#3B82F6" }}>
       {/* Messages Section */}
       <div className="px-20 py-40 max-w-full">
         <div
@@ -49,7 +49,7 @@ export default function Messages() {
           {/* Messages List */}
           <div
             className="w-96 rounded-l-3xl"
-            style={{ backgroundColor: "#eff0f2" }}
+            style={{ backgroundColor: "#3B82F6" }}
           >
             <div className="px-0">
               {/* All Messages Title */}
@@ -110,7 +110,7 @@ export default function Messages() {
           {/* Message Body */}
           <div
             className="flex-1 rounded-r-3xl flex flex-col justify-between p-12"
-            style={{ backgroundColor: "#eff0f2" }}
+            style={{ backgroundColor: "#3B82F6" }}
           >
             {/* Message Content Area */}
             <div className="flex items-center justify-center mb-8">
@@ -142,7 +142,7 @@ export default function Messages() {
               <button
                 onClick={handleSendMessage}
                 className="flex items-center justify-center w-12 h-12 rounded-full shrink-0 relative overflow-hidden"
-                style={{ backgroundColor: "#eff0f2" }}
+                style={{ backgroundColor: "#3B82F6" }}
               >
                 <img
                   src={imgEllipse18}
