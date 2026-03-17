@@ -1,7 +1,5 @@
-import { useState } from "react";
-
 export default function Wishlist() {
-  const [wishlistItems, setWishlistItems] = useState([
+  const wishlistItems = [
     {
       id: 1,
       title: "Family Apartment",
@@ -26,11 +24,7 @@ export default function Wishlist() {
       location: "100 Smart Street, LA, USA",
       image: "https://via.placeholder.com/279x240",
     },
-  ]);
-
-  const handleRemoveFromWishlist = (id) => {
-    setWishlistItems(wishlistItems.filter((item) => item.id !== id));
-  };
+  ];
 
   return (
     <div style={{ backgroundColor: "#3B82F6", minHeight: "100vh" }}>
@@ -105,15 +99,14 @@ export default function Wishlist() {
         </h1>
 
         {/* Wishlist Items Grid */}
-        {wishlistItems.length > 0 ? (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(279px, 1fr))",
-              gap: "30px",
-            }}
-          >
-            {wishlistItems.map((item) => (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(279px, 1fr))",
+            gap: "30px",
+          }}
+        >
+          {wishlistItems.map((item) => (
               <div
                 key={item.id}
                 style={{
@@ -145,7 +138,6 @@ export default function Wishlist() {
 
                 {/* Remove Button */}
                 <button
-                  onClick={() => handleRemoveFromWishlist(item.id)}
                   style={{
                     position: "absolute",
                     top: "8px",
@@ -163,14 +155,6 @@ export default function Wishlist() {
                     justifyContent: "center",
                     transition: "background-color 0.2s ease",
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      "rgba(0, 0, 0, 0.7)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      "rgba(0, 0, 0, 0.5)")
-                  }
                 >
                   ✕
                 </button>
@@ -210,22 +194,7 @@ export default function Wishlist() {
               </div>
             ))}
           </div>
-        ) : (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "60px 20px",
-              color: "#484848",
-            }}
-          >
-            <p style={{ fontSize: "20px", fontWeight: "600" }}>
-              Your wishlist is empty
-            </p>
-            <p style={{ fontSize: "14px", color: "#9a9a9a", marginTop: "8px" }}>
-              Start adding properties to your wishlist
-            </p>
-          </div>
-        )}
+        ) : null}
       </div>
 
       {/* Footer */}
