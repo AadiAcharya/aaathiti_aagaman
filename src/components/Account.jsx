@@ -29,7 +29,7 @@ export default function Account() {
 
   return (
     <div
-      className="min-h-screen bg-white"
+      className="min-h-screen bg-background"
       data-name="account-edit"
       data-node-id="2:1645"
     >
@@ -38,7 +38,7 @@ export default function Account() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left Sidebar - Profile Card */}
           <div className="lg:col-span-1">
-            <div className="bg-[#eff0f2] rounded-lg p-8 h-fit">
+            <div className="bg-bg-secondary rounded-lg p-8 h-fit">
               {/* Profile Avatar */}
               <div className="w-40 h-40 mx-auto mb-6">
                 <img
@@ -50,7 +50,7 @@ export default function Account() {
 
               {/* Upload Photo */}
               <p
-                className="font-semibold text-[16px] text-[#484848] text-center mb-8"
+                className="font-semibold text-[16px] text-text-primary text-center mb-8"
                 data-node-id="2:1666"
               >
                 Upload a Photo
@@ -58,7 +58,7 @@ export default function Account() {
 
               {/* Name */}
               <p
-                className="font-bold text-[22px] text-[#484848] mb-4"
+                className="font-bold text-[22px] text-text-primary mb-4"
                 data-node-id="2:1667"
               >
                 John Doe
@@ -66,7 +66,7 @@ export default function Account() {
 
               {/* Joined Date */}
               <p
-                className="font-medium text-[14px] text-[#9a9a9a] mb-6"
+                className="font-medium text-[14px] text-text-secondary mb-6"
                 data-node-id="2:1669"
               >
                 Joined in 2021
@@ -79,7 +79,7 @@ export default function Account() {
               >
                 <img alt="checkmark" className="w-5 h-5" src={imgCheckmark} />
                 <p
-                  className="font-medium text-[15px] text-[#9a9a9a]"
+                  className="font-medium text-[15px] text-text-secondary"
                   data-node-id="2:1671"
                 >
                   Email Confirmed
@@ -93,7 +93,7 @@ export default function Account() {
               >
                 <img alt="checkmark" className="w-5 h-5" src={imgCheckmark} />
                 <p
-                  className="font-medium text-[15px] text-[#9a9a9a]"
+                  className="font-medium text-[15px] text-text-secondary"
                   data-node-id="2:1676"
                 >
                   Mobile Confirmed
@@ -102,13 +102,13 @@ export default function Account() {
 
               {/* Identity Verification */}
               <p
-                className="font-bold text-[18px] text-[#484848] mb-3"
+                className="font-bold text-[18px] text-text-primary mb-3"
                 data-node-id="2:1680"
               >
                 Identity Verification
               </p>
               <p
-                className="font-normal text-[14px] text-[#9a9a9a] leading-5"
+                className="font-normal text-[14px] text-text-secondary leading-5"
                 data-node-id="2:1681"
               >
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
@@ -122,13 +122,13 @@ export default function Account() {
             <div>
               {/* Greeting */}
               <p
-                className="font-bold text-[28px] text-[#484848] mb-2"
+                className="font-bold text-[28px] text-text-primary mb-2"
                 data-node-id="2:1668"
               >
                 Hello, John Doe
               </p>
               <p
-                className="font-medium text-[14px] text-[#9a9a9a] mb-8"
+                className="font-medium text-[14px] text-text-secondary mb-8"
                 data-node-id="2:1669"
               >
                 Joined in 2021
