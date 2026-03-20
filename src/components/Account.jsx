@@ -137,7 +137,7 @@ export default function Account() {
               {/* About Section */}
               <div className="mb-6">
                 <label
-                  className="font-semibold text-[15px] text-[#484848] mb-2 block"
+                  className="font-semibold text-[15px] text-text-primary mb-2 block"
                   data-node-id="2:1683"
                 >
                   About
@@ -146,7 +146,7 @@ export default function Account() {
                   name="about"
                   value={formData.about}
                   onChange={handleInputChange}
-                  className="w-full h-31 bg-white border border-[#c2c6cc] rounded-lg px-4 py-3 text-[#484848] focus:outline-none focus:ring-2 focus:ring-[#484848]"
+                  className="w-full h-31 bg-bg-secondary border border-primary/30 rounded-lg px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
                   data-node-id="2:1682"
                 />
               </div>
@@ -154,7 +154,7 @@ export default function Account() {
               {/* Location Section */}
               <div className="mb-6">
                 <label
-                  className="font-semibold text-[15px] text-[#484848] mb-2 block"
+                  className="font-semibold text-[15px] text-text-primary mb-2 block"
                   data-node-id="2:1685"
                 >
                   Location
@@ -164,7 +164,7 @@ export default function Account() {
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
-                  className="w-full h-11 bg-white border border-[#c2c6cc] rounded-lg px-4 py-2 text-[#484848] focus:outline-none focus:ring-2 focus:ring-[#484848]"
+                  className="w-full h-11 bg-bg-secondary border border-primary/30 rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
                   data-node-id="2:1684"
                 />
               </div>
