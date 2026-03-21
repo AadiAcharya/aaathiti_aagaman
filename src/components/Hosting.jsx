@@ -7,12 +7,12 @@ export default function Hosting() {
       <section className="py-20 px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
           <div
-            className="relative bg-[#eff0f2] rounded-xl overflow-hidden p-12"
+            className="relative bg-bg-secondary rounded-xl overflow-hidden p-12"
             data-node-id="2:114"
           >
             {/* Background Rectangle */}
             <div
-              className="absolute inset-0 bg-[#eff0f2] rounded-xl"
+              className="absolute inset-0 bg-bg-secondary rounded-xl"
               data-node-id="2:115"
             ></div>
 
@@ -22,7 +22,7 @@ export default function Hosting() {
               <div className="flex-1 max-w-2xl">
                 {/* Main Title */}
                 <h1
-                  className="font-['Montserrat:Bold',sans-serif] font-bold text-[38px] text-[#484848] leading-13 mb-6"
+                  className="font-['Montserrat:Bold',sans-serif] font-bold text-[38px] text-text-primary leading-13 mb-6"
                   data-node-id="2:117"
                 >
                   Try Hosting With Us
@@ -30,7 +30,7 @@ export default function Hosting() {
 
                 {/* Subtitle */}
                 <p
-                  className="font-['Montserrat:Medium',sans-serif] font-medium text-[16px] text-[#9a9a9a] leading-13 mb-8"
+                  className="font-['Montserrat:Medium',sans-serif] font-medium text-[16px] text-text-secondary leading-13 mb-8"
                   data-node-id="2:116"
                 >
                   Earn extra just by renting your property...
@@ -38,7 +38,7 @@ export default function Hosting() {
 
                 {/* Become A Host Button */}
                 <button
-                  className="bg-[#484848] text-white font-['Montserrat:Bold',sans-serif] font-bold text-[15px] px-8 py-3 rounded-full h-15 w-55 hover:bg-[#333333] transition-colors"
+                  className="bg-primary hover:bg-primary-hover text-white font-['Montserrat:Bold',sans-serif] font-bold text-[15px] px-8 py-3 rounded-full h-15 w-55 transition-colors"
                   data-node-id="2:118"
                 >
                   <span data-node-id="2:119">Become A Host</span>
@@ -48,7 +48,7 @@ export default function Hosting() {
               {/* Right Side - Banner Image/Text */}
               <div className="flex-1 flex items-center justify-center">
                 <p
-                  className="font-['Montserrat:ExtraBold',sans-serif] font-extrabold text-[100px] text-[#e8eaec] leading-none text-right"
+                  className="font-['Montserrat:ExtraBold',sans-serif] font-extrabold text-[100px] text-text-muted leading-none text-right"
                   data-node-id="2:120"
                 >
                   BANNER

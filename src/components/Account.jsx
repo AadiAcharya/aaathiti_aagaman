@@ -172,7 +172,7 @@ export default function Account() {
               {/* Work Section */}
               <div className="mb-8">
                 <label
-                  className="font-semibold text-[15px] text-[#484848] mb-2 block"
+                  className="font-semibold text-[15px] text-text-primary mb-2 block"
                   data-node-id="2:1687"
                 >
                   Work
@@ -182,14 +182,14 @@ export default function Account() {
                   name="work"
                   value={formData.work}
                   onChange={handleInputChange}
-                  className="w-full h-11 bg-white border border-[#c2c6cc] rounded-lg px-4 py-2 text-[#484848] focus:outline-none focus:ring-2 focus:ring-[#484848]"
+                  className="w-full h-11 bg-bg-secondary border border-primary/30 rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
                   data-node-id="2:1686"
                 />
               </div>
 
               {/* Helper Text */}
               <p
-                className="font-semibold text-[15px] text-[#9a9a9a] mb-6"
+                className="font-semibold text-[15px] text-text-secondary mb-6"
                 data-node-id="2:1695"
               >
                 All the required user information can be added here...
@@ -200,7 +200,7 @@ export default function Account() {
                 {/* Cancel Button */}
                 <button
                   onClick={handleCancel}
-                  className="flex items-center gap-2 text-[#484848] font-bold text-[15px] hover:opacity-70 transition"
+                  className="flex items-center gap-2 text-text-primary font-bold text-[15px] hover:opacity-70 transition"
                   data-node-id="2:1691"
                 >
                   <img alt="close" className="w-7 h-7" src={imgClose} />
@@ -210,7 +210,7 @@ export default function Account() {
                 {/* Save Button */}
                 <button
                   onClick={handleSave}
-                  className="bg-[#9a9a9a] hover:bg-[#7a7a7a] text-white font-bold text-[15px] px-8 py-3 rounded-full transition"
+                  className="bg-primary hover:bg-primary-hover text-white font-bold text-[15px] px-8 py-3 rounded-full transition"
                   data-node-id="2:1688"
                 >
                   Save

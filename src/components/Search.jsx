@@ -57,13 +57,13 @@ export default function Search() {
   };
 
   return (
-    <div className="w-full bg-white min-h-screen overflow-x-hidden">
+    <div className="w-full bg-background min-h-screen overflow-x-hidden">
       {/* Main Content */}
       <div className="pt-24">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           {/* Results Section */}
           <div className="mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-700 mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-6">
               10 Results Found
             </h1>
 
@@ -71,38 +71,38 @@ export default function Search() {
             <div className="flex flex-wrap gap-3 items-center">
               <div className="flex gap-2 flex-wrap">
                 {/* Filter Chip 1 */}
-                <div className="bg-gray-200 rounded-full px-5 py-2 flex items-center gap-2">
-                  <span className="text-gray-700 text-sm font-medium">
+                <div className="bg-bg-secondary rounded-full px-5 py-2 flex items-center gap-2">
+                  <span className="text-text-primary text-sm font-medium">
                     100 Smart Street
                   </span>
-                  <button className="text-gray-600 hover:text-gray-800 text-xl leading-none">
+                  <button className="text-text-secondary hover:text-text-primary text-xl leading-none">
                     ×
                   </button>
                 </div>
 
                 {/* Filter Chip 2 */}
-                <div className="bg-gray-200 rounded-full px-5 py-2 flex items-center gap-2">
-                  <span className="text-gray-700 text-sm font-medium">
+                <div className="bg-bg-secondary rounded-full px-5 py-2 flex items-center gap-2">
+                  <span className="text-text-primary text-sm font-medium">
                     12 Mar 2021
                   </span>
-                  <button className="text-gray-600 hover:text-gray-800 text-xl leading-none">
+                  <button className="text-text-secondary hover:text-text-primary text-xl leading-none">
                     ×
                   </button>
                 </div>
 
                 {/* Filter Chip 3 */}
-                <div className="bg-gray-200 rounded-full px-5 py-2 flex items-center gap-2">
-                  <span className="text-gray-700 text-sm font-medium">
+                <div className="bg-bg-secondary rounded-full px-5 py-2 flex items-center gap-2">
+                  <span className="text-text-primary text-sm font-medium">
                     Short Period
                   </span>
-                  <button className="text-gray-600 hover:text-gray-800 text-xl leading-none">
+                  <button className="text-text-secondary hover:text-text-primary text-xl leading-none">
                     ×
                   </button>
                 </div>
               </div>
 
               {/* Filters Button */}
-              <button className="border-2 border-gray-600 text-gray-700 px-7 py-2 rounded-full font-semibold hover:bg-gray-100 transition">
+              <button className="border-2 border-text-secondary text-text-primary px-7 py-2 rounded-full font-semibold hover:bg-bg-secondary transition">
                 Filters
               </button>
             </div>
@@ -115,10 +115,10 @@ export default function Search() {
               {properties.map((property) => (
                 <div
                   key={property.id}
-                  className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition"
+                  className="bg-bg-secondary rounded-2xl shadow-lg overflow-hidden border border-primary/10 hover:shadow-xl transition"
                 >
                   {/* Image Container */}
-                  <div className="relative h-64 md:h-72 bg-gray-300 overflow-hidden">
+                  <div className="relative h-64 md:h-72 bg-text-muted/20 overflow-hidden">
                     <img
                       src={property.image}
                       alt={property.title}
@@ -130,14 +130,14 @@ export default function Search() {
                     {/* Heart Button */}
                     <button
                       onClick={() => toggleFavorite(property.id)}
-                      className="absolute top-4 right-4 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:shadow-lg transition"
+                      className="absolute top-4 right-4 bg-bg-secondary rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:shadow-lg transition"
                       aria-label="Toggle favorite"
                     >
                       <svg
                         className={`w-6 h-6 ${
                           favorites[property.id]
-                            ? "fill-red-500 text-red-500"
-                            : "text-gray-400"
+                            ? "fill-accent text-accent"
+                            : "text-text-secondary"
                         }`}
                         fill={favorites[property.id] ? "currentColor" : "none"}
                         stroke="currentColor"
@@ -153,16 +153,16 @@ export default function Search() {
                     </button>
 
                     {/* Host Info Badge */}
-                    <div className="absolute bottom-4 left-4 flex items-center gap-3 bg-white rounded-lg p-3 shadow-md">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex-shrink-0"></div>
+                    <div className="absolute bottom-4 left-4 flex items-center gap-3 bg-bg-secondary rounded-lg p-3 shadow-md">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-r from-primary to-accent shrink-0"></div>
                       <div>
-                        <p className="text-xs text-gray-600 font-medium">
+                        <p className="text-xs text-text-secondary font-medium">
                           Listed By:
                         </p>
-                        <p className="text-sm font-bold text-gray-800">
+                        <p className="text-sm font-bold text-text-primary">
                           {property.host}
                         </p>
-                        <p className="text-xs text-gray-700 font-medium">
+                        <p className="text-xs text-text-primary font-medium">
                           For: {property.price}
                         </p>
                       </div>
@@ -171,10 +171,10 @@ export default function Search() {
 
                   {/* Property Info */}
                   <div className="p-6">
-                    <h3 className="text-lg font-bold text-gray-800 mb-1">
+                    <h3 className="text-lg font-bold text-text-primary mb-1">
                       {property.title}
                     </h3>
-                    <p className="text-gray-600 text-sm mb-4">
+                    <p className="text-text-secondary text-sm mb-4">
                       {property.location}
                     </p>
 
@@ -183,13 +183,13 @@ export default function Search() {
                       {/* Bedrooms */}
                       <div className="flex items-center gap-2">
                         <svg
-                          className="w-5 h-5 text-gray-600"
+                          className="w-5 h-5 text-text-secondary"
                           fill="currentColor"
                           viewBox="0 0 24 24"
                         >
                           <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V6H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z" />
                         </svg>
-                        <span className="text-base font-semibold text-gray-800">
+                        <span className="text-base font-semibold text-text-primary">
                           {property.bedrooms}
                         </span>
                       </div>
@@ -197,13 +197,13 @@ export default function Search() {
                       {/* Bathrooms */}
                       <div className="flex items-center gap-2">
                         <svg
-                          className="w-5 h-5 text-gray-600"
+                          className="w-5 h-5 text-text-secondary"
                           fill="currentColor"
                           viewBox="0 0 24 24"
                         >
                           <path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM7 3c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm13 17H4v-2h16v2zm0-5H4V8h16v7z" />
                         </svg>
-                        <span className="text-base font-semibold text-gray-800">
+                        <span className="text-base font-semibold text-text-primary">
                           {property.bathrooms}
                         </span>
                       </div>
@@ -211,13 +211,13 @@ export default function Search() {
                       {/* Parking */}
                       <div className="flex items-center gap-2">
                         <svg
-                          className="w-5 h-5 text-gray-600"
+                          className="w-5 h-5 text-text-secondary"
                           fill="currentColor"
                           viewBox="0 0 24 24"
                         >
                           <path d="M13 3H6v18h4v-6h3c3.31 0 6-2.69 6-6s-2.69-6-6-6zm.2 8H10V7h3.2c1.1 0 2 .9 2 2s-.9 2-2 2z" />
                         </svg>
-                        <span className="text-base font-semibold text-gray-800">
+                        <span className="text-base font-semibold text-text-primary">
                           {property.parking}
                         </span>
                       </div>
@@ -225,7 +225,7 @@ export default function Search() {
                       {/* Pets */}
                       <div className="flex items-center gap-2">
                         <svg
-                          className="w-5 h-5 text-gray-600"
+                          className="w-5 h-5 text-text-secondary"
                           fill="currentColor"
                           viewBox="0 0 24 24"
                         >
@@ -238,7 +238,7 @@ export default function Search() {
                     </div>
 
                     {/* Bottom Info */}
-                    <div className="flex flex-col sm:flex-row sm:justify-between gap-2 text-xs text-gray-600 font-semibold">
+                    <div className="flex flex-col sm:flex-row sm:justify-between gap-2 text-xs text-text-secondary font-semibold">
                       <span>{property.type}</span>
                       <span>{property.period}</span>
                     </div>
@@ -248,9 +248,9 @@ export default function Search() {
             </div>
 
             {/* Right Column - Map */}
-            <div className="relative h-[500px] lg:sticky lg:top-32 lg:h-[600px] bg-gray-300 rounded-2xl overflow-hidden shadow-lg">
+            <div className="relative h-[500px] lg:sticky lg:top-32 lg:h-[600px] bg-text-muted/20 rounded-2xl overflow-hidden shadow-lg">
               {/* Map Background - Street Map Style */}
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300">
+              <div className="absolute inset-0 bg-gradient-to-br from-text-muted/20 via-text-muted/10 to-text-muted/20">
                 {/* Street lines pattern */}
                 <svg
                   className="absolute inset-0 w-full h-full opacity-20"
@@ -337,16 +337,16 @@ export default function Search() {
                   {/* Marker Pin */}
                   <div className="relative w-12 h-12">
                     {/* Pin Circle */}
-                    <div className="absolute inset-0 rounded-full bg-blue-600 shadow-lg flex items-center justify-center text-white text-sm font-bold border-4 border-white hover:bg-blue-700 transition">
+                    <div className="absolute inset-0 rounded-full bg-primary shadow-lg flex items-center justify-center text-white text-sm font-bold border-4 border-background hover:bg-primary-hover transition">
                       ${property.price.split(" ")[1]}k
                     </div>
                   </div>
 
                   {/* Popup Card */}
                   {selectedMapMarker === property.id && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 bg-white rounded-lg shadow-2xl z-30 w-64 overflow-hidden pointer-events-none">
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 bg-bg-secondary rounded-lg shadow-2xl z-30 w-64 overflow-hidden pointer-events-none border border-primary/20">
                       {/* Image */}
-                      <div className="h-36 bg-gray-400 relative overflow-hidden">
+                      <div className="h-36 bg-text-muted/20 relative overflow-hidden">
                         <img
                           src={property.image}
                           alt={property.title}
@@ -358,17 +358,17 @@ export default function Search() {
                       </div>
                       {/* Content */}
                       <div className="p-4">
-                        <h4 className="font-bold text-gray-800 text-sm mb-1">
+                        <h4 className="font-bold text-text-primary text-sm mb-1">
                           {property.title}
                         </h4>
-                        <p className="text-xs text-gray-600 mb-2">
+                        <p className="text-xs text-text-secondary mb-2">
                           {property.location}
                         </p>
-                        <p className="text-sm font-bold text-blue-600 mb-3">
+                        <p className="text-sm font-bold text-primary mb-3">
                           {property.price}
                         </p>
                         {/* Amenities Icons */}
-                        <div className="flex gap-4 text-xs text-gray-700 font-semibold">
+                        <div className="flex gap-4 text-xs text-text-primary font-semibold">
                           <span className="flex items-center gap-1">
                             🛏️ {property.bedrooms}
                           </span>
@@ -381,7 +381,7 @@ export default function Search() {
                         </div>
                       </div>
                       {/* Arrow pointer */}
-                      <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white rotate-45"></div>
+                      <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-bg-secondary rotate-45 border-r border-b border-primary/20"></div>
                     </div>
                   )}
                 </div>
@@ -390,7 +390,7 @@ export default function Search() {
           </div>
 
           {/* Footer Text */}
-          <p className="text-gray-600 font-semibold mb-12">
+          <p className="text-text-secondary font-semibold mb-12">
             Other as per found results...
           </p>
         </div>

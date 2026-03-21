@@ -27,26 +27,18 @@ export default function Wishlist() {
   ];
 
   return (
-    <div style={{ backgroundColor: "#3B82F6", minHeight: "100vh" }}>
+    <div className="bg-background min-h-screen">
       {/* Header Background */}
-      <div style={{ backgroundColor: "#eff0f2", height: "104px" }}>
+      <div className="bg-bg-secondary h-26">
         {/* Main Header */}
-        <div style={{ height: "70px", marginTop: "17px", paddingLeft: "76px" }}>
+        <div className="h-20 mt-4 pl-20">
           <div
-            style={{ fontSize: "35px", fontWeight: "800", color: "#484848" }}
+            className="text-4xl font-extrabold text-text-primary"
           >
             LOGO
           </div>
           <div
-            style={{
-              display: "flex",
-              gap: "30px",
-              fontSize: "16px",
-              fontWeight: "600",
-              color: "#484848",
-              marginTop: "-50px",
-              marginLeft: "241px",
-            }}
+            className="flex gap-8 text-base font-semibold text-text-primary -mt-12 ml-60"
           >
             <p>Find a Property</p>
             <p>Share Stories</p>
@@ -54,142 +46,64 @@ export default function Wishlist() {
             <p>Download Mobile App</p>
           </div>
           <div
-            style={{
-              position: "absolute",
-              right: "80px",
-              top: "24px",
-              display: "flex",
-              gap: "12px",
-              alignItems: "center",
-            }}
+            className="absolute right-20 top-6 flex gap-3 items-center"
           >
             <button
-              style={{
-                backgroundColor: "white",
-                border: "none",
-                borderRadius: "23px",
-                padding: "8px 16px",
-                cursor: "pointer",
-              }}
+              className="bg-white border-none rounded-full px-4 py-2 cursor-pointer text-text-primary"
             >
               Sign In
             </button>
             <div
-              style={{
-                width: "44px",
-                height: "44px",
-                borderRadius: "50%",
-                backgroundColor: "#484848",
-              }}
+              className="w-12 h-12 rounded-full bg-text-muted"
             />
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div style={{ padding: "40px 80px" }}>
+      <div className="p-10 md:p-20">
         {/* Title */}
         <h1
-          style={{
-            fontSize: "38px",
-            fontWeight: "800",
-            color: "#484848",
-            marginBottom: "30px",
-          }}
+          className="text-4xl font-extrabold text-text-primary mb-8"
         >
           Wishlists
         </h1>
 
         {/* Wishlist Items Grid */}
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(279px, 1fr))",
-            gap: "30px",
-          }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
         >
           {wishlistItems.map((item) => (
             <div
               key={item.id}
-              style={{
-                position: "relative",
-                borderRadius: "8px",
-                overflow: "hidden",
-                backgroundColor: "#9a9a9a",
-                height: "300px",
-                cursor: "pointer",
-                transition: "transform 0.3s ease",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = "scale(1.02)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = "scale(1)")
-              }
+              className="relative rounded-lg overflow-hidden bg-bg-secondary h-80 cursor-pointer transition-transform hover:scale-102"
             >
               {/* Item Image */}
               <img
                 src={item.image}
                 alt={item.title}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
+                className="w-full h-full object-cover"
               />
 
               {/* Remove Button */}
               <button
-                style={{
-                  position: "absolute",
-                  top: "8px",
-                  right: "8px",
-                  width: "24px",
-                  height: "24px",
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                  color: "white",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "18px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transition: "background-color 0.2s ease",
-                }}
+                className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/50 text-white border-none cursor-pointer text-lg flex items-center justify-center transition-colors hover:bg-black/70"
               >
                 ✕
               </button>
 
               {/* Item Info Overlay */}
               <div
-                style={{
-                  position: "absolute",
-                  bottom: "0",
-                  left: "0",
-                  right: "0",
-                  padding: "16px",
-                  background:
-                    "linear-gradient(to top, rgba(0,0,0,0.8), transparent)",
-                }}
+                className="absolute bottom-0 left-0 right-0 p-4"
+                style={{background: "linear-gradient(to top, rgba(0,0,0,0.8), transparent)"}}
               >
                 <p
-                  style={{
-                    color: "white",
-                    fontSize: "16px",
-                    fontWeight: "700",
-                    margin: "0 0 5px 0",
-                  }}
+                  className="text-white text-base font-bold mb-1"
                 >
                   {item.title}
                 </p>
                 <p
-                  style={{
-                    color: "white",
-                    fontSize: "12px",
-                    fontWeight: "500",
-                    margin: "0",
-                  }}
+                  className="text-white text-sm font-medium"
                 >
                   {item.location}
                 </p>

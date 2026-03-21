@@ -39,7 +39,7 @@ export default function Messages() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#3B82F6" }}>
+    <div className="min-h-screen bg-background">
       {/* Messages Section */}
       <div className="px-20 py-40 max-w-full">
         <div
@@ -48,14 +48,12 @@ export default function Messages() {
         >
           {/* Messages List */}
           <div
-            className="w-96 rounded-l-3xl"
-            style={{ backgroundColor: "#3B82F6" }}
+            className="w-96 rounded-l-3xl bg-bg-secondary"
           >
             <div className="px-0">
               {/* All Messages Title */}
               <h2
-                className="text-2xl font-bold p-6 pb-4"
-                style={{ color: "#484848" }}
+                className="text-2xl font-bold p-6 pb-4 text-text-primary"
               >
                 All Messages
               </h2>
@@ -74,11 +72,11 @@ export default function Messages() {
                     style={{
                       backgroundColor:
                         selectedMessage.id === msg.id
-                          ? "#ffffff"
+                          ? "var(--color-bg-secondary)"
                           : "transparent",
                       borderLeftColor:
                         selectedMessage.id === msg.id
-                          ? "#484848"
+                          ? "var(--color-primary)"
                           : "transparent",
                     }}
                   >
@@ -92,12 +90,11 @@ export default function Messages() {
                     {/* Message Info */}
                     <div className="min-w-0">
                       <p
-                        className="font-bold truncate"
-                        style={{ color: "#484848" }}
+                        className="font-bold truncate text-text-primary"
                       >
                         {msg.name}
                       </p>
-                      <p className="text-sm" style={{ color: "#9a9a9a" }}>
+                      <p className="text-sm text-text-secondary">
                         {msg.date}
                       </p>
                     </div>
@@ -109,14 +106,12 @@ export default function Messages() {
 
           {/* Message Body */}
           <div
-            className="flex-1 rounded-r-3xl flex flex-col justify-between p-12"
-            style={{ backgroundColor: "#3B82F6" }}
+            className="flex-1 rounded-r-3xl flex flex-col justify-between p-12 bg-bg-secondary"
           >
             {/* Message Content Area */}
             <div className="flex items-center justify-center mb-8">
               <p
-                className="text-6xl font-extrabold"
-                style={{ color: "#e0e2e6" }}
+                className="text-6xl font-extrabold text-text-muted"
               >
                 Message Body
               </p>
@@ -130,19 +125,13 @@ export default function Messages() {
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                className="flex-1 border rounded-full px-6 py-4 focus:outline-none transition-all"
-                style={{
-                  backgroundColor: "#ffffff",
-                  borderColor: "#e8eaec",
-                  color: "#484848",
-                }}
+                className="flex-1 border border-primary/30 rounded-full px-6 py-4 bg-background text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary transition-all"
               />
 
               {/* Send Button */}
               <button
                 onClick={handleSendMessage}
-                className="flex items-center justify-center w-12 h-12 rounded-full shrink-0 relative overflow-hidden"
-                style={{ backgroundColor: "#3B82F6" }}
+                className="flex items-center justify-center w-12 h-12 rounded-full shrink-0 relative overflow-hidden bg-primary"
               >
                 <img
                   src={imgEllipse18}
