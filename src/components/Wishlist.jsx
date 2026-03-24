@@ -32,30 +32,18 @@ export default function Wishlist() {
       <div className="bg-bg-secondary h-26">
         {/* Main Header */}
         <div className="h-20 mt-4 pl-20">
-          <div
-            className="text-4xl font-extrabold text-text-primary"
-          >
-            LOGO
-          </div>
-          <div
-            className="flex gap-8 text-base font-semibold text-text-primary -mt-12 ml-60"
-          >
+          <div className="text-4xl font-extrabold text-text-primary">LOGO</div>
+          <div className="flex gap-8 text-base font-semibold text-text-primary -mt-12 ml-60">
             <p>Find a Property</p>
             <p>Share Stories</p>
             <p>Rental Guides</p>
             <p>Download Mobile App</p>
           </div>
-          <div
-            className="absolute right-20 top-6 flex gap-3 items-center"
-          >
-            <button
-              className="bg-white border-none rounded-full px-4 py-2 cursor-pointer text-text-primary"
-            >
+          <div className="absolute right-20 top-6 flex gap-3 items-center">
+            <button className="bg-white border-none rounded-full px-4 py-2 cursor-pointer text-text-primary">
               Sign In
             </button>
-            <div
-              className="w-12 h-12 rounded-full bg-text-muted"
-            />
+            <div className="w-12 h-12 rounded-full bg-text-muted" />
           </div>
         </div>
       </div>
@@ -63,16 +51,12 @@ export default function Wishlist() {
       {/* Main Content */}
       <div className="p-10 md:p-20">
         {/* Title */}
-        <h1
-          className="text-4xl font-extrabold text-text-primary mb-8"
-        >
+        <h1 className="text-4xl font-extrabold text-text-primary mb-8">
           Wishlists
         </h1>
 
         {/* Wishlist Items Grid */}
-        <div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {wishlistItems.map((item) => (
             <div
               key={item.id}
@@ -86,25 +70,22 @@ export default function Wishlist() {
               />
 
               {/* Remove Button */}
-              <button
-                className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/50 text-white border-none cursor-pointer text-lg flex items-center justify-center transition-colors hover:bg-black/70"
-              >
+              <button className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/50 text-white border-none cursor-pointer text-lg flex items-center justify-center transition-colors hover:bg-black/70">
                 ✕
               </button>
 
               {/* Item Info Overlay */}
               <div
                 className="absolute bottom-0 left-0 right-0 p-4"
-                style={{background: "linear-gradient(to top, rgba(0,0,0,0.8), transparent)"}}
+                style={{
+                  background:
+                    "linear-gradient(to top, rgba(0,0,0,0.8), transparent)",
+                }}
               >
-                <p
-                  className="text-white text-base font-bold mb-1"
-                >
+                <p className="text-white text-base font-bold mb-1">
                   {item.title}
                 </p>
-                <p
-                  className="text-white text-sm font-medium"
-                >
+                <p className="text-white text-sm font-medium">
                   {item.location}
                 </p>
               </div>

@@ -9,6 +9,7 @@ import Hosting from "./components/Hosting";
 import Account from "./components/Account";
 import Messages from "./components/Messages";
 import Wishlist from "./components/Wishlist";
+import AddProperty from "./components/AddProperty/AddProperty";
 import "./App.css";
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/account" element={<Account />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/addproperty" element={<AddProperty />} />
         {/* Add more routes here as needed */}
       </Routes>
     </Router>

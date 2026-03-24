@@ -47,14 +47,10 @@ export default function Messages() {
           style={{ minHeight: "608px" }}
         >
           {/* Messages List */}
-          <div
-            className="w-96 rounded-l-3xl bg-bg-secondary"
-          >
+          <div className="w-96 rounded-l-3xl bg-bg-secondary">
             <div className="px-0">
               {/* All Messages Title */}
-              <h2
-                className="text-2xl font-bold p-6 pb-4 text-text-primary"
-              >
+              <h2 className="text-2xl font-bold p-6 pb-4 text-text-primary">
                 All Messages
               </h2>
 
@@ -89,14 +85,10 @@ export default function Messages() {
 
                     {/* Message Info */}
                     <div className="min-w-0">
-                      <p
-                        className="font-bold truncate text-text-primary"
-                      >
+                      <p className="font-bold truncate text-text-primary">
                         {msg.name}
                       </p>
-                      <p className="text-sm text-text-secondary">
-                        {msg.date}
-                      </p>
+                      <p className="text-sm text-text-secondary">{msg.date}</p>
                     </div>
                   </div>
                 ))}
@@ -105,14 +97,10 @@ export default function Messages() {
           </div>
 
           {/* Message Body */}
-          <div
-            className="flex-1 rounded-r-3xl flex flex-col justify-between p-12 bg-bg-secondary"
-          >
+          <div className="flex-1 rounded-r-3xl flex flex-col justify-between p-12 bg-bg-secondary">
             {/* Message Content Area */}
             <div className="flex items-center justify-center mb-8">
-              <p
-                className="text-6xl font-extrabold text-text-muted"
-              >
+              <p className="text-6xl font-extrabold text-text-muted">
                 Message Body
               </p>
             </div>
