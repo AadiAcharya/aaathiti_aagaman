@@ -222,7 +222,7 @@ export default function AddProperty() {
               <span className="font-bold">thecreation.design</span>
             </p>
           </div>
-        </div
+        </div>
       </footer>
     </div>
   );
