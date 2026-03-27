@@ -197,7 +197,7 @@ export default function AddProperty() {
               Created with love by{" "}
               <span className="font-bold">thecreation.design</span>
             </p>
-          </div>
+          </div
         </div>
       </footer>
     </div>
