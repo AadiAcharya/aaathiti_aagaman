@@ -1,6 +1,6 @@
-import { roomsData } from "../data/roomsData";
+import { roomsData } from "../../data/roomsData";
 
-export default function Rooms() {
+export default function Room() {
   const currentRoom = roomsData[0];
 
   // Hardcoded placeholder images
