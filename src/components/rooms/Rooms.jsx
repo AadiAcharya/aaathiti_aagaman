@@ -133,7 +133,7 @@ export default function Rooms() {
                       {room.rating}
                     </span>
                     <span className="text-text-secondary text-sm">
-                      ({room.reviews}
+                      ({room.reviews})
                     </span>
                   </div>
                 </div>
