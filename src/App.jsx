@@ -13,6 +13,8 @@ import AddProperty from "./components/AddProperty/AddProperty.jsx";
 import AddProperty2 from "./components/AddProperty/AddProperty2.jsx";
 import HostReservation from "./components/host/HostReservation.jsx"
 import TransactionHistory from "./components/host/TransactionHistory.jsx"
+import NotificationsPage from "./components/host/NotificationsPage.jsx"
+import MessagesPage from "./components/host/MessagesPage.jsx"
 
 export default function App() {
   return (
@@ -34,6 +36,8 @@ export default function App() {
             <Route path="/add-property2" element={<AddProperty2 />} />
             <Route path="/reservation" element={<HostReservation/>} />
             <Route path="/transactionh" element={<TransactionHistory/>} />
+            <Route path="notification" element={<NotificationsPage/>} />
+            <Route path="message" element={<MessagesPage/>} />
           </Routes>
         </main>
       </div>
