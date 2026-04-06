@@ -10,11 +10,12 @@ import Rooms from "./components/rooms/Rooms";
 import Search from "./components/Search";
 import Wishlist from "./components/Wishlist";
 import AddProperty from "./components/AddProperty/AddProperty.jsx";
-import AddProperty2 from "./components/AddProperty/AddProperty2.jsx";
+import RoomStatus from "./components/rooms/RoomStatus";
 import HostReservation from "./components/host/HostReservation.jsx"
 import TransactionHistory from "./components/host/TransactionHistory.jsx"
 import NotificationsPage from "./components/host/NotificationsPage.jsx"
 import MessagesPage from "./components/host/MessagesPage.jsx"
+import Post from "./components/AddProperty/Post.jsx"
 
 export default function App() {
   return (
@@ -33,11 +34,13 @@ export default function App() {
             <Route path="/search" element={<Search />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/add-property" element={<AddProperty />} />
-            <Route path="/add-property2" element={<AddProperty2 />} />
+            <Route path="/room-status" element={<RoomStatus />} />
             <Route path="/reservation" element={<HostReservation/>} />
             <Route path="/transactionh" element={<TransactionHistory/>} />
             <Route path="notification" element={<NotificationsPage/>} />
             <Route path="message" element={<MessagesPage/>} />
+            <Route path="post" element={<Post/>} />
+
           </Routes>
         </main>
       </div>
