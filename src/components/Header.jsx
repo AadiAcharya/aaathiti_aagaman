@@ -51,13 +51,13 @@ export default function Header() {
           >
             Rental Guides
           </Link>
-          <Link
+          {/* <Link
             to="/"
             className="hover:text-accent transition"
             data-node-id="2:3651"
           >
             Download Mobile App
-          </Link>
+          </Link> */}
         </nav>
 
         {/* Right Section - Desktop */}

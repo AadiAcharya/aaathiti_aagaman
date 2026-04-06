@@ -16,6 +16,7 @@ import TransactionHistory from "./components/host/TransactionHistory.jsx"
 import NotificationsPage from "./components/host/NotificationsPage.jsx"
 import MessagesPage from "./components/host/MessagesPage.jsx"
 import Post from "./components/AddProperty/Post.jsx"
+import SignIn from "./components/sign/SignIn.jsx"
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="notification" element={<NotificationsPage/>} />
             <Route path="message" element={<MessagesPage/>} />
             <Route path="post" element={<Post/>} />
+            <Route path="sign-in" element={<SignIn/>} />
 
           </Routes>
         </main>
