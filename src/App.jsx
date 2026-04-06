@@ -17,15 +17,22 @@ import NotificationsPage from "./components/host/NotificationsPage.jsx"
 import MessagesPage from "./components/host/MessagesPage.jsx"
 import Post from "./components/AddProperty/Post.jsx"
 import SignIn from "./components/sign/SignIn.jsx"
+import Login from "./components/sign/Login.jsx"
+import MainLayout from "./MainLayout";
+
+
 
 export default function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-background flex flex-col">
-        <Header />
+       <Header/>
+
         <main className="flex-1">
           <Routes>
+
             <Route path="/" element={<Home />} />
+            {/* <Route element={<MainLayout />} /> */}
             <Route path="/properties" element={<Properties />} />
             <Route path="/account" element={<Account />} />
             <Route path="/hosting" element={<Hosting />} />
@@ -42,6 +49,8 @@ export default function App() {
             <Route path="message" element={<MessagesPage/>} />
             <Route path="post" element={<Post/>} />
             <Route path="sign-in" element={<SignIn/>} />
+            <Route path="sign-up" element={<Login/>} />
+
 
           </Routes>
         </main>

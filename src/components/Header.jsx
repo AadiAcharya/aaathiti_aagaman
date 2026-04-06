@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link , useNavigate } from "react-router-dom";
 
 export default function Header() {
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <header
@@ -81,7 +83,7 @@ export default function Header() {
             data-node-id="2:3658"
           >
             {/* Menu Icon (Hamburger) */}
-            <svg
+            {/* <svg
               className="w-6 h-6 text-gray-700 cursor-pointer"
               fill="none"
               stroke="currentColor"
@@ -89,17 +91,19 @@ export default function Header() {
               data-node-id="2:3662"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            </svg> */}
 
             {/* User Avatar */}
-            <svg
-              className="w-8 h-8 text-gray-600 cursor-pointer"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              data-node-id="2:3660"
-            >
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
+            <button className="" onClick={() => setOpen(!open)}>
+              <svg
+                className="w-8 h-8 text-gray-600 cursor-pointer"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                data-node-id="2:3660"
+              >
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -157,6 +161,30 @@ export default function Header() {
           </button>
         </nav>
       )}
+
+      {/* making signup login secion */}
+      {/* {open && (
+        <div className="text-white">
+          <button className="block w-full text-left px-3 py-2 hover:text-text-muted">Sign Up</button>
+          <button className="block w-full text-left px-3 py-2 hover:text-text-muted">login</button>
+          <button className="block w-full text-left px-3 py-2 hover:text-text-muted">Help</button>
+        </div>
+      )} */}
+      <div
+        className={`
+        absolute right-0 mt-2 z-50 w-40 bg-white rounded-xl shadow-lg p-2 transition-all duration-200
+        ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
+      >
+        <button onClick={()=> navigate("/sign-in")} className="block w-full text-left px-3 py-2 hover:text-text-muted">
+          Sign Up
+        </button>
+        <button onClick={()=> navigate("/sign-up")} className="block w-full text-left px-3 py-2 hover:text-text-muted">
+          Login
+        </button>
+        <button onClick={()=> navigate("/help")} className="block w-full text-left px-3 py-2  hover:text-text-muted">
+          Help Center
+        </button>
+      </div>
     </header>
   );
 }
