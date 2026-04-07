@@ -37,14 +37,14 @@ export default function Header() {
             className="hover:text-accent transition"
             data-node-id="2:3648"
           >
-            Find a Property
+           Browse Property
           </Link>
           <Link
             to="/"
             className="hover:text-accent transition"
             data-node-id="2:3649"
           >
-            Share Stories
+            How It Works
           </Link>
           <Link
             to="/"
@@ -53,13 +53,13 @@ export default function Header() {
           >
             Rental Guides
           </Link>
-          {/* <Link
+          <Link
             to="/"
             className="hover:text-accent transition"
             data-node-id="2:3651"
           >
-            Download Mobile App
-          </Link> */}
+            Help Center
+          </Link>
         </nav>
 
         {/* Right Section - Desktop */}
