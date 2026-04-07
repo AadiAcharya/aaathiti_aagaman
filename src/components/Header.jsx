@@ -156,7 +156,7 @@ export default function Header() {
           >
             Download Mobile App
           </Link>
-          <button className="w-full mt-4 bg-gray-900 hover:bg-gray-800 text-white rounded-full px-6 py-2 font-semibold transition">
+          <button  onClick={()=> navigate("./host")} className="w-full mt-4 bg-gray-900 hover:bg-gray-800 text-white rounded-full px-6 py-2 font-semibold transition">
             Become A Host
           </button>
         </nav>

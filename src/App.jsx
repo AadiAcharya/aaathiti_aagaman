@@ -19,6 +19,7 @@ import Post from "./components/AddProperty/Post.jsx"
 import SignIn from "./components/sign/SignIn.jsx"
 import Login from "./components/sign/Login.jsx"
 import MainLayout from "./MainLayout";
+import Host from "./components/Host.jsx"
 
 
 
@@ -50,6 +51,7 @@ export default function App() {
             <Route path="post" element={<Post/>} />
             <Route path="sign-in" element={<SignIn/>} />
             <Route path="sign-up" element={<Login/>} />
+            <Route path="host" element={<Host/>} />
 
 
           </Routes>
