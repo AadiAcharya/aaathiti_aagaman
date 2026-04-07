@@ -1,4 +1,4 @@
-export default function Hosting() {
+export default function RoomStatus() {
   const listings = [
     {
       id: 1,
