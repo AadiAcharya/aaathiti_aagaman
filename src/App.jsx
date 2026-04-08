@@ -20,6 +20,7 @@ import SignIn from "./components/sign/SignIn.jsx"
 import Login from "./components/sign/Login.jsx"
 import MainLayout from "./MainLayout";
 import Host from "./components/Host.jsx"
+import Help from "./components/Help.jsx"
 
 
 
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="sign-in" element={<SignIn/>} />
             <Route path="sign-up" element={<Login/>} />
             <Route path="host" element={<Host/>} />
+            <Route path="help" element={<Help/>} />
 
 
           </Routes>

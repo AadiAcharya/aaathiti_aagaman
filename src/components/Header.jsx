@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link , useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export default function Header() {
             className="hover:text-accent transition"
             data-node-id="2:3648"
           >
-           Browse Property
+            Browse Property
           </Link>
           <Link
             to="/"
@@ -70,7 +70,8 @@ export default function Header() {
         >
           {/* Become A Host Button */}
           <button
-            className="bg-gray-900 hover:bg-gray-800 text-white rounded-full px-6 py-2 font-semibold transition"
+            onClick={() => navigate("/hosting")}
+            className="bg-primary hover:bg-primary-hover text-white rounded-full px-6 py-2 font-semibold transition"
             data-node-id="2:3645"
           >
             Become A Host
@@ -156,7 +157,10 @@ export default function Header() {
           >
             Download Mobile App
           </Link>
-          <button  onClick={()=> navigate("./host")} className="w-full mt-4 bg-gray-900 hover:bg-gray-800 text-white rounded-full px-6 py-2 font-semibold transition">
+          <button
+            onClick={() => navigate("/hosting")}
+            className="w-full mt-4 bg-primary hover:bg-primary-hover text-white rounded-full px-6 py-2 font-semibold transition"
+          >
             Become A Host
           </button>
         </nav>
@@ -175,13 +179,22 @@ export default function Header() {
         absolute right-0 mt-2 z-50 w-40 bg-white rounded-xl shadow-lg p-2 transition-all duration-200
         ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
       >
-        <button onClick={()=> navigate("/sign-in")} className="block w-full text-left px-3 py-2 hover:text-text-muted">
+        <button
+          onClick={() => navigate("/sign-in")}
+          className="block w-full text-left px-3 py-2 hover:text-text-muted"
+        >
           Sign Up
         </button>
-        <button onClick={()=> navigate("/sign-up")} className="block w-full text-left px-3 py-2 hover:text-text-muted">
+        <button
+          onClick={() => navigate("/sign-up")}
+          className="block w-full text-left px-3 py-2 hover:text-text-muted"
+        >
           Login
         </button>
-        <button onClick={()=> navigate("/help")} className="block w-full text-left px-3 py-2  hover:text-text-muted">
+        <button
+          onClick={() => navigate("/help")}
+          className="block w-full text-left px-3 py-2  hover:text-text-muted"
+        >
           Help Center
         </button>
       </div>
