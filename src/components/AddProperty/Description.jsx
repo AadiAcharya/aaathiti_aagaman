@@ -1,64 +1,89 @@
-import React from 'react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const Step2Description = () => {
+const Description = () => {
+  const navigate = useNavigate();
   return (
-    <div className="min-h-screen bg-white flex items-start justify-center p-6 pt-20">
-      <div className="w-full max-w-4xl">
-        {/* Question */}
-        <h1 className="text-2xl font-semibold text-gray-900 mb-8">
-          Add a short description of your place.
-        </h1>
+    <div className="min-h-screen bg-background">
+      <main className="max-w-6xl mx-auto px-6 py-20">
+        {/* Header */}
+        <div className="mb-12">
+          <h2 className="text-5xl font-bold text-text-primary mb-4">
+            Describe Your Place
+          </h2>
+          <p className="text-lg text-text-secondary">
+            Help guests understand what makes your place special
+          </p>
+        </div>
 
-        {/* Options Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
-          {/* Option 1 - Rental unit */}
-          <div className="bg-gray-50 border border-gray-300 rounded-lg p-6 hover:border-gray-900 cursor-pointer transition-colors">
-            <div className="flex items-start gap-3">
+        {/* Description Form */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+          {/* Left - Form */}
+          <div className="bg-bg-secondary rounded-xl p-8 border border-text-muted/20">
+            <div className="mb-6">
+              <label className="block text-lg font-bold text-text-primary mb-4">
+                Property Title
+              </label>
               <input
-                type="radio"
-                name="unitType"
-                className="w-5 h-5 mt-1 text-gray-900 focus:ring-gray-900"
+                type="text"
+                placeholder="e.g., Cozy Apartment near Downtown"
+                className="w-full bg-background border-2 border-text-muted/30 rounded-lg px-4 py-3 text-text-primary placeholder-text-secondary focus:border-primary focus:outline-none transition"
               />
-              <div>
-                <h3 className="text-base font-semibold text-gray-900 mb-2">
-                  Rental unit
-                </h3>
-                <p className="text-sm text-gray-600">
-                  A standalone unit in a multiunit residential building or complex.
-                </p>
-              </div>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-lg font-bold text-text-primary mb-4">
+                Description
+              </label>
+              <textarea
+                placeholder="Write a compelling description of your property..."
+                rows="6"
+                className="w-full bg-background border-2 border-text-muted/30 rounded-lg px-4 py-3 text-text-primary placeholder-text-secondary focus:border-primary focus:outline-none transition resize-none"
+              ></textarea>
             </div>
           </div>
 
-          {/* Option 2 - Shared unit */}
-          <div className="bg-gray-50 border border-gray-300 rounded-lg p-6 hover:border-gray-900 cursor-pointer transition-colors">
-            <div className="flex items-start gap-3">
-              <input
-                type="radio"
-                name="unitType"
-                className="w-5 h-5 mt-1 text-gray-900 focus:ring-gray-900"
-              />
+          {/* Right - Preview */}
+          <div className="bg-bg-secondary rounded-xl p-8 border border-text-muted/20">
+            <h3 className="text-2xl font-bold text-text-primary mb-6">
+              Preview
+            </h3>
+            <div className="space-y-4">
               <div>
-                <h3 className="text-base font-semibold text-gray-900 mb-2">
-                  Shared unit
-                </h3>
-                <p className="text-sm text-gray-600">
-                  A shared room within a multiunit residential building or complex.
+                <p className="text-text-secondary text-sm">Title</p>
+                <p className="text-lg font-bold text-text-primary">
+                  Your property title here
+                </p>
+              </div>
+              <div className="border-t border-text-muted/20 pt-4">
+                <p className="text-text-secondary text-sm mb-2">Description</p>
+                <p className="text-text-secondary leading-relaxed">
+                  Your description will appear here as guests read about your
+                  amazing place...
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Next Button */}
-        <div>
-          <button className="px-8 py-2 text-white bg-gray-500 rounded-full hover:bg-gray-600 transition-colors">
-            Next
+        {/* Navigation Buttons */}
+        <div className="flex gap-4">
+          <button
+            onClick={() => navigate("/amenities")}
+            className="px-6 py-3 text-text-primary bg-bg-secondary hover:bg-bg-secondary/80 rounded-lg font-bold border-2 border-text-muted/30 transition-all"
+          >
+            ← Back
+          </button>
+          <button
+            onClick={() => navigate("/facilities")}
+            className="px-6 py-3 text-white bg-primary hover:bg-primary-hover rounded-lg font-bold transition-all"
+          >
+            Next: Add Facilities →
           </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
-export default Step2Description;
+export default Description;

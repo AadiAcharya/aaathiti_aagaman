@@ -1,7 +1,10 @@
+import { useParams } from "react-router-dom";
 import { roomsData } from "../../data/roomsData";
 
 export default function Room() {
-  const currentRoom = roomsData[0];
+  const { roomId } = useParams();
+  const currentRoom =
+    roomsData.find((room) => room.id === parseInt(roomId)) || roomsData[0];
 
   // Hardcoded placeholder images
   const roomImages = [
@@ -346,30 +349,6 @@ export default function Room() {
           <button className="mt-6 px-8 py-3 bg-primary text-background rounded-full font-semibold hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105">
             Show On Map
           </button>
-        </div>
-      </div>
-
-      {/* Newsletter */}
-      <div className="bg-gradient-to-r from-bg-secondary to-bg-secondary/50 py-8 mt-12 border-t border-primary/20">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-bold text-text-primary">
-                NEWSLETTER
-              </h3>
-              <p className="text-sm text-text-secondary">Stay Updated</p>
-            </div>
-            <div className="flex gap-4">
-              <input
-                type="email"
-                placeholder="Your Email..."
-                className="px-6 py-3 rounded-full bg-background text-text-primary border border-primary/30 w-96 placeholder-text-muted focus:outline-none focus:border-accent focus:shadow-lg focus:shadow-accent/20 transition-all duration-300"
-              />
-              <button className="px-6 py-3 bg-primary text-background rounded-full font-semibold hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105">
-                →
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -1,81 +1,96 @@
-import React from 'react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Facilities = () => {
+  const navigate = useNavigate();
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-4xl">
-        {/* Question */}
-        <h1 className="text-3xl font-semibold text-gray-900 mb-12">
-          Add facilities available at your place:
-        </h1>
+    <div className="min-h-screen bg-background">
+      <main className="max-w-6xl mx-auto px-6 py-20">
+        {/* Header */}
+        <div className="mb-16">
+          <h2 className="text-5xl font-bold text-text-primary mb-4">
+            Select Facilities
+          </h2>
+          <p className="text-lg text-text-secondary mb-12">
+            Choose the facilities available at your property
+          </p>
 
-        {/* Facilities Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
-          {/* Facility Item 1 */}
-          <div className="flex items-center gap-3 p-4 bg-white border-2 border-gray-300 rounded-lg hover:border-gray-900 cursor-pointer transition-colors">
-            <input
-              type="checkbox"
-              className="w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
-            />
-            <span className="text-base text-gray-900">Kitchen</span>
-          </div>
+          {/* Facilities Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {/* Facility Card 1 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                ❄️
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">
+                Air Conditioning
+              </h3>
+            </div>
 
-          {/* Facility Item 2 */}
-          <div className="flex items-center gap-3 p-4 bg-white border-2 border-gray-300 rounded-lg hover:border-gray-900 cursor-pointer transition-colors">
-            <input
-              type="checkbox"
-              className="w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
-            />
-            <span className="text-base text-gray-900">Parking</span>
-          </div>
+            {/* Facility Card 2 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                🔥
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">Heating</h3>
+            </div>
 
-          {/* Facility Item 3 */}
-          <div className="flex items-center gap-3 p-4 bg-white border-2 border-gray-300 rounded-lg hover:border-gray-900 cursor-pointer transition-colors">
-            <input
-              type="checkbox"
-              className="w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
-            />
-            <span className="text-base text-gray-900">Balcony</span>
-          </div>
+            {/* Facility Card 3 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                🧺
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">
+                Washing Machine
+              </h3>
+            </div>
 
-          {/* Facility Item 4 */}
-          <div className="flex items-center gap-3 p-4 bg-white border-2 border-gray-300 rounded-lg hover:border-gray-900 cursor-pointer transition-colors">
-            <input
-              type="checkbox"
-              className="w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
-            />
-            <span className="text-base text-gray-900">Wi-Fi</span>
-          </div>
+            {/* Facility Card 4 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                📺
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">
+                Television
+              </h3>
+            </div>
 
-          {/* Facility Item 5 */}
-          <div className="flex items-center gap-3 p-4 bg-white border-2 border-gray-300 rounded-lg hover:border-gray-900 cursor-pointer transition-colors">
-            <input
-              type="checkbox"
-              className="w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
-            />
-            <span className="text-base text-gray-900">Garden</span>
-          </div>
+            {/* Facility Card 5 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                🛏️
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">Bedding</h3>
+            </div>
 
-          {/* Facility Item 6 */}
-          <div className="flex items-center gap-3 p-4 bg-white border-2 border-gray-300 rounded-lg hover:border-gray-900 cursor-pointer transition-colors">
-            <input
-              type="checkbox"
-              className="w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
-            />
-            <span className="text-base text-gray-900">Pool</span>
+            {/* Facility Card 6 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                🍽️
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">
+                Dining Area
+              </h3>
+            </div>
           </div>
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between">
-          <button className="px-6 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors">
-            Back
+        <div className="flex gap-4">
+          <button
+            onClick={() => navigate("/description")}
+            className="px-6 py-3 text-text-primary bg-bg-secondary hover:bg-bg-secondary/80 rounded-lg font-bold border-2 border-text-muted/30 transition-all"
+          >
+            ← Back
           </button>
-          <button className="px-6 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700 transition-colors">
-            Next
+          <button
+            onClick={() => navigate("/safety")}
+            className="px-6 py-3 text-white bg-primary hover:bg-primary-hover rounded-lg font-bold transition-all"
+          >
+            Next: Add Safety Features →
           </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

@@ -156,7 +156,7 @@ export default function Properties() {
 
         {/* Properties Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {properties.map((property) => (
+          {properties.map((property, index) => (
             <PropertyCard
               key={property.id}
               title={property.title}
@@ -172,42 +172,6 @@ export default function Properties() {
           <p className="text-text-secondary font-semibold">
             Paginations or Load on scroll...
           </p>
-        </div>
-      </div>
-
-      {/* Newsletter Section */}
-      <div className="bg-bg-secondary py-12 my-16">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex gap-8 items-center">
-            <div>
-              <h3 className="text-2xl font-bold text-text-primary">
-                NEWSLETTER
-              </h3>
-              <p className="text-text-secondary">Stay Upto Date</p>
-            </div>
-            <div className="flex-1 flex gap-4">
-              <input
-                type="email"
-                placeholder="Your Email..."
-                className="flex-1 bg-background text-text-primary placeholder-text-muted rounded-full py-3 px-6 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              <button className="bg-primary hover:bg-primary-hover text-white rounded-full px-8 font-semibold transition">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

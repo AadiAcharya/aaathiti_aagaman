@@ -39,6 +39,9 @@ export default function Header() {
           >
             Browse Property
           </Link>
+          <Link to="/rooms" className="hover:text-accent transition">
+            Browse Rooms
+          </Link>
           <Link
             to="/"
             className="hover:text-accent transition"
@@ -52,13 +55,6 @@ export default function Header() {
             data-node-id="2:3650"
           >
             Rental Guides
-          </Link>
-          <Link
-            to="/"
-            className="hover:text-accent transition"
-            data-node-id="2:3651"
-          >
-            Help Center
           </Link>
         </nav>
 
@@ -157,6 +153,12 @@ export default function Header() {
           >
             Download Mobile App
           </Link>
+          <Link
+            to="/help"
+            className="block text-text-primary font-semibold hover:text-accent"
+          >
+            Help Center
+          </Link>
           <button
             onClick={() => navigate("/hosting")}
             className="w-full mt-4 bg-primary hover:bg-primary-hover text-white rounded-full px-6 py-2 font-semibold transition"
@@ -191,11 +193,37 @@ export default function Header() {
         >
           Login
         </button>
+        <div className="border-t border-gray-200 my-2"></div>
+        <button
+          onClick={() => navigate("/account")}
+          className="block w-full text-left px-3 py-2 hover:text-text-muted"
+        >
+          👤 Account
+        </button>
+        <button
+          onClick={() => navigate("/messages")}
+          className="block w-full text-left px-3 py-2 hover:text-text-muted"
+        >
+          💬 Messages
+        </button>
+        <button
+          onClick={() => navigate("/wishlist")}
+          className="block w-full text-left px-3 py-2 hover:text-text-muted"
+        >
+          ❤️ Wishlist
+        </button>
+        <div className="border-t border-gray-200 my-2"></div>
+        <button
+          onClick={() => navigate("/host")}
+          className="block w-full text-left px-3 py-2 hover:text-text-muted font-semibold text-primary"
+        >
+          🏠 Host Dashboard
+        </button>
         <button
           onClick={() => navigate("/help")}
           className="block w-full text-left px-3 py-2  hover:text-text-muted"
         >
-          Help Center
+          ❓ Help Center
         </button>
       </div>
     </header>

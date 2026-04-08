@@ -1,104 +1,68 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const ReservationsUI = () => {
+  const [activeTab, setActiveTab] = useState('upcoming');
+
+  const reservations = [
+    { id: 1, title: '🏢 Fully Furnished Apartment', user: 'John Doe' },
+    { id: 2, title: '🏠 Double Flat with 3 Rooms', user: 'Harry Potter' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm p-8">
-        {/* Header */}
-        <h1 className="text-3xl font-semibold text-gray-900 mb-6">
-          Reservations
-        </h1>
+    <div>
+      {/* Tabs */}
+      <div className="flex gap-6 border-b border-text-muted/20 mb-8">
+        {['upcoming', 'past', 'rejected'].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`pb-3 px-1 text-[15px] font-medium relative transition ${
+              activeTab === tab
+                ? 'text-primary'
+                : 'text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            {activeTab === tab && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+            )}
+          </button>
+        ))}
+      </div>
 
-        {/* Tabs */}
-        <div className="flex gap-6 border-b-2 border-gray-200 mb-8">
-          <button className="pb-3 px-1 text-[15px] font-medium relative text-gray-900">
-            Upcoming
-            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900" />
-          </button>
-          <button className="pb-3 px-1 text-[15px] font-medium text-gray-500 hover:text-gray-900">
-            Past
-          </button>
-          <button className="pb-3 px-1 text-[15px] font-medium text-gray-500 hover:text-gray-900">
-            Rejected
-          </button>
-        </div>
-
-        {/* Reservation Cards */}
-        <div className="flex flex-col gap-4">
-          {/* Card 1 */}
-          <div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-            {/* Property Image Placeholder */}
-            <div className="w-20 h-20 bg-gray-400 rounded-md flex-shrink-0" />
+      {/* Reservation Cards */}
+      <div className="flex flex-col gap-4">
+        {reservations.map((reservation) => (
+          <div key={reservation.id} className="flex items-center gap-4 p-6 bg-bg-secondary border border-text-muted/20 rounded-xl hover:border-primary/50 hover:shadow-lg transition-all">
+            {/* Property Image */}
+            <div className="w-24 h-24 bg-gradient-to-br from-primary/30 to-primary/10 rounded-lg flex-shrink-0 flex items-center justify-center border border-primary/20 text-3xl">
+              🏠
+            </div>
 
             {/* Reservation Details */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-base font-semibold text-gray-900 mb-1">
-                Fully Furnished Apartment
+              <h3 className="text-lg font-bold text-text-primary mb-2">
+                {reservation.title}
               </h3>
-              <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600 mb-1">
-                <span>
-                  <span className="font-medium">Check In:</span> Fri 21 Nov 2025
-                </span>
-                <span>
-                  <span className="font-medium">Duration:</span> Long (2 - 5 Years)
-                </span>
-                <span>
-                  <span className="font-medium">Guests:</span> 2 Adults
-                </span>
+              <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-text-secondary mb-2">
+                <span>📅 <span className="font-medium">Check In:</span> Fri 21 Nov 2025</span>
+                <span>⏱️ <span className="font-medium">Duration:</span> Long (2 - 5 Years)</span>
+                <span>👥 <span className="font-medium">Guests:</span> 2 Adults</span>
               </div>
-              <div className="text-sm text-gray-600">
-                By: John Doe
-              </div>
+              <div className="text-sm text-text-muted">👤 By: {reservation.user}</div>
             </div>
 
             {/* Action Buttons */}
             <div className="flex gap-3 flex-shrink-0">
-              <button className="px-5 py-2 bg-gray-600 text-white text-sm font-medium rounded-full hover:bg-gray-700 transition-colors">
-                Approve
+              <button className="px-6 py-2 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-full transition-all">
+                ✓ Approve
               </button>
-              <button className="px-5 py-2 bg-white text-gray-600 text-sm font-medium border border-gray-300 rounded-full hover:bg-gray-50 transition-colors">
-                Reject
-              </button>
-            </div>
-          </div>
-
-          {/* Card 2 */}
-          <div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-            {/* Property Image Placeholder */}
-            <div className="w-20 h-20 bg-gray-400 rounded-md flex-shrink-0" />
-
-            {/* Reservation Details */}
-            <div className="flex-1 min-w-0">
-              <h3 className="text-base font-semibold text-gray-900 mb-1">
-                Double Flat with 3 Rooms
-              </h3>
-              <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600 mb-1">
-                <span>
-                  <span className="font-medium">Check In:</span> Fri 21 Nov 2025
-                </span>
-                <span>
-                  <span className="font-medium">Duration:</span> Long (2 - 5 Years)
-                </span>
-                <span>
-                  <span className="font-medium">Guests:</span> 2 Adults
-                </span>
-              </div>
-              <div className="text-sm text-gray-600">
-                By: Harry Potter
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-3 flex-shrink-0">
-              <button className="px-5 py-2 bg-gray-600 text-white text-sm font-medium rounded-full hover:bg-gray-700 transition-colors">
-                Approve
-              </button>
-              <button className="px-5 py-2 bg-white text-gray-600 text-sm font-medium border border-gray-300 rounded-full hover:bg-gray-50 transition-colors">
-                Reject
+              <button className="px-6 py-2 bg-bg-secondary border-2 border-text-muted/30 text-text-primary hover:border-primary text-sm font-bold rounded-full transition-all">
+                ✕ Reject
               </button>
             </div>
           </div>
-        </div>
+        ))}
       </div>
     </div>
   );

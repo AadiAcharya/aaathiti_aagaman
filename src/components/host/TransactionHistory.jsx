@@ -1,71 +1,62 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const TransactionHistory = () => {
+  const [activeTab, setActiveTab] = useState('completed');
+
+  const transactions = [
+    { id: 1, title: '💰 Booking Payment', date: '15 Nov 2021 at 2:00 PM', amount: '$1000' },
+    { id: 2, title: '💰 Monthly Payout', date: '14 Nov 2021 at 10:30 AM', amount: '$2500' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg border border-gray-300 p-6">
-        {/* Header with Tabs and Download Button */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-6">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Transaction History
-            </h1>
-            
-            {/* Tabs */}
-            <div className="flex gap-2">
-              <button className="px-4 py-1.5 text-sm font-medium text-gray-900 bg-white border border-gray-900 rounded">
-                Completed
+    <div>
+      {/* Header with Tabs and Download Button */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center gap-6">
+          <h1 className="text-3xl font-bold text-text-primary">💳 Transaction History</h1>
+          
+          {/* Tabs */}
+          <div className="flex gap-2 flex-wrap">
+            {['completed', 'upcoming', 'earning'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 text-sm font-bold rounded-lg transition ${
+                  activeTab === tab
+                    ? 'bg-primary text-white'
+                    : 'bg-bg-secondary text-text-secondary hover:text-text-primary border border-text-muted/30'
+                }`}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
-              <button className="px-4 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded hover:border-gray-400">
-                Upcoming
-              </button>
-              <button className="px-4 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded hover:border-gray-400">
-                Gross Earning
-              </button>
-            </div>
-          </div>
-
-          {/* Download Button */}
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            Download
-          </button>
-        </div>
-
-        {/* Transaction Cards */}
-        <div className="flex flex-col gap-3">
-          {/* Transaction Card 1 */}
-          <div className="flex items-center justify-between p-4 border border-dashed border-gray-300 rounded">
-            <div>
-              <h3 className="text-base font-semibold text-gray-900 mb-1">
-                Transaction Title
-              </h3>
-              <p className="text-sm text-gray-500">
-                15 Nov 2021 at 2:00 PM
-              </p>
-            </div>
-            <div className="text-lg font-semibold text-gray-900">
-              $ 1000 USD
-            </div>
-          </div>
-
-          {/* Transaction Card 2 */}
-          <div className="flex items-center justify-between p-4 border border-dashed border-gray-300 rounded">
-            <div>
-              <h3 className="text-base font-semibold text-gray-900 mb-1">
-                Transaction Title
-              </h3>
-              <p className="text-sm text-gray-500">
-                15 Nov 2021 at 2:00 PM
-              </p>
-            </div>
-            <div className="text-lg font-semibold text-gray-900">
-              $ 1000 USD
-            </div>
+            ))}
           </div>
         </div>
+
+        {/* Download Button */}
+        <button className="flex items-center gap-2 px-6 py-2 text-sm font-bold text-white bg-primary hover:bg-primary-hover rounded-lg transition">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          📥 Download
+        </button>
+      </div>
+
+      {/* Transaction Cards */}
+      <div className="flex flex-col gap-4">
+        {transactions.map((transaction) => (
+          <div key={transaction.id} className="flex items-center justify-between p-6 bg-bg-secondary border border-text-muted/20 rounded-xl hover:border-primary/50 hover:shadow-lg transition">
+            <div>
+              <h3 className="text-lg font-bold text-text-primary mb-2">
+                {transaction.title}
+              </h3>
+              <p className="text-sm text-text-muted">📅 {transaction.date}</p>
+            </div>
+            <div className="text-2xl font-bold text-primary">
+              {transaction.amount}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

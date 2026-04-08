@@ -2,11 +2,11 @@ import React from "react";
 
 const Login = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background text-text-muted">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 space-y-5">
+    <div className="min-h-screen flex items-center justify-center bg-background text-text-primary">
+      <div className="w-full max-w-md bg-bg-secondary rounded-2xl shadow-lg p-6 space-y-5 border border-gray-700">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <p className="font-medium">Login or Signup</p>
+          <p className="font-medium text-text-primary">Login or Signup</p>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="15"
@@ -16,12 +16,13 @@ const Login = () => {
           >
             <path
               d="M9.2608 7.49893L14.6306 2.14085C14.8658 1.90566 14.9979 1.58668 14.9979 1.25408C14.9979 0.921478 14.8658 0.602498 14.6306 0.367312C14.3955 0.132126 14.0765 0 13.744 0C13.4114 0 13.0925 0.132126 12.8573 0.367312L7.5 5.73789L2.14268 0.367312C1.90752 0.132126 1.58859 0 1.25603 0C0.923478 0 0.604543 0.132126 0.369391 0.367312C0.134239 0.602498 0.00213119 0.921478 0.00213119 1.25408C0.00213119 1.58668 0.134239 1.90566 0.369391 2.14085L5.7392 7.49893L0.369391 12.857C0.252343 12.9731 0.159441 13.1113 0.0960411 13.2635C0.0326416 13.4157 0 13.5789 0 13.7438C0 13.9087 0.0326416 14.0719 0.0960411 14.2241C0.159441 14.3763 0.252343 14.5144 0.369391 14.6306C0.485482 14.7476 0.6236 14.8405 0.775777 14.9039C0.927954 14.9674 1.09118 15 1.25603 15C1.42089 15 1.58411 14.9674 1.73629 14.9039C1.88847 14.8405 2.02659 14.7476 2.14268 14.6306L7.5 9.25998L12.8573 14.6306C12.9734 14.7476 13.1115 14.8405 13.2637 14.9039C13.4159 14.9674 13.5791 15 13.744 15C13.9088 15 14.072 14.9674 14.2242 14.9039C14.3764 14.8405 14.5145 14.7476 14.6306 14.6306C14.7477 14.5144 14.8406 14.3763 14.904 14.2241C14.9674 14.0719 15 13.9087 15 13.7438C15 13.5789 14.9674 13.4157 14.904 13.2635C14.8406 13.1113 14.7477 12.9731 14.6306 12.857L9.2608 7.49893Z"
-              fill="#484848"
+              fill="currentColor"
+              className="text-text-muted"
             />
           </svg>
         </div>
 
-        <hr />
+        <hr className="border-gray-700" />
 
         {/* Profile */}
         <div className="flex items-center gap-3 mt-2">
@@ -32,12 +33,12 @@ const Login = () => {
             viewBox="0 0 60 60"
             fill="none"
           >
-            <circle cx="30" cy="30" r="30" fill="#E0E2E6" />
+            <circle cx="30" cy="30" r="30" fill="#374151" />
           </svg>
 
           <div>
-            <h4 className="font-medium">Hello, John Doe</h4>
-            <p className="text-sm text-gray-500 cursor-pointer hover:underline">
+            <h4 className="font-medium text-text-primary">Hello, John Doe</h4>
+            <p className="text-sm text-text-secondary cursor-pointer hover:underline">
               Not you?
             </p>
           </div>
@@ -48,20 +49,20 @@ const Login = () => {
           <input
             type="password"
             placeholder="Enter your password"
-            className="w-full border rounded-lg px-3 py-2 mt-2 outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-700 rounded-lg px-3 py-2 mt-2 outline-none focus:ring-2 focus:ring-primary bg-background text-text-primary placeholder-text-muted"
           />
-          <p className="text-sm text-gray-500 mt-1 cursor-pointer hover:underline">
+          <p className="text-sm text-text-secondary mt-1 cursor-pointer hover:underline">
             Forget your password?
           </p>
         </div>
 
         {/* Buttons */}
         <div className="space-y-3">
-          <button className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
+          <button className="w-full bg-primary text-white py-2 rounded-lg hover:bg-blue-600 transition">
             Continue
           </button>
 
-          <button className="w-full flex items-center justify-center gap-2 border py-2 rounded-lg hover:bg-gray-100 transition">
+          <button className="w-full flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-bg-secondary bg-background transition">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="23"
@@ -71,7 +72,8 @@ const Login = () => {
             >
               <path
                 d="M21.125 0H1.625C1.19402 0 0.780698 0.171205 0.475951 0.475951C0.171205 0.780698 0 1.19402 0 1.625V14.625C0 15.056 0.171205 15.4693 0.475951 15.774C0.780698 16.0788 1.19402 16.25 1.625 16.25H21.125C21.556 16.25 21.9693 16.0788 22.274 15.774C22.5788 15.4693 22.75 15.056 22.75 14.625V1.625C22.75 1.19402 22.5788 0.780698 22.274 0.475951C21.9693 0.171205 21.556 0 21.125 0ZM19.3375 1.625L11.375 7.13375L3.4125 1.625H19.3375Z"
-                fill="#484848"
+                fill="currentColor"
+                className="text-text-muted"
               />
             </svg>
             Continue with email
@@ -79,15 +81,15 @@ const Login = () => {
         </div>
 
         {/* Divider */}
-        <div className="flex items-center gap-2 text-sm text-gray-500">
-          <hr className="flex-1" />
+        <div className="flex items-center gap-2 text-sm text-text-secondary">
+          <hr className="flex-1 border-gray-700" />
           or continue with
-          <hr className="flex-1" />
+          <hr className="flex-1 border-gray-700" />
         </div>
 
         {/* Social buttons */}
         <div className="flex gap-2">
-          <button className="flex-1 flex items-center justify-center gap-2 border py-2 rounded-lg hover:bg-gray-100 transition">
+          <button className="flex-1 flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-bg-secondary bg-background transition">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -97,13 +99,13 @@ const Login = () => {
             >
               <path
                 d="M24 12.0743C24 5.40402 18.6248 0 12 0C5.37075 0 0 5.40402 0 12.0743C0 18.0994 4.38675 23.0952 10.125 24V15.5653H7.07775V12.0751H10.125V9.41345C10.125 6.38808 11.9138 4.71729 14.6558 4.71729C15.969 4.71729 17.3438 4.95274 17.3438 4.95274V7.92378H15.828C14.34 7.92378 13.875 8.85577 13.875 9.8104V12.0743H17.2028L16.668 15.5646H13.875V23.9992C19.6087 23.0944 24 18.0987 24 12.0736V12.0743Z"
-                fill="#484848"
+                fill="#1877F2"
               />
             </svg>
             Facebook
           </button>
 
-          <button className="flex-1 flex items-center justify-center gap-2 border py-2 rounded-lg hover:bg-gray-100 transition">
+          <button className="flex-1 flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-bg-secondary bg-background transition">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
@@ -113,13 +115,14 @@ const Login = () => {
             >
               <path
                 d="M5.6361 21C4.94136 20.9624 4.2876 20.6594 3.80977 20.1537C3.23811 19.6037 2.72798 18.9932 2.28838 18.3329C1.60169 17.3496 1.05889 16.2733 0.676398 15.1365C0.243519 13.9136 0.0157944 12.6275 0.00243528 11.3303C-0.0311939 10.0575 0.284018 8.79966 0.913942 7.69311C1.3753 6.89551 2.03337 6.22946 2.82534 5.75851C3.60856 5.28957 4.50231 5.03715 5.41512 5.0271C6.10325 5.06781 6.77946 5.22509 7.41491 5.49224C7.92204 5.71542 8.45458 5.87231 9.00149 5.95849C9.60476 5.83211 10.1942 5.64709 10.7615 5.40606C11.4329 5.14391 12.1438 4.99711 12.8641 4.97185C12.9602 4.97185 13.0552 4.97185 13.1469 4.9829C14.7269 5.0282 16.1963 5.80381 17.1244 7.08213C16.4001 7.46953 15.7974 8.05019 15.3833 8.75958C14.9692 9.46897 14.7599 10.2793 14.7788 11.1005C14.7716 11.7284 14.8975 12.3507 15.1483 12.9265C15.3991 13.5022 15.7691 14.0182 16.2339 14.4405C16.657 14.8437 17.1498 15.1664 17.6879 15.394C17.5774 15.7254 17.4503 16.0458 17.3155 16.3684C17.0095 17.0814 16.6319 17.7614 16.1886 18.3981C15.7694 19.0359 15.2814 19.6257 14.7335 20.157C14.2337 20.6529 13.5674 20.9455 12.8641 20.9779C12.2678 20.9515 11.6821 20.8116 11.1383 20.5658C10.5518 20.3103 9.92159 20.1704 9.28212 20.1537C8.62462 20.1666 7.97572 20.3058 7.37072 20.5636C6.84817 20.7993 6.28989 20.9461 5.71896 20.9978L5.6361 21ZM9.11639 4.97185C9.03353 4.97185 8.95066 4.97185 8.8678 4.96191C8.85037 4.8304 8.84115 4.69793 8.84018 4.56527C8.87632 3.46166 9.30761 2.40774 10.0555 1.59541C10.4738 1.12856 10.9809 0.749604 11.5471 0.480612C12.0747 0.208988 12.6513 0.0455826 13.243 0C13.2596 0.144736 13.2596 0.286158 13.2596 0.42095C13.2441 1.50721 12.8359 2.55114 12.1106 3.35987C11.7593 3.83078 11.3093 4.21911 10.7921 4.49759C10.2748 4.77606 9.70287 4.93794 9.11639 4.97185Z"
-                fill="#484848"
+                fill="currentColor"
+                className="text-text-muted"
               />
             </svg>
             Apple ID
           </button>
 
-          <button className="flex-1 flex items-center justify-center gap-2 border py-2 rounded-lg hover:bg-gray-100 transition">
+          <button className="flex-1 flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-bg-secondary bg-background transition">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="19"
@@ -129,7 +132,8 @@ const Login = () => {
             >
               <path
                 d="M18.8256 7.77081H9.69336V11.447H14.9103C14.6854 12.6353 14.0029 13.6404 12.9742 14.3137C12.1047 14.8831 10.9951 15.2198 9.69083 15.2198C7.16576 15.2198 5.02993 13.5488 4.2666 11.3035C4.0745 10.7341 3.96328 10.1251 3.96328 9.49876C3.96328 8.87244 4.0745 8.26345 4.2666 7.69407C5.03246 5.4512 7.16828 3.7802 9.69336 3.7802C11.1164 3.7802 12.3928 4.26046 13.3988 5.20117L16.1792 2.47557C14.4983 0.940717 12.3069 0 9.69336 0C5.90448 0 2.62618 2.12899 1.03126 5.23335C0.374085 6.5157 0 7.96638 0 9.50124C0 11.0361 0.374085 12.4843 1.03126 13.7666C2.62618 16.871 5.90448 19 9.69336 19C12.312 19 14.5059 18.1484 16.1084 16.6977C17.9409 15.044 19 12.6081 19 9.71414C19 9.04078 18.9393 8.39466 18.8256 7.77081Z"
-                fill="#484848"
+                fill="currentColor"
+                className="text-text-muted"
               />
             </svg>
             Google

@@ -563,30 +563,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      {/* Newsletter - YOU ADD: value, onChange, onSubmit */}
-      <div className="bg-bg-secondary py-12 my-16">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex gap-8 items-center">
-            <div>
-              <h3 className="text-2xl font-bold text-text-primary">
-                NEWSLETTER
-              </h3>
-              <p className="text-text-secondary">Stay Upto Date</p>
-            </div>
-            <div className="flex-1 flex gap-4">
-              <input
-                type="email"
-                placeholder="Your Email..."
-                className="flex-1 bg-background text-text-primary placeholder-text-muted rounded-full py-3 px-6 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              <button className="bg-primary hover:bg-primary-hover text-white rounded-full px-8 font-semibold transition">
-                Send
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

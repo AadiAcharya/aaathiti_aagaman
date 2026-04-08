@@ -1,84 +1,102 @@
-import React from "react";
+import React, { useState } from "react";
+import HostReservation from "./host/HostReservation";
+import MessagesPage from "./host/MessagesPage";
+import NotificationsPage from "./host/NotificationsPage";
+import TransactionHistory from "./host/TransactionHistory";
 
-const Body = () => {
+export default function Host() {
+  const [activeTab, setActiveTab] = useState("reservation");
+
   return (
-    <div className="bg-gray-100 text-gray-800">
-
-      {/* HERO SECTION */}
-      <section className="h-[70vh] flex flex-col justify-center px-16 bg-gray-200">
-        <h1 className="text-4xl font-bold mb-4">
-          Try Hosting With Us
-        </h1>
-
-        <p className="text-gray-500 max-w-lg mb-6">
-          At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis
-          praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias.
-        </p>
-
-        <button className="bg-gray-700 text-white px-6 py-3 rounded-full w-fit hover:bg-gray-800 transition">
-          Lets Get Started
-        </button>
-      </section>
-
-      {/* INFO SECTION */}
-      <section className="grid grid-cols-2 gap-10 px-16 py-16">
-
-        {/* Image placeholder */}
-        <div className="bg-gray-300 rounded-xl h-80"></div>
-
-        {/* Text */}
-        <div className="flex flex-col justify-center space-y-4">
-          <h2 className="text-3xl font-semibold">Some Title Here</h2>
-
-          <p className="text-gray-500">
-            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium.
-          </p>
-
-          <p className="text-gray-500">
-            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium.
-          </p>
-
-          <p className="text-gray-500">
-            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium.
-          </p>
+    <div className="min-h-screen bg-background">
+      {/* Header Section */}
+      <section className="py-16 px-6 md:px-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative bg-gradient-to-br from-bg-secondary to-bg-secondary/70 rounded-2xl overflow-hidden p-12 border border-primary/20">
+            <div className="absolute inset-0 opacity-10 pointer-events-none">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
+            </div>
+            <div className="relative z-10">
+              <h1 className="font-bold text-6xl text-text-primary mb-3">
+                🏠 Host Dashboard
+              </h1>
+              <p className="text-xl text-text-secondary mb-2">
+                Manage your reservations, messages, notifications, and
+                transactions
+              </p>
+              <p className="text-sm text-text-muted">
+                Welcome back! Everything you need to manage your hosting is
+                right here
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* CARDS SECTION */}
-      <section className="px-16 pb-16">
-
-        <h2 className="text-2xl font-semibold mb-8">
-          Hosting Tips & Guides
-        </h2>
-
-        <div className="grid grid-cols-3 gap-6">
-
-          {/* CARD */}
-          <div>
-            <div className="bg-gray-300 h-48 rounded-lg mb-3"></div>
-            <h3 className="font-semibold">Choose the right property!</h3>
-            <p className="text-sm text-gray-500">Economy</p>
+      {/* Stats Overview (Optional) */}
+      <section className="py-8 px-6 md:px-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-bg-secondary rounded-xl p-6 border border-text-muted/20 hover:border-primary/50 transition">
+              <div className="text-3xl mb-2">📋</div>
+              <p className="text-text-secondary text-sm">Reservations</p>
+              <p className="text-2xl font-bold text-text-primary">12</p>
+            </div>
+            <div className="bg-bg-secondary rounded-xl p-6 border border-text-muted/20 hover:border-primary/50 transition">
+              <div className="text-3xl mb-2">💬</div>
+              <p className="text-text-secondary text-sm">Messages</p>
+              <p className="text-2xl font-bold text-text-primary">5</p>
+            </div>
+            <div className="bg-bg-secondary rounded-xl p-6 border border-text-muted/20 hover:border-primary/50 transition">
+              <div className="text-3xl mb-2">🔔</div>
+              <p className="text-text-secondary text-sm">Notifications</p>
+              <p className="text-2xl font-bold text-text-primary">3</p>
+            </div>
+            <div className="bg-bg-secondary rounded-xl p-6 border border-text-muted/20 hover:border-primary/50 transition">
+              <div className="text-3xl mb-2">💳</div>
+              <p className="text-text-secondary text-sm">Total Earnings</p>
+              <p className="text-2xl font-bold text-primary">$4,250</p>
+            </div>
           </div>
-
-          {/* CARD */}
-          <div>
-            <div className="bg-gray-300 h-48 rounded-lg mb-3"></div>
-            <h3 className="font-semibold">Best environment for rental</h3>
-            <p className="text-sm text-gray-500">Lifestyle</p>
-          </div>
-
-          {/* CARD */}
-          <div>
-            <div className="bg-gray-300 h-48 rounded-lg mb-3"></div>
-            <h3 className="font-semibold">Boys Hostel Apartment</h3>
-            <p className="text-sm text-gray-500">Property</p>
-          </div>
-
         </div>
       </section>
 
+      {/* Host Dashboard Section */}
+      <section className="py-12 px-6 md:px-12">
+        <div className="max-w-7xl mx-auto">
+          {/* Tab Navigation */}
+          <div className="flex gap-2 mb-8 border-b border-bg-secondary/50 overflow-x-auto">
+            {[
+              { id: "reservation", label: "📋 Reservations", icon: "📋" },
+              { id: "messages", label: "💬 Messages", icon: "💬" },
+              { id: "notifications", label: "🔔 Notifications", icon: "🔔" },
+              { id: "transactions", label: "💳 Transactions", icon: "💳" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`py-4 px-6 font-semibold transition whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? "text-primary border-b-2 border-primary bg-bg-secondary/30"
+                    : "text-text-secondary hover:text-text-primary hover:bg-bg-secondary/20"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab Content */}
+          <div className="bg-bg-secondary/30 rounded-2xl p-8 border border-text-muted/10 backdrop-blur-sm">
+            <div className="animate-fadeIn">
+              {activeTab === "reservation" && <HostReservation />}
+              {activeTab === "messages" && <MessagesPage />}
+              {activeTab === "notifications" && <NotificationsPage />}
+              {activeTab === "transactions" && <TransactionHistory />}
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
-};
-
-export default Body;
+}

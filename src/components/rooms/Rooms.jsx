@@ -1,8 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 export default function Rooms() {
+  const navigate = useNavigate();
   const rooms = [
     {
       id: 1,
-      image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&h=400&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&h=400&fit=crop",
       title: "Luxury King Suite",
       description: "Spacious room with king bed and city views",
       price: "$180",
@@ -12,7 +16,8 @@ export default function Rooms() {
     },
     {
       id: 2,
-      image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&h=400&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&h=400&fit=crop",
       title: "Deluxe Double Room",
       description: "Comfortable room with two queen beds",
       price: "$150",
@@ -22,7 +27,8 @@ export default function Rooms() {
     },
     {
       id: 3,
-      image: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=600&h=400&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=600&h=400&fit=crop",
       title: "Ocean View Suite",
       description: "Premium room with breathtaking ocean views",
       price: "$250",
@@ -32,7 +38,8 @@ export default function Rooms() {
     },
     {
       id: 4,
-      image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&h=400&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&h=400&fit=crop",
       title: "Standard Single Room",
       description: "Cozy room perfect for solo travelers",
       price: "$100",
@@ -42,7 +49,8 @@ export default function Rooms() {
     },
     {
       id: 5,
-      image: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600&h=400&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600&h=400&fit=crop",
       title: "Family Suite",
       description: "Large suite ideal for families with children",
       price: "$280",
@@ -52,7 +60,8 @@ export default function Rooms() {
     },
     {
       id: 6,
-      image: "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=600&h=400&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=600&h=400&fit=crop",
       title: "Executive Business Room",
       description: "Professional space with work desk and fast WiFi",
       price: "$200",
@@ -102,7 +111,8 @@ export default function Rooms() {
           {rooms.map((room) => (
             <div
               key={room.id}
-              className="bg-bg-secondary rounded-lg overflow-hidden border border-primary/10 hover:shadow-2xl transition group"
+              onClick={() => navigate(`/room/${room.id}`)}
+              className="bg-bg-secondary rounded-lg overflow-hidden border border-primary/10 hover:shadow-2xl transition group cursor-pointer"
             >
               {/* Room Image */}
               <div className="relative h-56 overflow-hidden">
@@ -112,7 +122,12 @@ export default function Rooms() {
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
-                  <p className="font-bold text-primary">{room.price}<span className="text-sm font-normal text-text-secondary">/night</span></p>
+                  <p className="font-bold text-primary">
+                    {room.price}
+                    <span className="text-sm font-normal text-text-secondary">
+                      /night
+                    </span>
+                  </p>
                 </div>
               </div>
 

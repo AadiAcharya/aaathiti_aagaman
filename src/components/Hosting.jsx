@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Hosting() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-background">
       {/* Hosting Info Section */}
@@ -38,6 +40,7 @@ export default function Hosting() {
 
                 {/* Become A Host Button */}
                 <button
+                  onClick={() => navigate("/add-property")}
                   className="bg-primary hover:bg-primary-hover text-white font-['Montserrat:Bold',sans-serif] font-bold text-[15px] px-8 py-3 rounded-full h-15 w-55 transition-colors"
                   data-node-id="2:118"
                 >

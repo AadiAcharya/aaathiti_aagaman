@@ -1,75 +1,104 @@
-import React from 'react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Amenities = () => {
+  const navigate = useNavigate();
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-5xl">
-        {/* Question */}
-        <h1 className="text-3xl font-semibold text-gray-900 mb-12">
-          Add amenities available at your place:
-        </h1>
+    <div className="min-h-screen bg-background">
+      <main className="max-w-6xl mx-auto px-6 py-20">
+        {/* Header */}
+        <div className="mb-16">
+          <h2 className="text-5xl font-bold text-text-primary mb-4">
+            Select Amenities
+          </h2>
+          <p className="text-lg text-text-secondary mb-12">
+            Choose all the amenities available at your place
+          </p>
 
-        {/* Amenities Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          {/* Amenity Card 1 */}
-          <div className="bg-white border-2 border-gray-300 rounded-lg p-4 hover:border-gray-900 cursor-pointer transition-colors">
-            <div className="w-16 h-16 bg-gray-300 rounded-lg mb-3"></div>
-            <h3 className="text-sm font-medium text-gray-900">Kitchen</h3>
-          </div>
+          {/* Amenities Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {/* Amenity Card 1 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                🍳
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">Kitchen</h3>
+            </div>
 
-          {/* Amenity Card 2 */}
-          <div className="bg-white border-2 border-gray-300 rounded-lg p-4 hover:border-gray-900 cursor-pointer transition-colors">
-            <div className="w-16 h-16 bg-gray-300 rounded-lg mb-3"></div>
-            <h3 className="text-sm font-medium text-gray-900">Parking</h3>
-          </div>
+            {/* Amenity Card 2 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                🚗
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">Parking</h3>
+            </div>
 
-          {/* Amenity Card 3 */}
-          <div className="bg-white border-2 border-gray-300 rounded-lg p-4 hover:border-gray-900 cursor-pointer transition-colors">
-            <div className="w-16 h-16 bg-gray-300 rounded-lg mb-3"></div>
-            <h3 className="text-sm font-medium text-gray-900">Balcony</h3>
-          </div>
+            {/* Amenity Card 3 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                🌳
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">Balcony</h3>
+            </div>
 
-          {/* Amenity Card 4 */}
-          <div className="bg-white border-2 border-gray-300 rounded-lg p-4 hover:border-gray-900 cursor-pointer transition-colors">
-            <div className="w-16 h-16 bg-gray-300 rounded-lg mb-3"></div>
-            <h3 className="text-sm font-medium text-gray-900">Garden</h3>
-          </div>
+            {/* Amenity Card 4 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                🌺
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">Garden</h3>
+            </div>
 
-          {/* Amenity Card 5 */}
-          <div className="bg-white border-2 border-gray-300 rounded-lg p-4 hover:border-gray-900 cursor-pointer transition-colors">
-            <div className="w-16 h-16 bg-gray-300 rounded-lg mb-3"></div>
-            <h3 className="text-sm font-medium text-gray-900">Wi-Fi</h3>
-          </div>
+            {/* Amenity Card 5 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                📶
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">Wi-Fi</h3>
+            </div>
 
-          {/* Amenity Card 6 */}
-          <div className="bg-white border-2 border-gray-300 rounded-lg p-4 hover:border-gray-900 cursor-pointer transition-colors">
-            <div className="w-16 h-16 bg-gray-300 rounded-lg mb-3"></div>
-            <h3 className="text-sm font-medium text-gray-900">Pool</h3>
-          </div>
+            {/* Amenity Card 6 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                🏊
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">Pool</h3>
+            </div>
 
-          {/* Amenity Card 7 */}
-          <div className="bg-white border-2 border-gray-300 rounded-lg p-4 hover:border-gray-900 cursor-pointer transition-colors">
-            <div className="w-16 h-16 bg-gray-300 rounded-lg mb-3"></div>
-            <h3 className="text-sm font-medium text-gray-900">Gym</h3>
-          </div>
+            {/* Amenity Card 7 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                💪
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">Gym</h3>
+            </div>
 
-          {/* Amenity Card 8 */}
-          <div className="bg-white border-2 border-gray-300 rounded-lg p-4 hover:border-gray-900 cursor-pointer transition-colors">
-            <div className="w-16 h-16 bg-gray-300 rounded-lg mb-3"></div>
-            <h3 className="text-sm font-medium text-gray-900">Elevator</h3>
+            {/* Amenity Card 8 */}
+            <div className="bg-bg-secondary border-2 border-text-muted/30 rounded-xl p-8 hover:border-primary hover:shadow-lg transition-all duration-300 cursor-pointer text-center group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                🛗
+              </div>
+              <h3 className="text-lg font-bold text-text-primary">Elevator</h3>
+            </div>
           </div>
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between">
-          <button className="px-6 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors">
-            Back
+        <div className="flex gap-4">
+          <button
+            onClick={() => navigate("/add-property")}
+            className="px-6 py-3 text-text-primary bg-bg-secondary hover:bg-bg-secondary/80 rounded-lg font-bold border-2 border-text-muted/30 transition-all"
+          >
+            ← Back
           </button>
-          <button className="px-6 py-2 text-white bg-gray-600 rounded-lg hover:bg-gray-700 transition-colors">
-            Next
+          <button
+            onClick={() => navigate("/description")}
+            className="px-6 py-3 text-white bg-primary hover:bg-primary-hover rounded-lg font-bold transition-all"
+          >
+            Next: Add Description →
           </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
