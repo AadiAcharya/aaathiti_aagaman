@@ -20,10 +20,34 @@ export default function Header() {
         {/* Logo */}
         <Link
           to="/"
-          className="text-3xl font-extrabold text-text-primary hover:text-accent transition"
+          className="flex items-center gap-2 hover:opacity-80 transition"
           data-node-id="2:3641"
         >
-          LOGO
+          <svg width="40" height="40" viewBox="0 0 40 40">
+            <circle cx="20" cy="20" r="19" fill="#FF6B6B" opacity="0.1" />
+            <circle
+              cx="20"
+              cy="20"
+              r="18"
+              fill="none"
+              stroke="#FF6B6B"
+              strokeWidth="2"
+            />
+            <text
+              x="20"
+              y="26"
+              fontSize="18"
+              fontWeight="bold"
+              textAnchor="middle"
+              fill="#FF6B6B"
+              fontFamily="sans-serif"
+            >
+              AA
+            </text>
+          </svg>
+          <span className="text-lg font-bold bg-linear-to-r from-red-400 to-pink-400 bg-clip-text text-transparent hidden sm:inline">
+            Aathiti Aagaman
+          </span>
         </Link>
 
         {/* Navigation Links - Desktop */}
