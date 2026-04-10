@@ -30,7 +30,7 @@ export default function Header() {
               cy="20"
               r="18"
               fill="none"
-              stroke="#FF6B6B"
+              stroke="#64748B"
               strokeWidth="2"
             />
             <text
@@ -39,13 +39,13 @@ export default function Header() {
               fontSize="18"
               fontWeight="bold"
               textAnchor="middle"
-              fill="#FF6B6B"
+              fill="#64748B"
               fontFamily="sans-serif"
             >
               AA
             </text>
           </svg>
-          <span className="text-lg font-bold bg-linear-to-r from-red-400 to-pink-400 bg-clip-text text-transparent hidden sm:inline">
+          <span className="text-lg font-bold bg-linear-to-r text-text-muted  bg-clip-text hidden sm:inline">
             Aathiti Aagaman
           </span>
         </Link>
@@ -67,14 +67,14 @@ export default function Header() {
             Browse Rooms
           </Link>
           <Link
-            to="/"
+            to="/how-it-works"
             className="hover:text-accent transition"
             data-node-id="2:3649"
           >
             How It Works
           </Link>
           <Link
-            to="/"
+            to="/rental-guide"
             className="hover:text-accent transition"
             data-node-id="2:3650"
           >
