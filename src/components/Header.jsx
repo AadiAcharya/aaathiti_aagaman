@@ -1,10 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Header() {
   const navigate = useNavigate();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [open, setOpen] = useState(false);
+  // Theme state: 'light' or 'dark'
+  // Theme state: 'light' or 'dark'.
+  // On first render, check localStorage and system preference.
+  const [theme, setTheme] = useState('dark');
+
+  // Set theme on mount (immediate effect, avoids flicker)
+  useLayoutEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'light' || saved === 'dark') {
+        setTheme(saved);
+        document.body.classList.toggle('dark', saved === 'dark');
+      } else {
+        // Optionally, use system preference
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setTheme(prefersDark ? 'dark' : 'light');
+        document.body.classList.toggle('dark', prefersDark);
+      }
+    }
+  }, []);
+
+  // Update theme when changed
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      document.body.classList.toggle('dark', theme === 'dark');
+      localStorage.setItem('theme', theme);
+    }
+  }, [theme]);
+
+  // Toggle theme handler
+  const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
+
+  // This approach ensures the theme is set immediately on page load (avoiding a flash),
+  // and persists the user's choice in localStorage.
 
   return (
     <header
@@ -24,13 +59,13 @@ export default function Header() {
           data-node-id="2:3641"
         >
           <svg width="40" height="40" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="19" fill="#FF6B6B" opacity="0.1" />
+            <circle cx="20" cy="20" r="19" fill={theme === 'dark' ? '#FF6B6B' : '#2563EB'} opacity="0.1" />
             <circle
               cx="20"
               cy="20"
               r="18"
               fill="none"
-              stroke="#64748B"
+              stroke={theme === 'dark' ? '#64748B' : '#2563EB'}
               strokeWidth="2"
             />
             <text
@@ -39,16 +74,33 @@ export default function Header() {
               fontSize="18"
               fontWeight="bold"
               textAnchor="middle"
-              fill="#64748B"
+              fill={theme === 'dark' ? '#64748B' : '#2563EB'}
               fontFamily="sans-serif"
             >
               AA
             </text>
           </svg>
-          <span className="text-lg font-bold bg-linear-to-r text-text-muted  bg-clip-text hidden sm:inline">
+          <span className="text-lg font-bold text-text-muted hidden sm:inline">
             Aathiti Aagaman
           </span>
         </Link>
+
+        {/* Theme Toggle Button */}
+        <button
+          onClick={toggleTheme}
+          className="ml-4 p-2 rounded-full border border-bg-secondary bg-bg-secondary hover:bg-bg-secondary/80 transition text-xl"
+          title={theme === 'dark' ? 'Switch to Day Mode' : 'Switch to Night Mode'}
+        >
+          {theme === 'dark' ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.07l-.71.71M21 12h-1M4 12H3m16.66 5.66l-.71-.71M4.05 4.93l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
+            </svg>
+          )}
+        </button>
 
         {/* Navigation Links - Desktop */}
         <nav
