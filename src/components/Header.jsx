@@ -5,67 +5,71 @@ export default function Header() {
   const navigate = useNavigate();
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [open, setOpen] = useState(false);
-  // Theme state: 'light' or 'dark'
-  // Theme state: 'light' or 'dark'.
-  // On first render, check localStorage and system preference.
-  const [theme, setTheme] = useState('dark');
-
-  // Set theme on mount (immediate effect, avoids flicker)
-  useLayoutEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('theme');
-      if (saved === 'light' || saved === 'dark') {
-        setTheme(saved);
-        document.body.classList.toggle('dark', saved === 'dark');
-      } else {
-        // Optionally, use system preference
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        setTheme(prefersDark ? 'dark' : 'light');
-        document.body.classList.toggle('dark', prefersDark);
-      }
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    // Initialize theme from localStorage or system preference
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("theme");
+      return saved === "dark" || saved === "light" ? saved : "dark";
     }
-  }, []);
+    return "dark";
+  });
 
-  // Update theme when changed
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      document.body.classList.toggle('dark', theme === 'dark');
-      localStorage.setItem('theme', theme);
+  // Set theme on mount
+  useLayoutEffect(() => {
+    if (typeof window !== "undefined") {
+      const isDark = theme === "dark";
+      if (isDark) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+      localStorage.setItem("theme", theme);
     }
   }, [theme]);
 
   // Toggle theme handler
-  const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
+  };
 
-  // This approach ensures the theme is set immediately on page load (avoiding a flash),
-  // and persists the user's choice in localStorage.
+  // Navigation links data
+  const navLinks = [
+    { label: "Browse Property", path: "/properties" },
+    { label: "Browse Rooms", path: "/rooms" },
+    { label: "How It Works", path: "/how-it-works" },
+    { label: "Rental Guides", path: "/rental-guide" },
+  ];
+
+  const logoColor = theme === "dark" ? "#FF6B6B" : "#2563EB";
+  const logoStroke = theme === "dark" ? "#64748B" : "#2563EB";
 
   return (
-    <header
-      className="w-full bg-bg-secondary shadow-sm"
-      data-name="Main Header"
-      data-node-id="2:3639"
-    >
-      <div
-        className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"
-        data-name="Header"
-        data-node-id="2:3640"
-      >
+    <header className={`w-full shadow-sm transition-colors duration-300 ${
+      theme === "dark" 
+        ? "bg-slate-900 border-b border-slate-800" 
+        : "bg-white border-b border-gray-200"
+    }`}>
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2 hover:opacity-80 transition"
-          data-node-id="2:3641"
+          className="flex items-center gap-2 hover:opacity-80 transition flex-shrink-0"
         >
           <svg width="40" height="40" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="19" fill={theme === 'dark' ? '#FF6B6B' : '#2563EB'} opacity="0.1" />
+            <circle
+              cx="20"
+              cy="20"
+              r="19"
+              fill={logoColor}
+              opacity="0.1"
+            />
             <circle
               cx="20"
               cy="20"
               r="18"
               fill="none"
-              stroke={theme === 'dark' ? '#64748B' : '#2563EB'}
+              stroke={logoStroke}
               strokeWidth="2"
             />
             <text
@@ -74,115 +78,235 @@ export default function Header() {
               fontSize="18"
               fontWeight="bold"
               textAnchor="middle"
-              fill={theme === 'dark' ? '#64748B' : '#2563EB'}
+              fill={logoStroke}
               fontFamily="sans-serif"
             >
               AA
             </text>
           </svg>
-          <span className="text-lg font-bold text-text-muted hidden sm:inline">
+          <span className={`text-lg font-bold hidden sm:inline transition-colors duration-300 ${
+            theme === "dark" ? "text-slate-100" : "text-gray-900"
+          }`}>
             Aathiti Aagaman
           </span>
         </Link>
 
-        {/* Theme Toggle Button */}
-        <button
-          onClick={toggleTheme}
-          className="ml-4 p-2 rounded-full border border-bg-secondary bg-bg-secondary hover:bg-bg-secondary/80 transition text-xl"
-          title={theme === 'dark' ? 'Switch to Day Mode' : 'Switch to Night Mode'}
-        >
-          {theme === 'dark' ? (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.07l-.71.71M21 12h-1M4 12H3m16.66 5.66l-.71-.71M4.05 4.93l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
-            </svg>
-          )}
-        </button>
-
         {/* Navigation Links - Desktop */}
-        <nav
-          className="hidden md:flex items-center gap-8 text-text-primary font-semibold text-base"
-          data-name="header navigations"
-          data-node-id="2:3647"
-        >
-          <Link
-            to="/properties"
-            className="hover:text-accent transition"
-            data-node-id="2:3648"
-          >
-            Browse Property
-          </Link>
-          <Link to="/rooms" className="hover:text-accent transition">
-            Browse Rooms
-          </Link>
-          <Link
-            to="/how-it-works"
-            className="hover:text-accent transition"
-            data-node-id="2:3649"
-          >
-            How It Works
-          </Link>
-          <Link
-            to="/rental-guide"
-            className="hover:text-accent transition"
-            data-node-id="2:3650"
-          >
-            Rental Guides
-          </Link>
+        <nav className={`hidden lg:flex items-center gap-8 font-semibold text-base transition-colors duration-300 ${
+          theme === "dark" ? "text-slate-300" : "text-gray-700"
+        }`}>
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              to={link.path}
+              className={`transition-colors ${
+                theme === "dark"
+                  ? "hover:text-blue-400"
+                  : "hover:text-blue-600"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
 
         {/* Right Section - Desktop */}
-        <div
-          className="hidden md:flex items-center gap-4"
-          data-name="right-section"
-          data-node-id="2:3657"
-        >
+        <div className="hidden md:flex items-center gap-4">
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className={`p-2 rounded-full border transition-all duration-300 ${
+              theme === "dark"
+                ? "bg-slate-800 border-slate-700 hover:bg-slate-700 text-slate-300"
+                : "bg-gray-100 border-gray-300 hover:bg-gray-200 text-gray-700"
+            }`}
+            title={
+              theme === "dark" ? "Switch to Day Mode" : "Switch to Night Mode"
+            }
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.07l-.71.71M21 12h-1M4 12H3m16.66 5.66l-.71-.71M4.05 4.93l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"
+                />
+              </svg>
+            )}
+          </button>
+
           {/* Become A Host Button */}
           <button
             onClick={() => navigate("/hosting")}
-            className="bg-primary hover:bg-primary-hover text-white rounded-full px-6 py-2 font-semibold transition"
-            data-node-id="2:3645"
+            className={`rounded-full px-6 py-2 font-semibold transition-colors text-white ${
+              theme === "dark"
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
           >
             Become A Host
           </button>
 
           {/* Auth Section */}
-          <div
-            className="flex items-center gap-3 bg-white border border-bg-secondary rounded-full px-3 py-2"
-            data-name="auth btn"
-            data-node-id="2:3658"
-          >
-            {/* Menu Icon (Hamburger) */}
-            {/* <svg
-              className="w-6 h-6 text-gray-700 cursor-pointer"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              data-node-id="2:3662"
+          <div className="relative">
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className={`flex items-center gap-2 border rounded-full px-3 py-2 hover:shadow-md transition ${
+                theme === "dark"
+                  ? "bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700"
+                  : "bg-white border-gray-300 text-gray-600 hover:bg-gray-50"
+              }`}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg> */}
-
-            {/* User Avatar */}
-            <button className="" onClick={() => setOpen(!open)}>
               <svg
-                className="w-8 h-8 text-gray-600 cursor-pointer"
+                className="w-6 h-6"
                 fill="currentColor"
                 viewBox="0 0 24 24"
-                data-node-id="2:3660"
               >
                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
               </svg>
             </button>
+
+            {/* Desktop Dropdown Menu */}
+            <div
+              className={`absolute right-0 mt-2 w-48 rounded-xl shadow-lg border overflow-hidden transition-all duration-200 z-50 ${
+                dropdownOpen
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 -translate-y-2 pointer-events-none"
+              } ${
+                theme === "dark"
+                  ? "bg-slate-800 border-slate-700"
+                  : "bg-white border-gray-200"
+              }`}
+            >
+              <button
+                onClick={() => {
+                  navigate("/sign-in");
+                  setDropdownOpen(false);
+                }}
+                className={`block w-full text-left px-4 py-2 transition ${
+                  theme === "dark"
+                    ? "text-slate-300 hover:bg-slate-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/sign-up");
+                  setDropdownOpen(false);
+                }}
+                className={`block w-full text-left px-4 py-2 transition ${
+                  theme === "dark"
+                    ? "text-slate-300 hover:bg-slate-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                Sign Up
+              </button>
+              <div className={`border-t ${
+                theme === "dark" ? "border-slate-700" : "border-gray-200"
+              }`}></div>
+              <button
+                onClick={() => {
+                  navigate("/account");
+                  setDropdownOpen(false);
+                }}
+                className={`block w-full text-left px-4 py-2 transition ${
+                  theme === "dark"
+                    ? "text-slate-300 hover:bg-slate-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                👤 Account
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/messages");
+                  setDropdownOpen(false);
+                }}
+                className={`block w-full text-left px-4 py-2 transition ${
+                  theme === "dark"
+                    ? "text-slate-300 hover:bg-slate-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                💬 Messages
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/wishlist");
+                  setDropdownOpen(false);
+                }}
+                className={`block w-full text-left px-4 py-2 transition ${
+                  theme === "dark"
+                    ? "text-slate-300 hover:bg-slate-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                ❤️ Wishlist
+              </button>
+              <div className={`border-t ${
+                theme === "dark" ? "border-slate-700" : "border-gray-200"
+              }`}></div>
+              <button
+                onClick={() => {
+                  navigate("/host");
+                  setDropdownOpen(false);
+                }}
+                className={`block w-full text-left px-4 py-2 font-semibold transition ${
+                  theme === "dark"
+                    ? "text-blue-400 hover:bg-slate-700"
+                    : "text-blue-600 hover:bg-gray-100"
+                }`}
+              >
+                🏠 Host Dashboard
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/help");
+                  setDropdownOpen(false);
+                }}
+                className={`block w-full text-left px-4 py-2 transition ${
+                  theme === "dark"
+                    ? "text-slate-300 hover:bg-slate-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                ❓ Help Center
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-text-primary"
+          className={`md:hidden transition-colors ${
+            theme === "dark" ? "text-slate-300" : "text-gray-700"
+          }`}
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -204,104 +328,199 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <nav className="md:hidden bg-background border-t border-bg-secondary px-6 py-4 space-y-3">
-          <Link
-            to="/properties"
-            className="block text-text-primary font-semibold hover:text-accent"
-          >
-            Find a Property
-          </Link>
-          <Link
-            to="/"
-            className="block text-text-primary font-semibold hover:text-accent"
-          >
-            Share Stories
-          </Link>
-          <Link
-            to="/"
-            className="block text-text-primary font-semibold hover:text-accent"
-          >
-            Rental Guides
-          </Link>
-          <Link
-            to="/"
-            className="block text-text-primary font-semibold hover:text-accent"
-          >
-            Download Mobile App
-          </Link>
-          <Link
-            to="/help"
-            className="block text-text-primary font-semibold hover:text-accent"
-          >
-            Help Center
-          </Link>
+        <nav className={`md:hidden border-t transition-colors duration-300 px-6 py-4 space-y-2 ${
+          theme === "dark"
+            ? "bg-slate-800 border-slate-700"
+            : "bg-gray-50 border-gray-200"
+        }`}>
+          {/* Desktop Navigation Links for Mobile */}
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              to={link.path}
+              className={`block font-semibold py-2 transition ${
+                theme === "dark"
+                  ? "text-slate-300 hover:text-blue-400"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+              onClick={() => setMenuOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+
+          <div className={`border-t my-3 ${
+            theme === "dark" ? "border-slate-700" : "border-gray-200"
+          }`}></div>
+
+          {/* Auth Links for Mobile */}
           <button
-            onClick={() => navigate("/hosting")}
-            className="w-full mt-4 bg-primary hover:bg-primary-hover text-white rounded-full px-6 py-2 font-semibold transition"
+            onClick={() => {
+              navigate("/sign-in");
+              setMenuOpen(false);
+            }}
+            className={`block w-full text-left font-semibold py-2 transition ${
+              theme === "dark"
+                ? "text-slate-300 hover:text-blue-400"
+                : "text-gray-700 hover:text-blue-600"
+            }`}
+          >
+            Sign In
+          </button>
+          <button
+            onClick={() => {
+              navigate("/sign-up");
+              setMenuOpen(false);
+            }}
+            className={`block w-full text-left font-semibold py-2 transition ${
+              theme === "dark"
+                ? "text-slate-300 hover:text-blue-400"
+                : "text-gray-700 hover:text-blue-600"
+            }`}
+          >
+            Sign Up
+          </button>
+
+          <div className={`border-t my-3 ${
+            theme === "dark" ? "border-slate-700" : "border-gray-200"
+          }`}></div>
+
+          {/* Account Links for Mobile */}
+          <button
+            onClick={() => {
+              navigate("/account");
+              setMenuOpen(false);
+            }}
+            className={`block w-full text-left py-2 transition ${
+              theme === "dark"
+                ? "text-slate-300 hover:text-blue-400"
+                : "text-gray-700 hover:text-blue-600"
+            }`}
+          >
+            👤 Account
+          </button>
+          <button
+            onClick={() => {
+              navigate("/messages");
+              setMenuOpen(false);
+            }}
+            className={`block w-full text-left py-2 transition ${
+              theme === "dark"
+                ? "text-slate-300 hover:text-blue-400"
+                : "text-gray-700 hover:text-blue-600"
+            }`}
+          >
+            💬 Messages
+          </button>
+          <button
+            onClick={() => {
+              navigate("/wishlist");
+              setMenuOpen(false);
+            }}
+            className={`block w-full text-left py-2 transition ${
+              theme === "dark"
+                ? "text-slate-300 hover:text-blue-400"
+                : "text-gray-700 hover:text-blue-600"
+            }`}
+          >
+            ❤️ Wishlist
+          </button>
+
+          <div className={`border-t my-3 ${
+            theme === "dark" ? "border-slate-700" : "border-gray-200"
+          }`}></div>
+
+          {/* Host & Help for Mobile */}
+          <button
+            onClick={() => {
+              navigate("/host");
+              setMenuOpen(false);
+            }}
+            className={`block w-full text-left font-semibold py-2 transition ${
+              theme === "dark"
+                ? "text-blue-400 hover:text-blue-300"
+                : "text-blue-600 hover:text-blue-700"
+            }`}
+          >
+            🏠 Host Dashboard
+          </button>
+          <button
+            onClick={() => {
+              navigate("/help");
+              setMenuOpen(false);
+            }}
+            className={`block w-full text-left py-2 transition ${
+              theme === "dark"
+                ? "text-slate-300 hover:text-blue-400"
+                : "text-gray-700 hover:text-blue-600"
+            }`}
+          >
+            ❓ Help Center
+          </button>
+
+          <div className={`border-t my-3 ${
+            theme === "dark" ? "border-slate-700" : "border-gray-200"
+          }`}></div>
+
+          {/* Theme Toggle for Mobile */}
+          <button
+            onClick={toggleTheme}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-semibold transition ${
+              theme === "dark"
+                ? "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            <span>{theme === "dark" ? "🌙 Dark Mode" : "☀️ Light Mode"}</span>
+            {theme === "dark" ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.07l-.71.71M21 12h-1M4 12H3m16.66 5.66l-.71-.71M4.05 4.93l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                />
+              </svg>
+            )}
+          </button>
+
+          {/* Become A Host for Mobile */}
+          <button
+            onClick={() => {
+              navigate("/hosting");
+              setMenuOpen(false);
+            }}
+            className={`w-full mt-4 rounded-full px-6 py-2 font-semibold transition text-white ${
+              theme === "dark"
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
           >
             Become A Host
           </button>
         </nav>
       )}
-
-      {/* making signup login secion */}
-      {/* {open && (
-        <div className="text-white">
-          <button className="block w-full text-left px-3 py-2 hover:text-text-muted">Sign Up</button>
-          <button className="block w-full text-left px-3 py-2 hover:text-text-muted">login</button>
-          <button className="block w-full text-left px-3 py-2 hover:text-text-muted">Help</button>
-        </div>
-      )} */}
-      <div
-        className={`
-        absolute right-0 mt-2 z-50 w-40 bg-white rounded-xl shadow-lg p-2 transition-all duration-200
-        ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
-      >
-        <button
-          onClick={() => navigate("/sign-in")}
-          className="block w-full text-left px-3 py-2 hover:text-text-muted"
-        >
-          Sign Up
-        </button>
-        <button
-          onClick={() => navigate("/sign-up")}
-          className="block w-full text-left px-3 py-2 hover:text-text-muted"
-        >
-          Login
-        </button>
-        <div className="border-t border-gray-200 my-2"></div>
-        <button
-          onClick={() => navigate("/account")}
-          className="block w-full text-left px-3 py-2 hover:text-text-muted"
-        >
-          👤 Account
-        </button>
-        <button
-          onClick={() => navigate("/messages")}
-          className="block w-full text-left px-3 py-2 hover:text-text-muted"
-        >
-          💬 Messages
-        </button>
-        <button
-          onClick={() => navigate("/wishlist")}
-          className="block w-full text-left px-3 py-2 hover:text-text-muted"
-        >
-          ❤️ Wishlist
-        </button>
-        <div className="border-t border-gray-200 my-2"></div>
-        <button
-          onClick={() => navigate("/host")}
-          className="block w-full text-left px-3 py-2 hover:text-text-muted font-semibold text-primary"
-        >
-          🏠 Host Dashboard
-        </button>
-        <button
-          onClick={() => navigate("/help")}
-          className="block w-full text-left px-3 py-2  hover:text-text-muted"
-        >
-          ❓ Help Center
-        </button>
-      </div>
     </header>
   );
 }
