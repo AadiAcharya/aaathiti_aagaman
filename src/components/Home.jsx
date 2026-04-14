@@ -283,73 +283,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Nearby Properties */}
-      <div className="max-w-6xl mx-auto px-6 py-20">
-        <div className="mb-12 flex justify-between items-center">
-          <div>
-            <h2 className="text-4xl font-bold text-text-primary mb-4">
-              Nearby Listed Properties
-            </h2>
-            <div className="w-32 h-1.5 bg-primary rounded"></div>
-          </div>
-          <button className="text-accent font-semibold hover:text-primary transition">
-            Show On Map →
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {sortProperties(
-            properties.filter((property) => {
-              const matchesCategory = property.category === selectedTab;
-
-              const matchesSearch =
-                searchTerm === "" ||
-                property.location
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase()) ||
-                property.title.toLowerCase().includes(searchTerm.toLowerCase());
-              const matchesPrice = extractPrice(property.price) <= maxPrice;
-              return matchesCategory && matchesSearch && matchesPrice;
-            }),
-            sortBy,
-          )
-            .slice(0, visibleCount)
-            .map((property) => (
-              <PropertyCard
-                key={property.id}
-                title={property.title}
-                location={property.location}
-                bedrooms={property.bedrooms}
-                bathrooms={property.bathrooms}
-                parking={property.parking}
-                pets={property.pets}
-                price={property.price}
-                image={property.image}
-              />
-            ))}
-        </div>
-        <div className="flex justify-center mt-8">
-          {visibleCount <
-            properties.filter((property) => {
-              const matchesCategory = property.category === selectedTab;
-              const matchesSearch =
-                searchTerm === "" ||
-                property.location
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase()) ||
-                property.title.toLowerCase().includes(searchTerm.toLowerCase());
-              const matchesPrice = extractPrice(property.price) <= maxPrice;
-              return matchesCategory && matchesSearch && matchesPrice;
-            }).length && (
-            <button
-              onClick={() => setVisibleCount((prev) => prev + 3)}
-              className="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-full font-semibold transition"
-            >
-              load More Properties
-            </button>
-          )}
-        </div>
-      </div>
+  
 
       {/* Top Rated Properties */}
       <div className="max-w-6xl mx-auto px-6 py-20">
