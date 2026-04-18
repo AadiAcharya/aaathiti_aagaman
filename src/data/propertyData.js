@@ -19,6 +19,7 @@ export const properties = [
     isTopRated: true,
     image:
       "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&h=600&fit=crop",
+    isFeatured: true,
   },
   {
     id: 2,
@@ -33,6 +34,7 @@ export const properties = [
     isTopRated: false,
     image:
       "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop",
+    isFeatured: false,
   },
   {
     id: 3,
@@ -47,6 +49,7 @@ export const properties = [
     isTopRated: true,
     image:
       "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
+    isFeatured: true,
   },
   {
     id: 4,
@@ -61,6 +64,7 @@ export const properties = [
     isTopRated: true,
     image:
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
+    isFeatured: false,
   },
   {
     id: 5,
@@ -75,6 +79,7 @@ export const properties = [
     isTopRated: true,
     image:
       "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
+    isFeatured: true,
   },
   {
     id: 6,
@@ -89,6 +94,7 @@ export const properties = [
     isTopRated: false,
     image:
       "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
+    isFeatured: false,
   },
 
   // FLATS Category
@@ -105,6 +111,7 @@ export const properties = [
     isTopRated: false,
     image:
       "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop",
+    isFeatured: false,
   },
   {
     id: 8,
@@ -119,6 +126,7 @@ export const properties = [
     isTopRated: true,
     image:
       "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop",
+    isFeatured: true,
   },
   {
     id: 9,
@@ -133,6 +141,7 @@ export const properties = [
     isTopRated: false,
     image:
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
+    isFeatured: false,
   },
   {
     id: 10,
@@ -147,6 +156,7 @@ export const properties = [
     isTopRated: true,
     image:
       "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
+    isFeatured: false,
   },
   {
     id: 11,
@@ -518,6 +528,7 @@ export const blogs = [
     category: "Guide",
     image:
       "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
+    isFeatured: false,
     excerpt: "Essential security measures for renters and landlords.",
     date: "2024-01-20",
   },
