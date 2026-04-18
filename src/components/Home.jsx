@@ -81,24 +81,43 @@ const sortProperties = (properties, sortBy) => {
 };
 
 export default function Home() {
+  // UI state
   const [selectedTab, setSelectedTab] = useState("rooms");
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [maxPrice, setMaxPrice] = useState(10000);
   const [sortBy, setSortBy] = useState("default");
-  // eslint-disable-next-line no-unused-vars
   const [visibleCount, setVisibleCount] = useState(3);
 
+  // Search/filter state for the search button
+  const [appliedSearch, setAppliedSearch] = useState({
+    term: "",
+    tab: "rooms",
+    price: 10000,
+    sort: "default",
+  });
+
+  // On mount, show loading
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
     }, 1500);
   }, []);
 
+  // Reset visible count when filters change
   useEffect(() => {
-    // eslint-disable-next-line
     setVisibleCount(3);
   }, [selectedTab, searchTerm, maxPrice, sortBy]);
+
+  // Search button handler
+  const handleSearch = () => {
+    setAppliedSearch({
+      term: searchTerm,
+      tab: selectedTab,
+      price: maxPrice,
+      sort: sortBy,
+    });
+  };
 
   return (
     <div className="w-full bg-background min-h-screen">
@@ -240,17 +259,18 @@ export default function Home() {
 
             {/* Search Button - YOU ADD: onClick handler */}
             <div className="flex justify-end">
-              <button className="bg-primary hover:bg-primary-hover text-white rounded-full px-8 py-3 font-semibold transition">
-                Search
+              <button
+                onClick={handleSearch}
+                className="bg-primary hover:bg-primary-hover text-white rounded-full px-8 py-3 font-semibold transition"
+              >
+                Searchh
               </button>
             </div>
           </div>
         </div>
       </div>
 
-
-
-          {/* Nearby Properties */}
+      {/* Nearby Properties */}
       <div className="max-w-6xl mx-auto px-6 py-20">
         <div className="mb-12 flex justify-between items-center">
           <div>
@@ -267,18 +287,21 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {sortProperties(
             properties.filter((property) => {
-              const matchesCategory = property.category === selectedTab;
+              const matchesCategory = property.category === appliedSearch.tab;
 
               const matchesSearch =
-                searchTerm === "" ||
+                appliedSearch.term === "" ||
                 property.location
                   .toLowerCase()
-                  .includes(searchTerm.toLowerCase()) ||
-                property.title.toLowerCase().includes(searchTerm.toLowerCase());
-              const matchesPrice = extractPrice(property.price) <= maxPrice;
+                  .includes(appliedSearch.term.toLowerCase()) ||
+                property.title
+                  .toLowerCase()
+                  .includes(appliedSearch.term.toLowerCase());
+              const matchesPrice =
+                extractPrice(property.price) <= appliedSearch.price;
               return matchesCategory && matchesSearch && matchesPrice;
             }),
-            sortBy,
+            appliedSearch.sort,
           )
             .slice(0, visibleCount)
             .map((property) => (
@@ -298,14 +321,17 @@ export default function Home() {
         <div className="flex justify-center mt-8">
           {visibleCount <
             properties.filter((property) => {
-              const matchesCategory = property.category === selectedTab;
+              const matchesCategory = property.category === appliedSearch.tab;
               const matchesSearch =
-                searchTerm === "" ||
+                appliedSearch.term === "" ||
                 property.location
                   .toLowerCase()
-                  .includes(searchTerm.toLowerCase()) ||
-                property.title.toLowerCase().includes(searchTerm.toLowerCase());
-              const matchesPrice = extractPrice(property.price) <= maxPrice;
+                  .includes(appliedSearch.term.toLowerCase()) ||
+                property.title
+                  .toLowerCase()
+                  .includes(appliedSearch.term.toLowerCase());
+              const matchesPrice =
+                extractPrice(property.price) <= appliedSearch.price;
               return matchesCategory && matchesSearch && matchesPrice;
             }).length && (
             <button
@@ -352,8 +378,6 @@ export default function Home() {
           <div className="w-32 h-1.5 bg-primary rounded"></div>
         </div>
       </div>
-
-  
 
       {/* Top Rated Properties */}
       <div className="max-w-6xl mx-auto px-6 py-20">
