@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import { properties, blogs } from "../data/propertyData";
 
-// FUNCTIONS YOU NEED TO ADD:
-// 1. const [searchTab, setSearchTab] = useState('rooms'); - For tab switching
-// 2. Form submission handlers for search, newsletter, etc.
-// 3. Navigation handlers for buttons (optional - can use <Link> from react-router)
-
 // Property card component
 const PropertyCard = ({
   title,
@@ -104,9 +99,13 @@ export default function Home() {
     }, 1500);
   }, []);
 
-  // Reset visible count when filters change
+  // Reset visible count when filters change, but avoid cascading renders
   useEffect(() => {
-    setVisibleCount(3);
+    // Only update after initial mount
+    if (visibleCount !== 3) {
+      setVisibleCount(3);
+    }
+    // eslint-disable-next-line
   }, [selectedTab, searchTerm, maxPrice, sortBy]);
 
   // Search button handler
@@ -350,6 +349,7 @@ export default function Home() {
           <h2 className="text-4xl font-bold text-text-primary mb-4">
             Latest on the Property Listing
           </h2>
+           <div className="w-32 h-1.5 bg-primary rounded mb-12"></div>
           {isLoading ? (
             <div className="text-center py-20">
               <div className="text-primary text-2xl animate-pulse">
@@ -375,7 +375,7 @@ export default function Home() {
               ))}
             </div>
           )}
-          <div className="w-32 h-1.5 bg-primary rounded"></div>
+         
         </div>
       </div>
 
@@ -419,36 +419,21 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <PropertyCard
-            title="Well Furnished Apartment"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            image="/images/property1.svg"
+          {properties.filter((property) => property.isFeatured === true).slice(0,4).map((property)=> (
+             <PropertyCard
+             key={property.id}
+            title={property.title}
+            location={property.location}
+            bedrooms={property.bedrooms}
+            bathrooms={property.bathrooms}
+            parking={property.parking}
+            pets={property.pets}
+            price={property.price}
+            isTopRated={property.isTopRated}
+            image={property.image}
           />
-          <PropertyCard
-            title="Blue Door Villa Modern"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            image="/images/property2.svg"
-          />
-          <PropertyCard
-            title="Beach House Apartment"
-            location="100 Smart Street, LA, USA"
-            bedrooms="3"
-            bathrooms="1"
-            parking="2"
-            pets="0"
-            price="$1000 - 5000 USD"
-            image="/images/property3.svg"
-          />
+          ))}
+    
         </div>
       </div>
 

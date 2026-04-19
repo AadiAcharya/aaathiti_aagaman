@@ -1,0 +1,281 @@
+import React, { useState } from "react";
+
+const EnhancedSignUp = () => {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
+  };
+
+  const getPasswordStrength = (password) => {
+    if (!password) return { strength: "weak", label: "Weak", color: "bg-red-500" };
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*]/.test(password);
+    const length = password.length;
+
+    let strengthScore = 0;
+    if (hasUpper) strengthScore++;
+    if (hasLower) strengthScore++;
+    if (hasNumber) strengthScore++;
+    if (hasSpecial) strengthScore++;
+    if (length >= 12) strengthScore++;
+
+    if (strengthScore >= 4) return { strength: "strong", label: "Strong", color: "bg-green-500" };
+    if (strengthScore >= 2) return { strength: "medium", label: "Medium", color: "bg-yellow-500" };
+    return { strength: "weak", label: "Weak", color: "bg-red-500" };
+  };
+
+  // Add your validation logic here
+
+  const validateString= ()=>{
+    const newErrors ={};
+
+    // name empty
+    if (form.name.trim === ""){
+      newErrors.name = "Name is required"
+    }
+     // emeil empty
+    if (form.email.trim === ""){
+      newErrors.email= "email is required"
+    }
+
+    // password empty
+    if (form.password.trim === ""){
+      newErrors.password = "Password is required"
+    }
+    // confirm password empty
+    if (form.confirmPassword.trim === ""){
+      newErrors.password = "Password is required"
+    }
+
+    // if email format is valid
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)){
+      newErrors.email= "invalid email format"
+    }
+
+    // if password is less ahn 8
+    if (form.password.length<8){
+      newErrors.password= "password must be 8 character long"
+    }
+
+    // if both password match
+    if (form.password !== form.confirmPassword){
+      newErrors.password =" both password needs to be same"
+    }
+
+setErrors(newErrors)
+return Object.key(newErrors).length === 0;
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Add your submission logic here
+  };
+
+  const passwordStrength = getPasswordStrength(form.password);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-background)', color: 'var(--color-text-primary)' }}>
+      <div className="w-full max-w-md rounded-2xl shadow-lg p-6 space-y-5" style={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid rgba(100, 116, 139, 0.2)' }}>
+        <div className="text-center space-y-1">
+          <p className="font-medium text-lg" style={{ color: 'var(--color-text-primary)' }}>Create Account</p>
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Join us today</p>
+        </div>
+        <hr style={{ borderColor: 'rgba(100, 116, 139, 0.2)' }} />
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name Field */}
+          <div>
+            <label className="block mb-1 text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Full Name</label>
+            <input
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              className="w-full rounded-lg px-3 py-2 outline-none focus:ring-2 transition"
+              style={{
+                border: errors.name ? '1px solid #ef4444' : '1px solid rgba(100, 116, 139, 0.2)',
+                backgroundColor: 'var(--color-background)',
+                color: 'var(--color-text-primary)',
+                boxShadow: errors.name ? '0 0 0 2px rgba(239, 68, 68, 0.1)' : 'none'
+              }}
+              placeholder="John Doe"
+            />
+            {errors.name && <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{errors.name}</p>}
+          </div>
+
+          {/* Email Field */}
+          <div>
+            <label className="block mb-1 text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Email Address</label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              className="w-full rounded-lg px-3 py-2 outline-none focus:ring-2 transition"
+              style={{
+                border: errors.email ? '1px solid #ef4444' : '1px solid rgba(100, 116, 139, 0.2)',
+                backgroundColor: 'var(--color-background)',
+                color: 'var(--color-text-primary)',
+                boxShadow: errors.email ? '0 0 0 2px rgba(239, 68, 68, 0.1)' : 'none'
+              }}
+              placeholder="you@example.com"
+            />
+            {errors.email && <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{errors.email}</p>}
+          </div>
+
+          {/* Password Field */}
+          <div>
+            <label className="block mb-1 text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Password</label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                className="w-full rounded-lg px-3 py-2 outline-none focus:ring-2 transition pr-10"
+                style={{
+                  border: errors.password ? '1px solid #ef4444' : '1px solid rgba(100, 116, 139, 0.2)',
+                  backgroundColor: 'var(--color-background)',
+                  color: 'var(--color-text-primary)',
+                  boxShadow: errors.password ? '0 0 0 2px rgba(239, 68, 68, 0.1)' : 'none'
+                }}
+                placeholder="At least 8 characters"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-2.5 text-lg transition"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                {showPassword ? "👁️" : "👁️‍🗨️"}
+              </button>
+            </div>
+            {errors.password && <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{errors.password}</p>}
+
+            {/* Password Strength Indicator */}
+            {form.password && (
+              <div className="mt-2 space-y-1">
+                <div className="flex gap-1">
+                  {[0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      className="flex-1 h-1 rounded-full transition"
+                      style={{
+                        backgroundColor: passwordStrength.strength === "strong"
+                          ? "#10b981"
+                          : passwordStrength.strength === "medium"
+                          ? i < 1 ? "#f59e0b" : "rgba(100, 116, 139, 0.2)"
+                          : i < 1 ? "#ef4444" : "rgba(100, 116, 139, 0.2)"
+                      }}
+                    />
+                  ))}
+                </div>
+                <p className="text-xs font-medium" style={{
+                  color: passwordStrength.strength === "strong"
+                    ? "#10b981"
+                    : passwordStrength.strength === "medium"
+                    ? "#f59e0b"
+                    : "#ef4444"
+                }}>
+                  {passwordStrength.label} password
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Confirm Password Field */}
+          <div>
+            <label className="block mb-1 text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Confirm Password</label>
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                className="w-full rounded-lg px-3 py-2 outline-none focus:ring-2 transition pr-10"
+                style={{
+                  border: errors.confirmPassword ? '1px solid #ef4444' : '1px solid rgba(100, 116, 139, 0.2)',
+                  backgroundColor: 'var(--color-background)',
+                  color: 'var(--color-text-primary)',
+                  boxShadow: errors.confirmPassword ? '0 0 0 2px rgba(239, 68, 68, 0.1)' : 'none'
+                }}
+                placeholder="Re-enter your password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-2.5 text-lg transition"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+              </button>
+            </div>
+            {errors.confirmPassword && <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{errors.confirmPassword}</p>}
+            {form.password && form.confirmPassword && form.password === form.confirmPassword && !errors.confirmPassword && (
+              <p className="text-xs mt-1" style={{ color: '#10b981' }}>✓ Passwords match</p>
+            )}
+          </div>
+
+          {/* Sign Up Button */}
+          <button
+            type="submit"
+            className="w-full text-white rounded-full px-6 py-3 font-semibold transition hover:opacity-90"
+            style={{ backgroundColor: 'var(--color-primary)' }}
+          >
+            Sign Up
+          </button>
+        </form>
+
+        <hr style={{ borderColor: 'rgba(100, 116, 139, 0.2)' }} />
+
+        {/* Already Have Account */}
+        <div className="text-center">
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            Already have an account?{" "}
+            <a
+              href="/sign-in"
+              className="font-semibold hover:underline"
+              style={{ color: 'var(--color-primary)' }}
+            >
+              Sign In
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EnhancedSignUp;

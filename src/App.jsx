@@ -22,7 +22,7 @@ import TransactionHistory from "./components/host/TransactionHistory.jsx";
 import NotificationsPage from "./components/host/NotificationsPage.jsx";
 import MessagesPage from "./components/host/MessagesPage.jsx";
 import SignIn from "./components/sign/SignIn.jsx";
-import Login from "./components/sign/Login.jsx";
+import SignUp from "./components/sign/SignUp.jsx";
 import MainLayout from "./MainLayout";
 import Host from "./components/Host.jsx";
 import Help from "./components/Help.jsx";
@@ -60,7 +60,7 @@ export default function App() {
             <Route path="notification" element={<NotificationsPage />} />
             <Route path="message" element={<MessagesPage />} />
             <Route path="sign-in" element={<SignIn />} />
-            <Route path="sign-up" element={<Login />} />
+            <Route path="sign-up" element={<SignUp />} />
             <Route path="host" element={<Host />} />
             <Route path="help" element={<Help />} />
             <Route path="how-it-works" element={<HowItWorks />} />
