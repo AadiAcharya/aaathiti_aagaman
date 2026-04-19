@@ -1,51 +1,30 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 
-const EnhancedSignUp = () => {
-  const [form, setForm] = useState({
+const SignUp = () => {
+
+  const [form, setForm] = useState[{
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-  });
+  }]
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+
+   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [errors, setErrors] = useState({});
 
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-    if (errors[name]) {
-      setErrors({ ...errors, [name]: "" });
+  const handelChange = (e)=>{
+    const {name, value} = e.target
+    setConfirmPassword({...form, [name]: value})
+    if (errors[name]){
+      setErrors({...errors, [name]:""})
     }
-  };
+  }
 
-  const getPasswordStrength = (password) => {
-    if (!password) return { strength: "weak", label: "Weak", color: "bg-red-500" };
-    const hasUpper = /[A-Z]/.test(password);
-    const hasLower = /[a-z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
-    const hasSpecial = /[!@#$%^&*]/.test(password);
-    const length = password.length;
-
-    let strengthScore = 0;
-    if (hasUpper) strengthScore++;
-    if (hasLower) strengthScore++;
-    if (hasNumber) strengthScore++;
-    if (hasSpecial) strengthScore++;
-    if (length >= 12) strengthScore++;
-
-    if (strengthScore >= 4) return { strength: "strong", label: "Strong", color: "bg-green-500" };
-    if (strengthScore >= 2) return { strength: "medium", label: "Medium", color: "bg-yellow-500" };
-    return { strength: "weak", label: "Weak", color: "bg-red-500" };
-  };
-
-  // Add your validation logic here
-
-  const validateString= ()=>{
+    const validateString= ()=>{
     const newErrors ={};
 
     // name empty
@@ -89,21 +68,12 @@ return Object.key(newErrors).length === 0;
 
   }
 
-
-
-
-
-
-
-
-
-
-  const handleSubmit = (e) => {
+  const handelSubmit = (e)=>{
     e.preventDefault();
-    // Add your submission logic here
-  };
+  }
 
-  const passwordStrength = getPasswordStrength(form.password);
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-background)', color: 'var(--color-text-primary)' }}>
@@ -114,7 +84,8 @@ return Object.key(newErrors).length === 0;
         </div>
         <hr style={{ borderColor: 'rgba(100, 116, 139, 0.2)' }} />
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handelSubmit} className="space-y-4">
+
           {/* Name Field */}
           <div>
             <label className="block mb-1 text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Full Name</label>
@@ -122,17 +93,15 @@ return Object.key(newErrors).length === 0;
               type="text"
               name="name"
               value={form.name}
-              onChange={handleChange}
+              onChange={handelChange}
               className="w-full rounded-lg px-3 py-2 outline-none focus:ring-2 transition"
               style={{
-                border: errors.name ? '1px solid #ef4444' : '1px solid rgba(100, 116, 139, 0.2)',
+                border: '1px solid rgba(100, 116, 139, 0.2)',
                 backgroundColor: 'var(--color-background)',
-                color: 'var(--color-text-primary)',
-                boxShadow: errors.name ? '0 0 0 2px rgba(239, 68, 68, 0.1)' : 'none'
+                color: 'var(--color-text-primary)'
               }}
               placeholder="John Doe"
             />
-            {errors.name && <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{errors.name}</p>}
           </div>
 
           {/* Email Field */}
@@ -141,18 +110,14 @@ return Object.key(newErrors).length === 0;
             <input
               type="email"
               name="email"
-              value={form.email}
-              onChange={handleChange}
               className="w-full rounded-lg px-3 py-2 outline-none focus:ring-2 transition"
               style={{
-                border: errors.email ? '1px solid #ef4444' : '1px solid rgba(100, 116, 139, 0.2)',
+                border: '1px solid rgba(100, 116, 139, 0.2)',
                 backgroundColor: 'var(--color-background)',
-                color: 'var(--color-text-primary)',
-                boxShadow: errors.email ? '0 0 0 2px rgba(239, 68, 68, 0.1)' : 'none'
+                color: 'var(--color-text-primary)'
               }}
               placeholder="you@example.com"
             />
-            {errors.email && <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{errors.email}</p>}
           </div>
 
           {/* Password Field */}
@@ -160,59 +125,24 @@ return Object.key(newErrors).length === 0;
             <label className="block mb-1 text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Password</label>
             <div className="relative">
               <input
-                type={showPassword ? "text" : "password"}
+                type="password"
                 name="password"
-                value={form.password}
-                onChange={handleChange}
                 className="w-full rounded-lg px-3 py-2 outline-none focus:ring-2 transition pr-10"
                 style={{
-                  border: errors.password ? '1px solid #ef4444' : '1px solid rgba(100, 116, 139, 0.2)',
+                  border: '1px solid rgba(100, 116, 139, 0.2)',
                   backgroundColor: 'var(--color-background)',
-                  color: 'var(--color-text-primary)',
-                  boxShadow: errors.password ? '0 0 0 2px rgba(239, 68, 68, 0.1)' : 'none'
+                  color: 'var(--color-text-primary)'
                 }}
                 placeholder="At least 8 characters"
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-2.5 text-lg transition"
                 style={{ color: 'var(--color-text-secondary)' }}
               >
-                {showPassword ? "👁️" : "👁️‍🗨️"}
+                👁️‍🗨️
               </button>
             </div>
-            {errors.password && <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{errors.password}</p>}
-
-            {/* Password Strength Indicator */}
-            {form.password && (
-              <div className="mt-2 space-y-1">
-                <div className="flex gap-1">
-                  {[0, 1, 2].map((i) => (
-                    <div
-                      key={i}
-                      className="flex-1 h-1 rounded-full transition"
-                      style={{
-                        backgroundColor: passwordStrength.strength === "strong"
-                          ? "#10b981"
-                          : passwordStrength.strength === "medium"
-                          ? i < 1 ? "#f59e0b" : "rgba(100, 116, 139, 0.2)"
-                          : i < 1 ? "#ef4444" : "rgba(100, 116, 139, 0.2)"
-                      }}
-                    />
-                  ))}
-                </div>
-                <p className="text-xs font-medium" style={{
-                  color: passwordStrength.strength === "strong"
-                    ? "#10b981"
-                    : passwordStrength.strength === "medium"
-                    ? "#f59e0b"
-                    : "#ef4444"
-                }}>
-                  {passwordStrength.label} password
-                </p>
-              </div>
-            )}
           </div>
 
           {/* Confirm Password Field */}
@@ -220,32 +150,24 @@ return Object.key(newErrors).length === 0;
             <label className="block mb-1 text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Confirm Password</label>
             <div className="relative">
               <input
-                type={showConfirmPassword ? "text" : "password"}
+                type="password"
                 name="confirmPassword"
-                value={form.confirmPassword}
-                onChange={handleChange}
                 className="w-full rounded-lg px-3 py-2 outline-none focus:ring-2 transition pr-10"
                 style={{
-                  border: errors.confirmPassword ? '1px solid #ef4444' : '1px solid rgba(100, 116, 139, 0.2)',
+                  border: '1px solid rgba(100, 116, 139, 0.2)',
                   backgroundColor: 'var(--color-background)',
-                  color: 'var(--color-text-primary)',
-                  boxShadow: errors.confirmPassword ? '0 0 0 2px rgba(239, 68, 68, 0.1)' : 'none'
+                  color: 'var(--color-text-primary)'
                 }}
                 placeholder="Re-enter your password"
               />
               <button
                 type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute right-3 top-2.5 text-lg transition"
                 style={{ color: 'var(--color-text-secondary)' }}
               >
-                {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                👁️‍🗨️
               </button>
             </div>
-            {errors.confirmPassword && <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{errors.confirmPassword}</p>}
-            {form.password && form.confirmPassword && form.password === form.confirmPassword && !errors.confirmPassword && (
-              <p className="text-xs mt-1" style={{ color: '#10b981' }}>✓ Passwords match</p>
-            )}
           </div>
 
           {/* Sign Up Button */}
@@ -265,7 +187,7 @@ return Object.key(newErrors).length === 0;
           <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
             Already have an account?{" "}
             <a
-              href="/sign-in"
+              href="#"
               className="font-semibold hover:underline"
               style={{ color: 'var(--color-primary)' }}
             >
@@ -278,4 +200,4 @@ return Object.key(newErrors).length === 0;
   );
 };
 
-export default EnhancedSignUp;
+export default SignUp;
