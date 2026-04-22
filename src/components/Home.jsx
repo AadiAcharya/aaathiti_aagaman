@@ -3,6 +3,7 @@ import { properties, blogs } from "../data/propertyData";
 
 // Property card component
 const PropertyCard = ({
+  id,
   title,
   location,
   bedrooms,
@@ -12,6 +13,8 @@ const PropertyCard = ({
   price,
   isTopRated,
   image,
+  isFavorite,
+  onToggleFavorite,
 }) => (
   <div className="bg-bg-secondary rounded-lg overflow-hidden hover:shadow-lg transition border border-text-muted/20">
     <div className="bg-text-muted/10 h-48 relative overflow-hidden">
@@ -20,6 +23,12 @@ const PropertyCard = ({
         alt={title}
         className="w-full h-full object-cover hover:scale-110 transition"
       />
+      <button
+        onClick={() => onToggleFavorite(id)}
+        className="absolute top-3 left-3 bg-background/80 hover:bg-background text-2xl px-3 py-1 rounded-full transition"
+      >
+        {isFavorite ? "❤️" : "🤍"}
+      </button>
       {isTopRated && (
         <div className="absolute top-3 right-3 bg-accent text-background px-3 py-1 rounded-full text-xs font-semibold">
           ★★★★★
@@ -75,6 +84,8 @@ const sortProperties = (properties, sortBy) => {
   return sorted;
 };
 
+
+
 export default function Home() {
   // UI state
   const [selectedTab, setSelectedTab] = useState("rooms");
@@ -83,6 +94,16 @@ export default function Home() {
   const [maxPrice, setMaxPrice] = useState(10000);
   const [sortBy, setSortBy] = useState("default");
   const [visibleCount, setVisibleCount] = useState(3);
+  const [favorites, setFavorites] = useState([]);
+
+  // Toggle favorite function
+  const toggleFavorite = (propertyId) => {
+    if (favorites.includes(propertyId)) {
+      setFavorites(favorites.filter((id) => id !== propertyId));
+    } else {
+      setFavorites([...favorites, propertyId]);
+    }
+  };
 
   // Search/filter state for the search button
   const [appliedSearch, setAppliedSearch] = useState({
@@ -103,6 +124,7 @@ export default function Home() {
   useEffect(() => {
     // Only update after initial mount
     if (visibleCount !== 3) {
+      // eslint-disable-next-line
       setVisibleCount(3);
     }
     // eslint-disable-next-line
@@ -314,6 +336,8 @@ export default function Home() {
                 pets={property.pets}
                 price={property.price}
                 image={property.image}
+                isFavorite={favorites.includes(property.id)}
+                onToggleFavorite={toggleFavorite}
               />
             ))}
         </div>
@@ -349,7 +373,7 @@ export default function Home() {
           <h2 className="text-4xl font-bold text-text-primary mb-4">
             Latest on the Property Listing
           </h2>
-           <div className="w-32 h-1.5 bg-primary rounded mb-12"></div>
+          <div className="w-32 h-1.5 bg-primary rounded mb-12"></div>
           {isLoading ? (
             <div className="text-center py-20">
               <div className="text-primary text-2xl animate-pulse">
@@ -370,12 +394,13 @@ export default function Home() {
                   // price={property.price}
                   // image={property.image}
                   // isTopRated={property.isTopRated}
+                  //    isFavorite={favorites.include(property.Id)}
+                  // onToggleFavorite={toggleFavorite}
                   {...property}
                 />
               ))}
             </div>
           )}
-         
         </div>
       </div>
 
@@ -404,6 +429,8 @@ export default function Home() {
                 price={property.price}
                 isTopRated={property.isTopRated}
                 image={property.image}
+                isFavorite={favorites.includes(property.Id)}
+                onToggleFavorite={toggleFavorite}
               />
             ))}
         </div>
@@ -419,23 +446,53 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {properties.filter((property) => property.isFeatured === true).slice(0,4).map((property)=> (
-             <PropertyCard
-             key={property.id}
-            title={property.title}
-            location={property.location}
-            bedrooms={property.bedrooms}
-            bathrooms={property.bathrooms}
-            parking={property.parking}
-            pets={property.pets}
-            price={property.price}
-            isTopRated={property.isTopRated}
-            image={property.image}
-          />
-          ))}
-    
+          {properties
+            .filter((property) => property.isFeatured === true)
+            .slice(0, 4)
+            .map((property) => (
+              <PropertyCard
+                key={property.id}
+                title={property.title}
+                location={property.location}
+                bedrooms={property.bedrooms}
+                bathrooms={property.bathrooms}
+                parking={property.parking}
+                pets={property.pets}
+                price={property.price}
+                isTopRated={property.isTopRated}
+                image={property.image}
+                isFavorite={favorites.includes(property.Id)}
+                onToggleFavorite={toggleFavorite}
+              />
+            ))}
         </div>
       </div>
+
+      {favorites.length > 0 && (
+        <div>
+          <div>
+            <h2>My favorites ({favorites.length})</h2>
+            <div className="w-32 h-1.5 bg-primary rounded"></div>
+          </div>
+          <div>
+            {properties.filter(p => favorites.includes(p.id)).map(property =>(
+              <propertyCard 
+               key={property.id}
+                title={property.title}
+                location={property.location}
+                bedrooms={property.bedrooms}
+                bathrooms={property.bathrooms}
+                parking={property.parking}
+                pets={property.pets}
+                price={property.price}
+                isTopRated={property.isTopRated}
+                image={property.image}
+                isFavorite={true}
+                onToggleFavorite={toggleFavorite}/>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Try Hosting */}
       <div className="bg-bg-secondary py-20 my-16">
