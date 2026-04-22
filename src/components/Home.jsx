@@ -84,17 +84,23 @@ const sortProperties = (properties, sortBy) => {
   return sorted;
 };
 
-
-
 export default function Home() {
   // UI state
   const [selectedTab, setSelectedTab] = useState("rooms");
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [maxPrice, setMaxPrice] = useState(10000);
+  const [email, setEmail] = useState("");
   const [sortBy, setSortBy] = useState("default");
   const [visibleCount, setVisibleCount] = useState(3);
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState(() => {
+    const saved = localStorage.getItem("favorites");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
 
   // Toggle favorite function
   const toggleFavorite = (propertyId) => {
@@ -138,6 +144,43 @@ export default function Home() {
       price: maxPrice,
       sort: sortBy,
     });
+  };
+
+  // Reset filters function
+  const resetFilters = () => {
+    setSearchTerm("");
+    setMaxPrice(10000);
+    setSortBy("default");
+    setVisibleCount(3);
+    setAppliedSearch({
+      term: "",
+      tab: "rooms",
+      price: 10000,
+      sort: "default",
+    });
+    setSelectedTab("rooms");
+  };
+
+  const filteredProperties = properties.filter((property) => {
+    const matchesCategory = property.category === appliedSearch.tab;
+    const matchesSearch =
+      appliedSearch.term === "" ||
+      property.location
+        .toLowerCase()
+        .includes(appliedSearch.term.toLowerCase()) ||
+      property.title.toLowerCase().includes(appliedSearch.term.toLowerCase());
+    const matchesPrice = extractPrice(property.price) <= appliedSearch.price;
+    return matchesCategory && matchesSearch && matchesPrice;
+  });
+
+  // newsLetter
+  const handleNewsletterSubmit = () => {
+    if (email) {
+      alert(`thank you! We'll send updates to Your ${email}`);
+      setEmail("");
+    } else {
+      alert("please enter your email");
+    }
   };
 
   return (
@@ -279,12 +322,23 @@ export default function Home() {
             </div>
 
             {/* Search Button - YOU ADD: onClick handler */}
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-4">
+              {(searchTerm !== "" ||
+                maxPrice !== 10000 ||
+                sortBy !== "default" ||
+                selectedTab !== "rooms") && (
+                <button
+                  onClick={resetFilters}
+                  className="bg-primary hover:bg-primary-hover text-white rounded-full px-8 py-3 font-semibold transition"
+                >
+                  Clear Filters
+                </button>
+              )}
               <button
                 onClick={handleSearch}
                 className="bg-primary hover:bg-primary-hover text-white rounded-full px-8 py-3 font-semibold transition"
               >
-                Searchh
+                Search
               </button>
             </div>
           </div>
@@ -292,12 +346,16 @@ export default function Home() {
       </div>
 
       {/* Nearby Properties */}
+
       <div className="max-w-6xl mx-auto px-6 py-20">
         <div className="mb-12 flex justify-between items-center">
           <div>
             <h2 className="text-4xl font-bold text-text-primary mb-4">
               Nearby Listed Properties
             </h2>
+            <span className="text-text-secondary text-2xl ml-3">
+              ({filteredProperties.length} found)
+            </span>
             <div className="w-32 h-1.5 bg-primary rounded"></div>
           </div>
           <button className="text-accent font-semibold hover:text-primary transition">
@@ -306,28 +364,12 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {sortProperties(
-            properties.filter((property) => {
-              const matchesCategory = property.category === appliedSearch.tab;
-
-              const matchesSearch =
-                appliedSearch.term === "" ||
-                property.location
-                  .toLowerCase()
-                  .includes(appliedSearch.term.toLowerCase()) ||
-                property.title
-                  .toLowerCase()
-                  .includes(appliedSearch.term.toLowerCase());
-              const matchesPrice =
-                extractPrice(property.price) <= appliedSearch.price;
-              return matchesCategory && matchesSearch && matchesPrice;
-            }),
-            appliedSearch.sort,
-          )
+          {sortProperties(filteredProperties, sortBy)
             .slice(0, visibleCount)
             .map((property) => (
               <PropertyCard
                 key={property.id}
+                id={property.id}
                 title={property.title}
                 location={property.location}
                 bedrooms={property.bedrooms}
@@ -385,18 +427,18 @@ export default function Home() {
               {properties.slice(0, 4).map((property) => (
                 <PropertyCard
                   key={property.id}
-                  // title={property.title}
-                  // location={property.location}
-                  // bedrooms={property.bedrooms}
-                  // bathrooms={property.bathrooms}
-                  // parking={property.parking}
-                  // pets={property.pets}
-                  // price={property.price}
-                  // image={property.image}
-                  // isTopRated={property.isTopRated}
-                  //    isFavorite={favorites.include(property.Id)}
-                  // onToggleFavorite={toggleFavorite}
-                  {...property}
+                  id={property.id}
+                  title={property.title}
+                  location={property.location}
+                  bedrooms={property.bedrooms}
+                  bathrooms={property.bathrooms}
+                  parking={property.parking}
+                  pets={property.pets}
+                  price={property.price}
+                  image={property.image}
+                  isTopRated={property.isTopRated}
+                  isFavorite={favorites.includes(property.id)}
+                  onToggleFavorite={toggleFavorite}
                 />
               ))}
             </div>
@@ -420,6 +462,7 @@ export default function Home() {
             .map((property) => (
               <PropertyCard
                 key={property.id}
+                id={property.id}
                 title={property.title}
                 location={property.location}
                 bedrooms={property.bedrooms}
@@ -429,7 +472,7 @@ export default function Home() {
                 price={property.price}
                 isTopRated={property.isTopRated}
                 image={property.image}
-                isFavorite={favorites.includes(property.Id)}
+                isFavorite={favorites.includes(property.id)}
                 onToggleFavorite={toggleFavorite}
               />
             ))}
@@ -452,6 +495,7 @@ export default function Home() {
             .map((property) => (
               <PropertyCard
                 key={property.id}
+                id={property.id}
                 title={property.title}
                 location={property.location}
                 bedrooms={property.bedrooms}
@@ -461,35 +505,42 @@ export default function Home() {
                 price={property.price}
                 isTopRated={property.isTopRated}
                 image={property.image}
-                isFavorite={favorites.includes(property.Id)}
+                isFavorite={favorites.includes(property.id)}
                 onToggleFavorite={toggleFavorite}
               />
             ))}
         </div>
       </div>
 
+      {/* favorite secion */}
       {favorites.length > 0 && (
-        <div>
-          <div>
-            <h2>My favorites ({favorites.length})</h2>
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <div className="mb-12">
+            <h2 className="text-4xl font-bold text-text-primary mb-4">
+              My Favorites ({favorites.length})
+            </h2>
             <div className="w-32 h-1.5 bg-primary rounded"></div>
           </div>
-          <div>
-            {properties.filter(p => favorites.includes(p.id)).map(property =>(
-              <propertyCard 
-               key={property.id}
-                title={property.title}
-                location={property.location}
-                bedrooms={property.bedrooms}
-                bathrooms={property.bathrooms}
-                parking={property.parking}
-                pets={property.pets}
-                price={property.price}
-                isTopRated={property.isTopRated}
-                image={property.image}
-                isFavorite={true}
-                onToggleFavorite={toggleFavorite}/>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {properties
+              .filter((p) => favorites.includes(p.id))
+              .map((property) => (
+                <PropertyCard
+                  key={property.id}
+                  id={property.id}
+                  title={property.title}
+                  location={property.location}
+                  bedrooms={property.bedrooms}
+                  bathrooms={property.bathrooms}
+                  parking={property.parking}
+                  pets={property.pets}
+                  price={property.price}
+                  isTopRated={property.isTopRated}
+                  image={property.image}
+                  isFavorite={true}
+                  onToggleFavorite={toggleFavorite}
+                />
+              ))}
           </div>
         </div>
       )}
@@ -630,6 +681,37 @@ export default function Home() {
               alt="About Us"
               className="w-full h-full object-cover"
             />
+          </div>
+        </div>
+      </div>
+      {/* Newsletter Section */}
+      <div className="bg-bg-secondary py-12 mt-16">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex gap-8 items-center">
+            <div>
+              <h3 className="text-2xl font-bold text-text-primary">
+                NEWSLETTER
+              </h3>
+              <p className="text-text-secondary">Stay Up to Date</p>
+            </div>
+            <div className="flex-1 flex gap-4">
+              <input
+                type="email"
+                placeholder="Your Email..."
+                value={email}
+                onKeyPress={(e) =>
+                  e.key === "Enter" && handleNewsletterSubmit()
+                }
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 bg-background text-text-primary placeholder-text-muted rounded-full py-3 px-6 focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <button
+                onClick={handleNewsletterSubmit}
+                className="bg-primary hover:bg-primary-hover text-white rounded-full px-8 font-semibold transition"
+              >
+                Send
+              </button>
+            </div>
           </div>
         </div>
       </div>
