@@ -1,75 +1,64 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { roomsData, sortRooms } from "../../data/propertyData";
 
 export default function Rooms() {
   const navigate = useNavigate();
-  const rooms = [
-    {
-      id: 1,
-      image:
-        "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&h=400&fit=crop",
-      title: "Luxury King Suite",
-      description: "Spacious room with king bed and city views",
-      price: "$180",
-      amenities: ["WiFi", "TV", "AC", "Mini Bar"],
-      rating: 4.9,
-      reviews: 124,
-    },
-    {
-      id: 2,
-      image:
-        "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&h=400&fit=crop",
-      title: "Deluxe Double Room",
-      description: "Comfortable room with two queen beds",
-      price: "$150",
-      amenities: ["WiFi", "TV", "AC", "Coffee Maker"],
-      rating: 4.7,
-      reviews: 98,
-    },
-    {
-      id: 3,
-      image:
-        "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=600&h=400&fit=crop",
-      title: "Ocean View Suite",
-      description: "Premium room with breathtaking ocean views",
-      price: "$250",
-      amenities: ["WiFi", "TV", "AC", "Balcony", "Mini Bar"],
-      rating: 5.0,
-      reviews: 156,
-    },
-    {
-      id: 4,
-      image:
-        "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&h=400&fit=crop",
-      title: "Standard Single Room",
-      description: "Cozy room perfect for solo travelers",
-      price: "$100",
-      amenities: ["WiFi", "TV", "AC"],
-      rating: 4.5,
-      reviews: 67,
-    },
-    {
-      id: 5,
-      image:
-        "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600&h=400&fit=crop",
-      title: "Family Suite",
-      description: "Large suite ideal for families with children",
-      price: "$280",
-      amenities: ["WiFi", "TV", "AC", "Kitchen", "Living Room"],
-      rating: 4.8,
-      reviews: 142,
-    },
-    {
-      id: 6,
-      image:
-        "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=600&h=400&fit=crop",
-      title: "Executive Business Room",
-      description: "Professional space with work desk and fast WiFi",
-      price: "$200",
-      amenities: ["WiFi", "TV", "AC", "Work Desk", "Coffee Maker"],
-      rating: 4.6,
-      reviews: 89,
-    },
-  ];
+
+  const [roomType, setRoomType] = useState("all");
+  const [priceRange, setPriceRange] = useState("all");
+  const [sortBy, setSortBy] = useState("default");
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [roomFavorites, setRoomFavorites] = useState(()=>{
+    const saved = localStorage.getItem("roomFavorites");
+    return saved ? JSON.parse(saved) : []
+  })
+
+  useEffect(()=>{
+  localStorage.setItem("roomFavorites", JSON.stringify(roomFavorites))
+  }, [roomFavorites])
+
+  const toggleRoomFavorite = (roomId) => {
+    if (roomFavorites.includes(roomId)){
+      setRoomFavorites(roomFavorites.filter((id)=> id !== roomId))
+    }
+    else  {
+      setRoomFavorites([...roomFavorites, roomId] )
+    }
+  }
+
+
+  const getFilteredRooms = () => {
+    let filtered = [...roomsData];
+
+    if (roomType !== "all") {
+      filtered = filtered.filter((room) => room.type === roomType);
+    }
+
+    if (priceRange === "under-150") {
+      filtered = filtered.filter((room) => room.price < 150);
+    } else if (priceRange === "over-250") {
+      filtered = filtered.filter((room) => room.price > 250);
+    } else if (priceRange === "150-250") {
+      filtered = filtered.filter(
+        (room) => room.price >= 150 && room.price <= 250,
+      );
+    }
+
+    return sortRooms(filtered, sortBy);
+  };
+  const filteredRooms = getFilteredRooms();
+
+  useEffect(() => {
+    setVisibleCount(6);
+  }, [roomType, priceRange, sortBy]);
+
+  const resetFilters = () => {
+    setRoomType("all");
+    setPriceRange("all");
+    setSortBy("default");
+    setVisibleCount(6);
+  };
 
   return (
     <div className="min-h-screen">
@@ -86,29 +75,55 @@ export default function Rooms() {
 
         {/* Filters */}
         <div className="mb-12 flex flex-wrap gap-4">
-          <select className="px-6 py-3 bg-bg-secondary border border-primary/10 rounded-lg focus:outline-none focus:border-primary text-text-primary">
-            <option>All Room Types</option>
-            <option>Single</option>
-            <option>Double</option>
-            <option>Suite</option>
+          <select
+            value={roomType}
+            onChange={(e) => setRoomType(e.target.value)}
+            className="px-6 py-3 bg-bg-secondary border border-primary/10 rounded-lg focus:outline-none focus:border-primary text-text-primary"
+          >
+            <option value="all">All Room Types</option>
+            <option value="single">Single</option>
+            <option value="double">Double</option>
+            <option value="suite">Suite</option>
           </select>
-          <select className="px-6 py-3 bg-bg-secondary border border-primary/10 rounded-lg focus:outline-none focus:border-primary text-text-primary">
-            <option>Price Range</option>
-            <option>Under $150</option>
-            <option>$150 - $250</option>
-            <option>Over $250</option>
+          <select
+            value={priceRange}
+            onChange={(e) => setPriceRange(e.target.value)}
+            className="px-6 py-3 bg-bg-secondary border border-primary/10 rounded-lg focus:outline-none focus:border-primary text-text-primary"
+          >
+            <option value="all">Price Range</option>
+            <option value="under-150">Under $150</option>
+            <option value="150-250">$150 - $250</option>
+            <option value="over-250">Over $250</option>
           </select>
-          <select className="px-6 py-3 bg-bg-secondary border border-primary/10 rounded-lg focus:outline-none focus:border-primary text-text-primary">
-            <option>Sort By</option>
-            <option>Price: Low to High</option>
-            <option>Price: High to Low</option>
-            <option>Rating</option>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-6 py-3 bg-bg-secondary border border-primary/10 rounded-lg focus:outline-none focus:border-primary text-text-primary"
+          >
+            <option value="default">Sort By</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Rating</option>
           </select>
+
+          {(roomType !== "all" ||
+            priceRange !== "all" ||
+            sortBy !== "default") && (
+            <button 
+            onClick={resetFilters}
+            className=" px-6 py-3 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg font-semibold transition">
+              Clear Filters
+            </button>
+          )}
+
+          <div className="px-6 py-3 text-text-secondary font-semibold">
+            {filteredRooms.length} rooms found
+          </div>
         </div>
 
         {/* Rooms Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {rooms.map((room) => (
+          {filteredRooms.slice(0, visibleCount).map((room) => (
             <div
               key={room.id}
               onClick={() => navigate(`/room/${room.id}`)}
@@ -123,7 +138,7 @@ export default function Rooms() {
                 />
                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
                   <p className="font-bold text-primary">
-                    {room.price}
+                    {room.priceDisplay}
                     <span className="text-sm font-normal text-text-secondary">
                       /night
                     </span>
@@ -174,20 +189,14 @@ export default function Rooms() {
                   <button className="flex-1 bg-primary hover:bg-primary-hover text-white font-semibold py-3 rounded-lg transition">
                     Book Now
                   </button>
-                  <button className="px-4 border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold rounded-lg transition">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                      />
-                    </svg>
+                  <button 
+                  onClick={(e)=> {
+                    e.stopPropagation()
+                    toggleRoomFavorite(room.id)
+                  }}
+                  className="px-4 border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold rounded-lg transition">
+                    
+                    <span className="text-2xl">{(roomFavorites.includes(room.id) ? "❤️":"🤍")}</span>
                   </button>
                 </div>
               </div>
@@ -197,9 +206,14 @@ export default function Rooms() {
 
         {/* Load More */}
         <div className="mt-12 text-center">
-          <button className="bg-bg-secondary hover:bg-primary/10 text-text-primary font-semibold px-12 py-4 rounded-full border border-primary/10 transition">
-            Load More Rooms
-          </button>
+          {visibleCount < filteredRooms.length && (
+            <button
+              onClick={() => setVisibleCount((prev) => prev + 3)}
+              className="bg-bg-secondary hover:bg-primary/10 text-text-primary font-semibold px-12 py-4 rounded-full border border-primary/10 transition"
+            >
+              Load More Rooms ({filteredRooms.length - visibleCount} remaining )
+            </button>
+          )}
         </div>
       </main>
     </div>
