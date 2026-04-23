@@ -563,3 +563,137 @@ export const searchPropertiesByLocation = (searchTerm) => {
       property.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 };
+
+// ============================================
+// ROOMS DATA (Hotel/Guest Rooms)
+// ============================================
+export const roomsData = [
+  {
+    id: 1,
+    image:
+      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&h=400&fit=crop",
+    title: "Luxury King Suite",
+    description: "Spacious room with king bed and city views",
+    price: 180,
+    priceDisplay: "$180",
+    amenities: ["WiFi", "TV", "AC", "Mini Bar"],
+    rating: 4.9,
+    reviews: 124,
+    type: "suite",
+    maxGuests: 2,
+    bedType: "King",
+    size: "45 sqm",
+  },
+  {
+    id: 2,
+    image:
+      "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&h=400&fit=crop",
+    title: "Deluxe Double Room",
+    description: "Comfortable room with two queen beds",
+    price: 150,
+    priceDisplay: "$150",
+    amenities: ["WiFi", "TV", "AC", "Coffee Maker"],
+    rating: 4.7,
+    reviews: 98,
+    type: "double",
+    maxGuests: 4,
+    bedType: "Queen",
+    size: "38 sqm",
+  },
+  {
+    id: 3,
+    image:
+      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=600&h=400&fit=crop",
+    title: "Ocean View Suite",
+    description: "Premium room with breathtaking ocean views",
+    price: 250,
+    priceDisplay: "$250",
+    amenities: ["WiFi", "TV", "AC", "Balcony", "Mini Bar"],
+    rating: 5.0,
+    reviews: 156,
+    type: "suite",
+    maxGuests: 2,
+    bedType: "King",
+    size: "55 sqm",
+  },
+  {
+    id: 4,
+    image:
+      "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&h=400&fit=crop",
+    title: "Standard Single Room",
+    description: "Cozy room perfect for solo travelers",
+    price: 100,
+    priceDisplay: "$100",
+    amenities: ["WiFi", "TV", "AC"],
+    rating: 4.5,
+    reviews: 67,
+    type: "single",
+    maxGuests: 1,
+    bedType: "Single",
+    size: "25 sqm",
+  },
+  {
+    id: 5,
+    image:
+      "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600&h=400&fit=crop",
+    title: "Family Suite",
+    description: "Large suite ideal for families with children",
+    price: 280,
+    priceDisplay: "$280",
+    amenities: ["WiFi", "TV", "AC", "Kitchen", "Living Room"],
+    rating: 4.8,
+    reviews: 142,
+    type: "suite",
+    maxGuests: 6,
+    bedType: "King + Twin",
+    size: "70 sqm",
+  },
+  {
+    id: 6,
+    image:
+      "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=600&h=400&fit=crop",
+    title: "Executive Business Room",
+    description: "Professional space with work desk and fast WiFi",
+    price: 200,
+    priceDisplay: "$200",
+    amenities: ["WiFi", "TV", "AC", "Work Desk", "Coffee Maker"],
+    rating: 4.6,
+    reviews: 89,
+    type: "double",
+    maxGuests: 2,
+    bedType: "Queen",
+    size: "35 sqm",
+  },
+];
+
+// ============================================
+// HELPER FUNCTIONS FOR ROOMS
+// ============================================
+
+// Get rooms by type
+export const getRoomsByType = (type) => {
+  if (type === "all") return roomsData;
+  return roomsData.filter((room) => room.type === type);
+};
+
+// Get rooms by price range
+export const getRoomsByPriceRange = (min, max) => {
+  return roomsData.filter((room) => room.price >= min && room.price <= max);
+};
+
+// Sort rooms
+export const sortRooms = (rooms, sortBy) => {
+  const sorted = [...rooms];
+
+  if (sortBy === "price-low") {
+    return sorted.sort((a, b) => a.price - b.price);
+  }
+  if (sortBy === "price-high") {
+    return sorted.sort((a, b) => b.price - a.price);
+  }
+  if (sortBy === "rating") {
+    return sorted.sort((a, b) => b.rating - a.rating);
+  }
+
+  return sorted;
+};

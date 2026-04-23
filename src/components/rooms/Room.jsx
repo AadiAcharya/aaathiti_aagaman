@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { roomsData } from "../../data/roomsData";
+import { roomsData } from "../../data/propertyData";
 
 export default function Room() {
   const { roomId } = useParams();

@@ -25,7 +25,7 @@ const PropertyCard = ({
       />
       <button
         onClick={() => onToggleFavorite(id)}
-        className="absolute top-3 left-3 bg-background/80 hover:bg-background text-2xl px-3 py-1 rounded-full transition"
+        className="absolute top-3 left-3  hover:bg-background text-2xl px-3 py-1 rounded-full transition"
       >
         {isFavorite ? "❤️" : "🤍"}
       </button>
