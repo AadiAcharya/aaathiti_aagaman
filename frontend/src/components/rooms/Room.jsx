@@ -1,5 +1,57 @@
 import { useParams } from "react-router-dom";
+// import { useState } from "react";
 import {roomsData} from "../../data/propertyData"
+
+// Icon mapping for amenities
+const amenityIcons = {
+  'WiFi': '📶',
+  'TV': '📺',
+  'AC': '❄️',
+  'Mini Bar': '🍹',
+  'Coffee Maker': '☕',
+  'Balcony': '🌴',
+  'Kitchen': '🍳',
+  'Washer': '🧺',
+  'Work Desk': '💼',
+  'Fireplace': '🔥',
+  'Mountain View': '⛰️',
+  'Hot Tub Access': '🛁',
+  'City View': '🏙️',
+  'Beach Access': '🏖️',
+};
+
+const getAmenityIcon = (amenity) => {
+  return amenityIcons[amenity] || '✓';
+};
+
+
+ // Get initial favorite state from localStorage
+  // const getInitialFavorite = () => {
+  //   if (currentRoom) {
+  //     const saved = localStorage.getItem('roomFavorites');
+  //     const favorites = saved ? JSON.parse(saved) : [];
+  //     return favorites.includes(currentRoom.id);
+  //   }
+  //   return false;
+  // };
+
+  // const [isFavorited, setIsFavorited] = useState(getInitialFavorite());
+
+  // if (!currentRoom){
+  //   return <div className="text-center p-8 text-text-primary">Room not found</div>
+  // }
+
+  // const toggleFavorite = () => {
+  //   const saved = localStorage.getItem('roomFavorites');
+  //   let favorites = saved ? JSON.parse(saved) : [];
+  //   if (isFavorited) {
+  //     favorites = favorites.filter(id => id !== currentRoom.id);
+  //   } else {
+  //     favorites.push(currentRoom.id);
+  //   }
+  //   localStorage.setItem('roomFavorites', JSON.stringify(favorites));
+  //   setIsFavorited(!isFavorited);
+  // };
 
 export default function Room() {
   const { roomId } = useParams();
@@ -50,7 +102,7 @@ export default function Room() {
             <div className="mb-8 flex justify-between items-start">
               <div>
                 <h1 className="text-3xl font-bold text-text-primary mb-2">
-                 {currentRoom?.title}
+                 {currentRoom.title}
                 </h1>
                 <p className="text-text-secondary">Location: {roomId}</p>
               </div>
@@ -92,7 +144,7 @@ export default function Room() {
                 Apartment Description
               </h2>
               <p className="text-text-secondary text-sm leading-relaxed mb-4 bg-bg-secondary/50 p-4 rounded-lg border border-primary/10">
-                Room description placeholder text goes here
+               {currentRoom.description}
               </p>
             </div>
 
@@ -103,38 +155,26 @@ export default function Room() {
               </h2>
               <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-2 rounded-lg hover:bg-primary/5 transition-colors duration-300">
-                    <span className="text-2xl">🍳</span>
-                    <span className="text-text-secondary">Kitchen</span>
+                  {currentRoom.amenities.slice(0,Math.ceil(currentRoom.amenities.length /2)).map((amenity, id)=> (
+                    <div key={id} className="flex items-center gap-4 p-2 rounded-lg hover:bg-primary/5 transition-colors duration-300">
+
+                    <span className="text-2xl">{getAmenityIcon(amenity)}</span>
+                    <span className="text-text-secondary">{amenity}</span>
                   </div>
-                  <div className="flex items-center gap-4 p-2 rounded-lg hover:bg-primary/5 transition-colors duration-300">
-                    <span className="text-2xl">❄️</span>
-                    <span className="text-text-secondary">Air Conditioner</span>
-                  </div>
-                  <div className="flex items-center gap-4 p-2 rounded-lg hover:bg-primary/5 transition-colors duration-300">
-                    <span className="text-2xl">🧺</span>
-                    <span className="text-text-secondary">Washer</span>
-                  </div>
+                  ))}
+                  
                 </div>
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 p-2 rounded-lg hover:bg-primary/5 transition-colors duration-300">
-                    <span className="text-2xl">📺</span>
+                  {currentRoom.amenities.slice(0, Math.ceil(currentRoom.amenities.length / 2)).map((amenity, id) => (
+                     <div key={id} className="flex items-center gap-4 p-2 rounded-lg hover:bg-primary/5 transition-colors duration-300">
+                    <span className="text-2xl">{getAmenityIcon(amenity)}</span>
                     <span className="text-text-secondary">
-                      Television with Netflix
+                      {amenity}
+                      
                     </span>
-                  </div>
-                  <div className="flex items-center gap-4 p-2 rounded-lg hover:bg-primary/5 transition-colors duration-300">
-                    <span className="text-2xl">📶</span>
-                    <span className="text-text-secondary">
-                      Free Wireless Internet
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-4 p-2 rounded-lg hover:bg-primary/5 transition-colors duration-300">
-                    <span className="text-2xl">🌴</span>
-                    <span className="text-text-secondary">
-                      Balcony or Patio
-                    </span>
-                  </div>
+                    </div>
+                  ))}
+                
                 </div>
               </div>
               <button className="mt-6 px-6 py-3 border-2 border-accent rounded-lg font-semibold text-accent hover:bg-accent hover:text-background hover:shadow-lg hover:shadow-accent/20 transition-all duration-300">

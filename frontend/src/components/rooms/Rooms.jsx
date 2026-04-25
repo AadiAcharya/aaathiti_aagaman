@@ -50,7 +50,8 @@ export default function Rooms() {
   const filteredRooms = getFilteredRooms();
 
   useEffect(() => {
-    setVisibleCount(6);
+    //eslint ignore line below
+    setVisibleCount(6)
   }, [roomType, priceRange, sortBy]);
 
   const resetFilters = () => {
