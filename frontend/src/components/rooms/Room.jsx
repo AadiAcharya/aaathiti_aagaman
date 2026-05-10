@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { roomsAPI, bookingsAPI, paymentsAPI } from "../../services/api";
+import { roomsAPI, bookingsAPI } from "../../services/api";
 
 const amenityIcons = {
   WiFi: "📶", TV: "📺", AC: "❄️", "Mini Bar": "🍹",

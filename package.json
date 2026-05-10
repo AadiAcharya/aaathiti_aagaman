@@ -9,7 +9,14 @@
     "preview": "cd frontend && npm run preview",
     "lint": "cd frontend && npm run lint"
   },
-  "keywords": ["hotel", "rental", "booking"],
+  "keywords": [
+    "hotel",
+    "rental",
+    "booking"
+  ],
   "author": "Aadityaa",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.6"
+  }
 }
