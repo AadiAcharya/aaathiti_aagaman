@@ -1,16 +1,39 @@
-import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { authAPI } from "../../services/api";
 
 const SignIn = () => {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
+  const [form, setForm]       = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    if (error) setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Signed in! (Demo only)");
+    if (!form.email || !form.password) {
+      setError("Please fill in all fields");
+      return;
+    }
+    try {
+      setLoading(true);
+      setError("");
+      const { token, user } = await authAPI.login(form);
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      // Redirect based on role
+      if (user.role === "admin") navigate("/admin");
+      else if (user.role === "host") navigate("/room-status");
+      else navigate("/");
+    } catch (err) {
+      setError(err.message || "Invalid email or password");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -25,6 +48,13 @@ const SignIn = () => {
           </p>
         </div>
 
+        {/* Error */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -35,7 +65,8 @@ const SignIn = () => {
               value={form.email}
               onChange={handleChange}
               required
-              className="w-full border border-gray-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-background text-text-primary"
+              disabled={loading}
+              className="w-full border border-gray-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-background text-text-primary disabled:opacity-60"
               placeholder="Enter your email"
             />
           </div>
@@ -48,7 +79,8 @@ const SignIn = () => {
               value={form.password}
               onChange={handleChange}
               required
-              className="w-full border border-gray-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-background text-text-primary"
+              disabled={loading}
+              className="w-full border border-gray-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-background text-text-primary disabled:opacity-60"
               placeholder="Enter your password"
             />
           </div>
@@ -57,21 +89,22 @@ const SignIn = () => {
             <Link to="/sign-up" className="text-primary hover:underline text-sm">
               Don't have an account? Sign Up
             </Link>
-
-            <button
-              type="button"
-              className="text-text-secondary hover:underline text-sm"
-              onClick={() => alert("Password reset coming soon!")}
-            >
+            <button type="button" className="text-text-secondary hover:underline text-sm">
               Forgot password?
             </button>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary-hover transition font-semibold mt-2"
+            disabled={loading}
+            className="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary-hover transition font-semibold mt-2 disabled:opacity-60 flex items-center justify-center gap-2"
           >
-            Sign In
+            {loading ? (
+              <>
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Signing in...
+              </>
+            ) : "Sign In"}
           </button>
         </form>
 
@@ -84,30 +117,25 @@ const SignIn = () => {
 
         {/* Social Buttons */}
         <div className="flex gap-2 text-text-secondary">
-          <button className="flex-1 flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-bg-secondary bg-background transition">
-            Facebook
-          </button>
-
-          <button className="flex-1 flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-bg-secondary bg-background transition">
-            Apple ID
-          </button>
-
-          <button className="flex-1 flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-bg-secondary bg-background transition">
-            Google
-          </button>
+          {["Facebook", "Apple ID", "Google"].map((provider) => (
+            <button
+              key={provider}
+              className="flex-1 flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-bg-secondary bg-background transition text-sm"
+            >
+              {provider}
+            </button>
+          ))}
         </div>
 
         {/* Footer */}
-        <div className="text-xs text-text-secondary text-center mt-4">
+        <div className="text-xs text-text-secondary text-center">
           By signing in, you agree to our{" "}
           <span className="underline cursor-pointer">Terms of Service</span> and{" "}
           <span className="underline cursor-pointer">Privacy Policy</span>.
         </div>
 
-        <div className="text-center mt-2">
-          <span className="text-text-muted">
-            Demo: Try signing in with any email and password.
-          </span>
+        <div className="text-center text-xs text-text-muted">
+          Demo seed accounts: <strong>host@hotel.com</strong> / host1234 &nbsp;|&nbsp; <strong>admin@hotel.com</strong> / admin123
         </div>
       </div>
     </div>
