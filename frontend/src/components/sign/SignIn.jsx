@@ -1,12 +1,19 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { authAPI } from "../../services/api";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const [form, setForm]       = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState("");
+  const [error, setError] = useState("");
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (localStorage.getItem("token") && localStorage.getItem("user")) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -24,7 +31,17 @@ const SignIn = () => {
       setError("");
       const { token, user } = await authAPI.login(form);
       localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+
+      // Add verification fields for BecomeHostModal
+      const userWithVerification = {
+        ...user,
+        emailVerified: true,
+        phoneVerified: true,
+        idVerified: true,
+        age: user.age || 25, // default age if not provided
+      };
+      localStorage.setItem("user", JSON.stringify(userWithVerification));
+
       // Redirect based on role
       if (user.role === "admin") navigate("/admin");
       else if (user.role === "host") navigate("/room-status");
@@ -39,12 +56,12 @@ const SignIn = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background text-text-primary">
       <div className="w-full max-w-md bg-bg-secondary rounded-2xl shadow-lg p-8 space-y-6 border border-gray-700">
-
         {/* Header */}
         <div className="text-center">
           <h2 className="text-3xl font-bold mb-2">Welcome Back!</h2>
           <p className="text-text-secondary text-base">
-            Sign in to access your account, manage bookings, and enjoy personalized recommendations.
+            Sign in to access your account, manage bookings, and enjoy
+            personalized recommendations.
           </p>
         </div>
 
@@ -86,10 +103,16 @@ const SignIn = () => {
           </div>
 
           <div className="flex justify-between items-center">
-            <Link to="/sign-up" className="text-primary hover:underline text-sm">
+            <Link
+              to="/sign-up"
+              className="text-primary hover:underline text-sm"
+            >
               Don't have an account? Sign Up
             </Link>
-            <button type="button" className="text-text-secondary hover:underline text-sm">
+            <button
+              type="button"
+              className="text-text-secondary hover:underline text-sm"
+            >
               Forgot password?
             </button>
           </div>
@@ -104,7 +127,9 @@ const SignIn = () => {
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 Signing in...
               </>
-            ) : "Sign In"}
+            ) : (
+              "Sign In"
+            )}
           </button>
         </form>
 
@@ -135,7 +160,8 @@ const SignIn = () => {
         </div>
 
         <div className="text-center text-xs text-text-muted">
-          Demo seed accounts: <strong>host@hotel.com</strong> / host1234 &nbsp;|&nbsp; <strong>admin@hotel.com</strong> / admin123
+          Demo seed accounts: <strong>host@hotel.com</strong> / host1234
+          &nbsp;|&nbsp; <strong>admin@hotel.com</strong> / admin123
         </div>
       </div>
     </div>

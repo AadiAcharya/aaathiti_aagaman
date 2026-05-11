@@ -1,37 +1,15 @@
-import { useState, useLayoutEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
+import BecomeHostModal from "./BecomeHostModal";
 
 export default function Header() {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [theme, setTheme] = useState(() => {
-    // Initialize theme from localStorage or system preference
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("theme");
-      return saved === "dark" || saved === "light" ? saved : "dark";
-    }
-    return "dark";
-  });
-
-  // Set theme on mount
-  useLayoutEffect(() => {
-    if (typeof window !== "undefined") {
-      const isDark = theme === "dark";
-      if (isDark) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-      localStorage.setItem("theme", theme);
-    }
-  }, [theme]);
-
-  // Toggle theme handler
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
-  };
+  const [hostModalOpen, setHostModalOpen] = useState(false);
 
   // Navigation links data
   const navLinks = [
@@ -45,11 +23,13 @@ export default function Header() {
   const logoStroke = theme === "dark" ? "#64748B" : "#2563EB";
 
   return (
-    <header className={`w-full shadow-sm transition-colors duration-300 ${
-      theme === "dark" 
-        ? "bg-slate-900 border-b border-slate-800" 
-        : "bg-white border-b border-gray-200"
-    }`}>
+    <header
+      className={`w-full shadow-sm transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-slate-900 border-b border-slate-800"
+          : "bg-white border-b border-gray-200"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link
@@ -57,13 +37,7 @@ export default function Header() {
           className="flex items-center gap-2 hover:opacity-80 transition flex-shrink-0"
         >
           <svg width="40" height="40" viewBox="0 0 40 40">
-            <circle
-              cx="20"
-              cy="20"
-              r="19"
-              fill={logoColor}
-              opacity="0.1"
-            />
+            <circle cx="20" cy="20" r="19" fill={logoColor} opacity="0.1" />
             <circle
               cx="20"
               cy="20"
@@ -84,25 +58,27 @@ export default function Header() {
               AA
             </text>
           </svg>
-          <span className={`text-lg font-bold hidden sm:inline transition-colors duration-300 ${
-            theme === "dark" ? "text-slate-100" : "text-gray-900"
-          }`}>
+          <span
+            className={`text-lg font-bold hidden sm:inline transition-colors duration-300 ${
+              theme === "dark" ? "text-slate-100" : "text-gray-900"
+            }`}
+          >
             Aathiti Aagaman
           </span>
         </Link>
 
         {/* Navigation Links - Desktop */}
-        <nav className={`hidden lg:flex items-center gap-8 font-semibold text-base transition-colors duration-300 ${
-          theme === "dark" ? "text-slate-300" : "text-gray-700"
-        }`}>
+        <nav
+          className={`hidden sm:flex items-center gap-4 lg:gap-8 font-semibold text-sm lg:text-base transition-colors duration-300 ${
+            theme === "dark" ? "text-slate-300" : "text-gray-700"
+          }`}
+        >
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
               className={`transition-colors ${
-                theme === "dark"
-                  ? "hover:text-blue-400"
-                  : "hover:text-blue-600"
+                theme === "dark" ? "hover:text-blue-400" : "hover:text-blue-600"
               }`}
             >
               {link.label}
@@ -111,7 +87,7 @@ export default function Header() {
         </nav>
 
         {/* Right Section - Desktop */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden sm:flex items-center gap-2 lg:gap-4">
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
@@ -160,7 +136,7 @@ export default function Header() {
 
           {/* Become A Host Button */}
           <button
-            onClick={() => navigate("/hosting")}
+            onClick={() => setHostModalOpen(true)}
             className={`rounded-full px-6 py-2 font-semibold transition-colors text-white ${
               theme === "dark"
                 ? "bg-blue-600 hover:bg-blue-700"
@@ -169,6 +145,22 @@ export default function Header() {
           >
             Become A Host
           </button>
+
+          {/* Admin Link - Hidden unless user is admin */}
+          {localStorage.getItem("userRole") === "admin" && (
+            <a
+              href="http://localhost:5000/admin"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`rounded-full px-6 py-2 font-semibold transition-colors text-white ${
+                theme === "dark"
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-red-500 hover:bg-red-600"
+              }`}
+            >
+              Admin
+            </a>
+          )}
 
           {/* Auth Section */}
           <div className="relative">
@@ -180,13 +172,25 @@ export default function Header() {
                   : "bg-white border-gray-300 text-gray-600 hover:bg-gray-50"
               }`}
             >
-              <svg
-                className="w-6 h-6"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-              </svg>
+              {localStorage.getItem("user") ? (
+                <div
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold text-white ${
+                    theme === "dark" ? "bg-blue-600" : "bg-blue-500"
+                  }`}
+                >
+                  {JSON.parse(localStorage.getItem("user"))
+                    .name?.charAt(0)
+                    .toUpperCase() || "U"}
+                </div>
+              ) : (
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg>
+              )}
             </button>
 
             {/* Desktop Dropdown Menu */}
@@ -201,35 +205,54 @@ export default function Header() {
                   : "bg-white border-gray-200"
               }`}
             >
+              {!localStorage.getItem("user") && (
+                <>
+                  <button
+                    onClick={() => {
+                      navigate("/sign-in");
+                      setDropdownOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-2 transition ${
+                      theme === "dark"
+                        ? "text-slate-300 hover:bg-slate-700"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate("/sign-up");
+                      setDropdownOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-2 transition ${
+                      theme === "dark"
+                        ? "text-slate-300 hover:bg-slate-700"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
+              <div
+                className={`border-t ${
+                  theme === "dark" ? "border-slate-700" : "border-gray-200"
+                }`}
+              ></div>
               <button
                 onClick={() => {
-                  navigate("/sign-in");
+                  navigate("/profile");
                   setDropdownOpen(false);
                 }}
-                className={`block w-full text-left px-4 py-2 transition ${
+                className={`block w-full text-left px-4 py-2 transition font-semibold ${
                   theme === "dark"
-                    ? "text-slate-300 hover:bg-slate-700"
-                    : "text-gray-700 hover:bg-gray-100"
+                    ? "text-blue-400 hover:bg-slate-700"
+                    : "text-blue-600 hover:bg-gray-100"
                 }`}
               >
-                Sign In
+                👤 Profile
               </button>
-              <button
-                onClick={() => {
-                  navigate("/sign-up");
-                  setDropdownOpen(false);
-                }}
-                className={`block w-full text-left px-4 py-2 transition ${
-                  theme === "dark"
-                    ? "text-slate-300 hover:bg-slate-700"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                Sign Up
-              </button>
-              <div className={`border-t ${
-                theme === "dark" ? "border-slate-700" : "border-gray-200"
-              }`}></div>
               <button
                 onClick={() => {
                   navigate("/account");
@@ -241,7 +264,7 @@ export default function Header() {
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                👤 Account
+                ⚙️ Account
               </button>
               <button
                 onClick={() => {
@@ -269,9 +292,11 @@ export default function Header() {
               >
                 ❤️ Wishlist
               </button>
-              <div className={`border-t ${
-                theme === "dark" ? "border-slate-700" : "border-gray-200"
-              }`}></div>
+              <div
+                className={`border-t ${
+                  theme === "dark" ? "border-slate-700" : "border-gray-200"
+                }`}
+              ></div>
               <button
                 onClick={() => {
                   navigate("/host");
@@ -298,13 +323,39 @@ export default function Header() {
               >
                 ❓ Help Center
               </button>
+              {localStorage.getItem("user") && (
+                <>
+                  <div
+                    className={`border-t ${
+                      theme === "dark" ? "border-slate-700" : "border-gray-200"
+                    }`}
+                  ></div>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem("user");
+                      localStorage.removeItem("userRole");
+                      localStorage.removeItem("hostRequest");
+                      setDropdownOpen(false);
+                      navigate("/");
+                      window.location.reload();
+                    }}
+                    className={`block w-full text-left px-4 py-2 font-semibold transition ${
+                      theme === "dark"
+                        ? "text-red-400 hover:bg-slate-700"
+                        : "text-red-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    🚪 Logout
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
 
         {/* Mobile Menu Button */}
         <button
-          className={`md:hidden transition-colors ${
+          className={`sm:hidden transition-colors ${
             theme === "dark" ? "text-slate-300" : "text-gray-700"
           }`}
           onClick={() => setMenuOpen(!menuOpen)}
@@ -328,11 +379,13 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <nav className={`md:hidden border-t transition-colors duration-300 px-6 py-4 space-y-2 ${
-          theme === "dark"
-            ? "bg-slate-800 border-slate-700"
-            : "bg-gray-50 border-gray-200"
-        }`}>
+        <nav
+          className={`md:hidden border-t transition-colors duration-300 px-6 py-4 space-y-2 ${
+            theme === "dark"
+              ? "bg-slate-800 border-slate-700"
+              : "bg-gray-50 border-gray-200"
+          }`}
+        >
           {/* Desktop Navigation Links for Mobile */}
           {navLinks.map((link) => (
             <Link
@@ -349,43 +402,62 @@ export default function Header() {
             </Link>
           ))}
 
-          <div className={`border-t my-3 ${
-            theme === "dark" ? "border-slate-700" : "border-gray-200"
-          }`}></div>
+          <div
+            className={`border-t my-3 ${
+              theme === "dark" ? "border-slate-700" : "border-gray-200"
+            }`}
+          ></div>
 
-          {/* Auth Links for Mobile */}
+          {/* Auth Links for Mobile - Hidden when logged in */}
+          {!localStorage.getItem("user") && (
+            <>
+              <button
+                onClick={() => {
+                  navigate("/sign-in");
+                  setMenuOpen(false);
+                }}
+                className={`block w-full text-left font-semibold py-2 transition ${
+                  theme === "dark"
+                    ? "text-slate-300 hover:text-blue-400"
+                    : "text-gray-700 hover:text-blue-600"
+                }`}
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/sign-up");
+                  setMenuOpen(false);
+                }}
+                className={`block w-full text-left font-semibold py-2 transition ${
+                  theme === "dark"
+                    ? "text-slate-300 hover:text-blue-400"
+                    : "text-gray-700 hover:text-blue-600"
+                }`}
+              >
+                Sign Up
+              </button>
+
+              <div
+                className={`border-t my-3 ${
+                  theme === "dark" ? "border-slate-700" : "border-gray-200"
+                }`}
+              ></div>
+            </>
+          )}
           <button
             onClick={() => {
-              navigate("/sign-in");
+              navigate("/profile");
               setMenuOpen(false);
             }}
-            className={`block w-full text-left font-semibold py-2 transition ${
+            className={`block w-full text-left py-2 font-semibold transition ${
               theme === "dark"
-                ? "text-slate-300 hover:text-blue-400"
-                : "text-gray-700 hover:text-blue-600"
+                ? "text-blue-400 hover:text-blue-300"
+                : "text-blue-600 hover:text-blue-700"
             }`}
           >
-            Sign In
+            👤 Profile
           </button>
-          <button
-            onClick={() => {
-              navigate("/sign-up");
-              setMenuOpen(false);
-            }}
-            className={`block w-full text-left font-semibold py-2 transition ${
-              theme === "dark"
-                ? "text-slate-300 hover:text-blue-400"
-                : "text-gray-700 hover:text-blue-600"
-            }`}
-          >
-            Sign Up
-          </button>
-
-          <div className={`border-t my-3 ${
-            theme === "dark" ? "border-slate-700" : "border-gray-200"
-          }`}></div>
-
-          {/* Account Links for Mobile */}
           <button
             onClick={() => {
               navigate("/account");
@@ -397,7 +469,7 @@ export default function Header() {
                 : "text-gray-700 hover:text-blue-600"
             }`}
           >
-            👤 Account
+            ⚙️ Account
           </button>
           <button
             onClick={() => {
@@ -426,9 +498,11 @@ export default function Header() {
             ❤️ Wishlist
           </button>
 
-          <div className={`border-t my-3 ${
-            theme === "dark" ? "border-slate-700" : "border-gray-200"
-          }`}></div>
+          <div
+            className={`border-t my-3 ${
+              theme === "dark" ? "border-slate-700" : "border-gray-200"
+            }`}
+          ></div>
 
           {/* Host & Help for Mobile */}
           <button
@@ -458,9 +532,38 @@ export default function Header() {
             ❓ Help Center
           </button>
 
-          <div className={`border-t my-3 ${
-            theme === "dark" ? "border-slate-700" : "border-gray-200"
-          }`}></div>
+          {localStorage.getItem("user") && (
+            <>
+              <div
+                className={`border-t my-3 ${
+                  theme === "dark" ? "border-slate-700" : "border-gray-200"
+                }`}
+              ></div>
+              <button
+                onClick={() => {
+                  localStorage.removeItem("user");
+                  localStorage.removeItem("userRole");
+                  localStorage.removeItem("hostRequest");
+                  setMenuOpen(false);
+                  navigate("/");
+                  window.location.reload();
+                }}
+                className={`block w-full text-left py-2 font-semibold transition ${
+                  theme === "dark"
+                    ? "text-red-400 hover:text-red-300"
+                    : "text-red-600 hover:text-red-700"
+                }`}
+              >
+                🚪 Logout
+              </button>
+            </>
+          )}
+
+          <div
+            className={`border-t my-3 ${
+              theme === "dark" ? "border-slate-700" : "border-gray-200"
+            }`}
+          ></div>
 
           {/* Theme Toggle for Mobile */}
           <button
@@ -521,6 +624,12 @@ export default function Header() {
           </button>
         </nav>
       )}
+
+      {/* Become Host Modal */}
+      <BecomeHostModal
+        isOpen={hostModalOpen}
+        onClose={() => setHostModalOpen(false)}
+      />
     </header>
   );
 }
