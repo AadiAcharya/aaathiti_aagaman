@@ -1,30 +1,36 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Hosting() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-slate-900 text-slate-100"
+          : "bg-gray-50 text-gray-900"
+      }`}
+    >
       {/* Hosting Info Section */}
       <section className="py-20 px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
           <div
-            className="relative bg-bg-secondary rounded-xl overflow-hidden p-12"
+            className={`relative rounded-xl overflow-hidden p-12 ${
+              theme === "dark"
+                ? "bg-slate-800"
+                : "bg-white border border-gray-200"
+            }`}
             data-node-id="2:114"
           >
-            {/* Background Rectangle */}
-            <div
-              className="absolute inset-0 bg-bg-secondary rounded-xl"
-              data-node-id="2:115"
-            ></div>
-
             {/* Content Container */}
             <div className="relative z-10 flex items-center justify-between gap-12">
               {/* Left Side - Text Content */}
               <div className="flex-1 max-w-2xl">
                 {/* Main Title */}
                 <h1
-                  className="font-['Montserrat:Bold',sans-serif] font-bold text-[38px] text-text-primary leading-13 mb-6"
+                  className="font-['Montserrat:Bold',sans-serif] font-bold text-[38px] leading-13 mb-6"
                   data-node-id="2:117"
                 >
                   Try Hosting With Us
@@ -32,7 +38,9 @@ export default function Hosting() {
 
                 {/* Subtitle */}
                 <p
-                  className="font-['Montserrat:Medium',sans-serif] font-medium text-[16px] text-text-secondary leading-13 mb-8"
+                  className={`font-['Montserrat:Medium',sans-serif] font-medium text-[16px] leading-13 mb-8 ${
+                    theme === "dark" ? "text-slate-400" : "text-gray-600"
+                  }`}
                   data-node-id="2:116"
                 >
                   Earn extra just by renting your property...
@@ -41,7 +49,11 @@ export default function Hosting() {
                 {/* Become A Host Button */}
                 <button
                   onClick={() => navigate("/add-property")}
-                  className="bg-primary hover:bg-primary-hover text-white font-['Montserrat:Bold',sans-serif] font-bold text-[15px] px-8 py-3 rounded-full h-15 w-55 transition-colors"
+                  className={`text-white font-['Montserrat:Bold',sans-serif] font-bold text-[15px] px-8 py-3 rounded-full h-15 w-55 transition-colors ${
+                    theme === "dark"
+                      ? "bg-blue-600 hover:bg-blue-700"
+                      : "bg-blue-500 hover:bg-blue-600"
+                  }`}
                   data-node-id="2:118"
                 >
                   <span data-node-id="2:119">Become A Host</span>
@@ -51,7 +63,9 @@ export default function Hosting() {
               {/* Right Side - Banner Image/Text */}
               <div className="flex-1 flex items-center justify-center">
                 <p
-                  className="font-['Montserrat:ExtraBold',sans-serif] font-extrabold text-[100px] text-text-muted leading-none text-right"
+                  className={`font-['Montserrat:ExtraBold',sans-serif] font-extrabold text-[100px] leading-none text-right ${
+                    theme === "dark" ? "text-slate-700" : "text-gray-200"
+                  }`}
                   data-node-id="2:120"
                 >
                   BANNER
@@ -63,44 +77,72 @@ export default function Hosting() {
       </section>
 
       {/* Additional Hosting Benefits Section (Optional) */}
-      <section className="py-20 px-6 md:px-12 bg-bg-secondary/30">
+      <section
+        className={`py-20 px-6 md:px-12 ${
+          theme === "dark" ? "bg-slate-800/50" : "bg-gray-100/50"
+        }`}
+      >
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-text-primary mb-12 text-center">
+          <h2 className="text-3xl font-bold mb-12 text-center">
             Why Host With Us?
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Benefit Card 1 */}
-            <div className="bg-bg-secondary rounded-lg p-8 border border-text-muted/20">
+            <div
+              className={`rounded-lg p-8 ${
+                theme === "dark"
+                  ? "bg-slate-800 border border-slate-700"
+                  : "bg-white border border-gray-200"
+              }`}
+            >
               <div className="text-4xl mb-4">💰</div>
-              <h3 className="text-xl font-bold text-text-primary mb-3">
-                Earn Extra Income
-              </h3>
-              <p className="text-text-secondary">
+              <h3 className="text-xl font-bold mb-3">Earn Extra Income</h3>
+              <p
+                className={`${
+                  theme === "dark" ? "text-slate-400" : "text-gray-600"
+                }`}
+              >
                 Monetize your property and earn passive income by listing with
                 us.
               </p>
             </div>
 
             {/* Benefit Card 2 */}
-            <div className="bg-bg-secondary rounded-lg p-8 border border-text-muted/20">
+            <div
+              className={`rounded-lg p-8 ${
+                theme === "dark"
+                  ? "bg-slate-800 border border-slate-700"
+                  : "bg-white border border-gray-200"
+              }`}
+            >
               <div className="text-4xl mb-4">🛡️</div>
-              <h3 className="text-xl font-bold text-text-primary mb-3">
-                Safe & Secure
-              </h3>
-              <p className="text-text-secondary">
+              <h3 className="text-xl font-bold mb-3">Safe & Secure</h3>
+              <p
+                className={`${
+                  theme === "dark" ? "text-slate-400" : "text-gray-600"
+                }`}
+              >
                 Your property and personal information are protected with our
                 security measures.
               </p>
             </div>
 
             {/* Benefit Card 3 */}
-            <div className="bg-bg-secondary rounded-lg p-8 border border-text-muted/20">
+            <div
+              className={`rounded-lg p-8 ${
+                theme === "dark"
+                  ? "bg-slate-800 border border-slate-700"
+                  : "bg-white border border-gray-200"
+              }`}
+            >
               <div className="text-4xl mb-4">🌍</div>
-              <h3 className="text-xl font-bold text-text-primary mb-3">
-                Reach Global Guests
-              </h3>
-              <p className="text-text-secondary">
+              <h3 className="text-xl font-bold mb-3">Reach Global Guests</h3>
+              <p
+                className={`${
+                  theme === "dark" ? "text-slate-400" : "text-gray-600"
+                }`}
+              >
                 Connect with travelers from around the world and grow your
                 network.
               </p>
@@ -112,9 +154,7 @@ export default function Hosting() {
       {/* How It Works Section (Optional) */}
       <section className="py-20 px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-text-primary mb-12 text-center">
-            How It Works
-          </h2>
+          <h2 className="text-3xl font-bold mb-12 text-center">How It Works</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
@@ -140,15 +180,21 @@ export default function Hosting() {
               },
             ].map((item, index) => (
               <div key={index} className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-full flex items-center justify-center">
+                <div
+                  className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
+                    theme === "dark" ? "bg-blue-600" : "bg-blue-500"
+                  }`}
+                >
                   <span className="text-2xl font-bold text-white">
                     {item.step}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-text-primary mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-text-secondary text-sm">
+                <h3 className="text-lg font-bold mb-2">{item.title}</h3>
+                <p
+                  className={`text-sm ${
+                    theme === "dark" ? "text-slate-400" : "text-gray-600"
+                  }`}
+                >
                   {item.description}
                 </p>
               </div>
@@ -158,9 +204,13 @@ export default function Hosting() {
       </section>
 
       {/* FAQ Section (Optional) */}
-      <section className="py-20 px-6 md:px-12 bg-bg-secondary/30">
+      <section
+        className={`py-20 px-6 md:px-12 ${
+          theme === "dark" ? "bg-slate-800/50" : "bg-gray-100/50"
+        }`}
+      >
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-text-primary mb-12 text-center">
+          <h2 className="text-3xl font-bold mb-12 text-center">
             Frequently Asked Questions
           </h2>
 
@@ -189,13 +239,23 @@ export default function Hosting() {
             ].map((item, index) => (
               <details
                 key={index}
-                className="group border border-text-muted/20 rounded-lg p-6 cursor-pointer hover:border-primary transition"
+                className={`group rounded-lg p-6 cursor-pointer transition ${
+                  theme === "dark"
+                    ? "border border-slate-700 hover:border-blue-500"
+                    : "border border-gray-200 hover:border-blue-500"
+                }`}
               >
-                <summary className="flex justify-between items-center font-bold text-text-primary">
+                <summary className="flex justify-between items-center font-bold">
                   {item.question}
                   <span className="group-open:rotate-180 transition">▼</span>
                 </summary>
-                <p className="text-text-secondary mt-4 pl-4">{item.answer}</p>
+                <p
+                  className={`mt-4 pl-4 ${
+                    theme === "dark" ? "text-slate-400" : "text-gray-600"
+                  }`}
+                >
+                  {item.answer}
+                </p>
               </details>
             ))}
           </div>

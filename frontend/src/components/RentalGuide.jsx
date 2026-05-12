@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 
 export default function RentalGuide() {
-
-const navigate = useNavigate()
-
+  const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const guides = [
     {
@@ -132,28 +132,59 @@ const navigate = useNavigate()
   ];
 
   return (
-
-    <div className="min-h-screen bg-background text-text-primary">
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-slate-900 text-slate-100"
+          : "bg-gray-50 text-gray-900"
+      }`}
+    >
       {/* Header Section */}
-      <div className="bg-linear-to-r from-primary-dark to-primary-accent py-16 px-4 md:px-8">
+      <div
+        className={`py-16 px-4 md:px-8 ${
+          theme === "dark"
+            ? "bg-gradient-to-r from-slate-800 to-slate-900"
+            : "bg-gradient-to-r from-gray-100 to-gray-200"
+        }`}
+      >
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Rental Guide</h1>
-          <p className="text-xl text-text-muted">
+          <p
+            className={`text-xl ${
+              theme === "dark" ? "text-slate-400" : "text-gray-600"
+            }`}
+          >
             Everything you need to know for a perfect stay
           </p>
         </div>
       </div>
 
       {/* Quick Navigation */}
-      <div className="bg-secondary-dark/50 border-b border-gray-700 py-8 px-4 md:px-8">
+      <div
+        className={`py-8 px-4 md:px-8 ${
+          theme === "dark"
+            ? "bg-slate-800/50 border-b border-slate-700"
+            : "bg-gray-100/50 border-b border-gray-200"
+        }`}
+      >
         <div className="max-w-6xl mx-auto">
-          <p className="text-text-muted text-center mb-6">Jump to a section:</p>
+          <p
+            className={`text-center mb-6 ${
+              theme === "dark" ? "text-slate-400" : "text-gray-600"
+            }`}
+          >
+            Jump to a section:
+          </p>
           <div className="flex flex-wrap justify-center gap-3">
             {guides.map((guide, idx) => (
               <a
                 key={idx}
                 href={`#guide-${idx}`}
-                className="px-4 py-2 bg-primary-accent/10 border border-primary-accent/30 rounded-full hover:bg-primary-accent/20 transition-all duration-300 text-sm"
+                className={`px-4 py-2 rounded-full text-sm transition-all duration-300 ${
+                  theme === "dark"
+                    ? "bg-blue-500/10 border border-blue-500/30 text-blue-300 hover:bg-blue-500/20"
+                    : "bg-blue-500/10 border border-blue-500/30 text-blue-700 hover:bg-blue-500/20"
+                }`}
               >
                 {guide.icon} {guide.category.split(" ")[0]}
               </a>
@@ -172,7 +203,11 @@ const navigate = useNavigate()
             {dosDonts.map((section, idx) => (
               <div
                 key={idx}
-                className="bg-secondary-dark border border-gray-700 rounded-lg p-8"
+                className={`rounded-lg p-8 ${
+                  theme === "dark"
+                    ? "bg-slate-800 border border-slate-700"
+                    : "bg-white border border-gray-200"
+                }`}
               >
                 <h3 className="text-2xl font-bold mb-6">{section.title}</h3>
                 <div className="space-y-3">
@@ -181,7 +216,11 @@ const navigate = useNavigate()
                       <span className="text-xl flex-shrink-0">
                         {item.includes("✓") ? "✅" : "❌"}
                       </span>
-                      <p className="text-text-muted">
+                      <p
+                        className={`${
+                          theme === "dark" ? "text-slate-400" : "text-gray-600"
+                        }`}
+                      >
                         {item.replace("✓ ", "").replace("✗ ", "")}
                       </p>
                     </div>
@@ -194,14 +233,22 @@ const navigate = useNavigate()
       </div>
 
       {/* Main Guides */}
-      <div className="py-16 px-4 md:px-8 bg-secondary-dark/50">
+      <div
+        className={`py-16 px-4 md:px-8 ${
+          theme === "dark" ? "bg-slate-800/50" : "bg-gray-100/50"
+        }`}
+      >
         <div className="max-w-6xl mx-auto">
           <div className="space-y-12">
             {guides.map((guide, idx) => (
               <div
                 key={idx}
                 id={`guide-${idx}`}
-                className="bg-secondary-dark border border-gray-700 rounded-lg p-8 hover:border-primary-accent/50 transition-all duration-300"
+                className={`rounded-lg p-8 transition-all duration-300 ${
+                  theme === "dark"
+                    ? "bg-slate-800 border border-slate-700 hover:border-blue-500/50"
+                    : "bg-white border border-gray-200 hover:border-blue-500/50"
+                }`}
               >
                 <div className="flex items-center gap-3 mb-6">
                   <span className="text-4xl">{guide.icon}</span>
@@ -211,10 +258,20 @@ const navigate = useNavigate()
                 <div className="grid md:grid-cols-2 gap-4">
                   {guide.tips.map((tip, tipIdx) => (
                     <div key={tipIdx} className="flex gap-3">
-                      <span className="text-primary-accent text-xl shrink-0">
+                      <span
+                        className={`text-xl shrink-0 ${
+                          theme === "dark" ? "text-blue-400" : "text-blue-600"
+                        }`}
+                      >
                         •
                       </span>
-                      <p className="text-text-muted">{tip}</p>
+                      <p
+                        className={`${
+                          theme === "dark" ? "text-slate-400" : "text-gray-600"
+                        }`}
+                      >
+                        {tip}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -268,11 +325,19 @@ const navigate = useNavigate()
             ].map((resource, idx) => (
               <div
                 key={idx}
-                className="bg-linear-to-br from-primary-accent/5 to-primary-dark/5 border border-primary-accent/20 rounded-lg p-6 hover:border-primary-accent/50 transition-all duration-300"
+                className={`rounded-lg p-6 transition-all duration-300 ${
+                  theme === "dark"
+                    ? "bg-gradient-to-br from-blue-500/5 to-slate-800/5 border border-blue-500/20 hover:border-blue-500/50"
+                    : "bg-gradient-to-br from-blue-500/5 to-gray-100/5 border border-blue-500/20 hover:border-blue-500/50"
+                }`}
               >
                 <div className="text-4xl mb-3">{resource.icon}</div>
                 <h4 className="text-lg font-bold mb-2">{resource.title}</h4>
-                <p className="text-text-muted text-sm">
+                <p
+                  className={`text-sm ${
+                    theme === "dark" ? "text-slate-400" : "text-gray-600"
+                  }`}
+                >
                   {resource.description}
                 </p>
               </div>
@@ -282,7 +347,13 @@ const navigate = useNavigate()
       </div>
 
       {/* Tips Section */}
-      <div className="py-16 px-4 md:px-8 bg-linear-to-r from-primary-accent/5 to-primary-dark/5 border-t border-gray-700">
+      <div
+        className={`py-16 px-4 md:px-8 border-t ${
+          theme === "dark"
+            ? "bg-gradient-to-r from-blue-500/5 to-slate-800/5 border-slate-700"
+            : "bg-gradient-to-r from-blue-500/5 to-gray-100/5 border-gray-200"
+        }`}
+      >
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-12 text-center">
             💡 Pro Tips for Best Stays
@@ -318,12 +389,26 @@ const navigate = useNavigate()
             ].map((item, idx) => (
               <div
                 key={idx}
-                className="bg-secondary-dark border border-gray-700 rounded-lg p-6"
+                className={`rounded-lg p-6 ${
+                  theme === "dark"
+                    ? "bg-slate-800 border border-slate-700"
+                    : "bg-white border border-gray-200"
+                }`}
               >
-                <h4 className="text-lg font-bold mb-2 text-primary-accent">
+                <h4
+                  className={`text-lg font-bold mb-2 ${
+                    theme === "dark" ? "text-blue-400" : "text-blue-600"
+                  }`}
+                >
                   {item.tip}
                 </h4>
-                <p className="text-text-muted">{item.detail}</p>
+                <p
+                  className={`${
+                    theme === "dark" ? "text-slate-400" : "text-gray-600"
+                  }`}
+                >
+                  {item.detail}
+                </p>
               </div>
             ))}
           </div>
@@ -332,13 +417,23 @@ const navigate = useNavigate()
 
       {/* CTA Section */}
       <div className="py-16 px-4 md:px-8">
-        <div className="max-w-4xl mx-auto bg-linear-to-r from-primary-accent to-primary-dark border border-primary-accent/30 rounded-lg p-12 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Book Your Stay?</h2>
-          <p className="text-lg text-text-muted mb-8">
+        <div
+          className={`max-w-4xl mx-auto rounded-lg p-12 text-center ${
+            theme === "dark"
+              ? "bg-gradient-to-r from-blue-600 to-blue-800 border border-blue-500/30"
+              : "bg-gradient-to-r from-blue-500 to-blue-700 border border-blue-500/30"
+          }`}
+        >
+          <h2 className="text-3xl font-bold mb-4 text-white">
+            Ready to Book Your Stay?
+          </h2>
+          <p className="text-lg text-blue-200 mb-8">
             Explore thousands of unique properties and find your perfect rental
           </p>
-          <button className="px-8 py-3 bg-primary text-primary-dark font-bold rounded-lg hover:bg-text-muted transition-all duration-300"
-          onClick={()=> navigate("/properties")}>
+          <button
+            className="px-8 py-3 bg-white text-blue-700 font-bold rounded-lg hover:bg-gray-200 transition-all duration-300"
+            onClick={() => navigate("/properties")}
+          >
             Browse Properties →
           </button>
         </div>

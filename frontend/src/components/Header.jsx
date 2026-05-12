@@ -242,19 +242,6 @@ export default function Header() {
               ></div>
               <button
                 onClick={() => {
-                  navigate("/profile");
-                  setDropdownOpen(false);
-                }}
-                className={`block w-full text-left px-4 py-2 transition font-semibold ${
-                  theme === "dark"
-                    ? "text-blue-400 hover:bg-slate-700"
-                    : "text-blue-600 hover:bg-gray-100"
-                }`}
-              >
-                👤 Profile
-              </button>
-              <button
-                onClick={() => {
                   navigate("/account");
                   setDropdownOpen(false);
                 }}
@@ -445,19 +432,6 @@ export default function Header() {
               ></div>
             </>
           )}
-          <button
-            onClick={() => {
-              navigate("/profile");
-              setMenuOpen(false);
-            }}
-            className={`block w-full text-left py-2 font-semibold transition ${
-              theme === "dark"
-                ? "text-blue-400 hover:text-blue-300"
-                : "text-blue-600 hover:text-blue-700"
-            }`}
-          >
-            👤 Profile
-          </button>
           <button
             onClick={() => {
               navigate("/account");

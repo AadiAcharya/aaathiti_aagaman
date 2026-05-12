@@ -1,8 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { authAPI } from "../../services/api";
+import { useTheme } from "../context/ThemeContext";
 
 const SignIn = () => {
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -54,12 +56,32 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background text-text-primary">
-      <div className="w-full max-w-md bg-bg-secondary rounded-2xl shadow-lg p-8 space-y-6 border border-gray-700">
+    <div
+      className={`min-h-screen flex items-center justify-center ${
+        theme === "dark" ? "bg-background" : "bg-gray-50"
+      }`}
+    >
+      <div
+        className={`w-full max-w-md rounded-2xl shadow-lg p-8 space-y-6 border ${
+          theme === "dark"
+            ? "bg-bg-secondary border-gray-700"
+            : "bg-white border-gray-200"
+        }`}
+      >
         {/* Header */}
         <div className="text-center">
-          <h2 className="text-3xl font-bold mb-2">Welcome Back!</h2>
-          <p className="text-text-secondary text-base">
+          <h2
+            className={`text-3xl font-bold mb-2 ${
+              theme === "dark" ? "text-text-primary" : "text-gray-900"
+            }`}
+          >
+            Welcome Back!
+          </h2>
+          <p
+            className={`text-base ${
+              theme === "dark" ? "text-text-secondary" : "text-gray-600"
+            }`}
+          >
             Sign in to access your account, manage bookings, and enjoy
             personalized recommendations.
           </p>
@@ -75,7 +97,13 @@ const SignIn = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-text-secondary mb-1">Email</label>
+            <label
+              className={`block mb-1 ${
+                theme === "dark" ? "text-text-secondary" : "text-gray-700"
+              }`}
+            >
+              Email
+            </label>
             <input
               type="email"
               name="email"
@@ -83,13 +111,23 @@ const SignIn = () => {
               onChange={handleChange}
               required
               disabled={loading}
-              className="w-full border border-gray-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-background text-text-primary disabled:opacity-60"
+              className={`w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary disabled:opacity-60 ${
+                theme === "dark"
+                  ? "border-gray-700 bg-background text-text-primary"
+                  : "border-gray-300 bg-gray-50 text-gray-900"
+              }`}
               placeholder="Enter your email"
             />
           </div>
 
           <div>
-            <label className="block text-text-secondary mb-1">Password</label>
+            <label
+              className={`block mb-1 ${
+                theme === "dark" ? "text-text-secondary" : "text-gray-700"
+              }`}
+            >
+              Password
+            </label>
             <input
               type="password"
               name="password"
@@ -97,71 +135,117 @@ const SignIn = () => {
               onChange={handleChange}
               required
               disabled={loading}
-              className="w-full border border-gray-700 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary bg-background text-text-primary disabled:opacity-60"
+              className={`w-full border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary disabled:opacity-60 ${
+                theme === "dark"
+                  ? "border-gray-700 bg-background text-text-primary"
+                  : "border-gray-300 bg-gray-50 text-gray-900"
+              }`}
               placeholder="Enter your password"
             />
           </div>
 
-          <div className="flex justify-between items-center">
-            <Link
-              to="/sign-up"
-              className="text-primary hover:underline text-sm"
-            >
-              Don't have an account? Sign Up
-            </Link>
-            <button
-              type="button"
-              className="text-text-secondary hover:underline text-sm"
-            >
-              Forgot password?
-            </button>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                className="h-4 w-4 text-primary focus:ring-primary-hover border-gray-600 rounded"
+              />
+              <label
+                htmlFor="remember-me"
+                className={`ml-2 block text-sm ${
+                  theme === "dark" ? "text-text-secondary" : "text-gray-700"
+                }`}
+              >
+                Remember me
+              </label>
+            </div>
+
+            <div className="text-sm">
+              <a
+                href="#"
+                className={`font-medium ${
+                  theme === "dark"
+                    ? "text-primary hover:text-primary-hover"
+                    : "text-blue-600 hover:text-blue-500"
+                }`}
+              >
+                Forgot your password?
+              </a>
+            </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary-hover transition font-semibold mt-2 disabled:opacity-60 flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <>
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Signing in...
-              </>
-            ) : (
-              "Sign In"
-            )}
-          </button>
+          {/* Submit Button */}
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-hover disabled:opacity-50 transition duration-300"
+            >
+              {loading ? "Signing In..." : "Sign In"}
+            </button>
+          </div>
         </form>
 
         {/* Divider */}
-        <div className="flex items-center gap-3 text-sm text-text-secondary">
-          <hr className="flex-1 border-gray-700" />
-          <span className="whitespace-nowrap">or continue with</span>
-          <hr className="flex-1 border-gray-700" />
+        <div className="flex items-center justify-center">
+          <div
+            className={`w-full h-px ${
+              theme === "dark" ? "bg-gray-700" : "bg-gray-200"
+            }`}
+          ></div>
+          <p
+            className={`mx-4 text-sm ${
+              theme === "dark" ? "text-text-secondary" : "text-gray-500"
+            }`}
+          >
+            OR
+          </p>
+          <div
+            className={`w-full h-px ${
+              theme === "dark" ? "bg-gray-700" : "bg-gray-200"
+            }`}
+          ></div>
         </div>
 
-        {/* Social Buttons */}
-        <div className="flex gap-2 text-text-secondary">
-          {["Facebook", "Apple ID", "Google"].map((provider) => (
-            <button
-              key={provider}
-              className="flex-1 flex items-center justify-center gap-2 border border-gray-700 py-2 rounded-lg hover:bg-bg-secondary bg-background transition text-sm"
+        {/* Social Logins */}
+        <div className="space-y-3">
+          <button className="w-full flex items-center justify-center gap-3 border border-gray-700 rounded-lg px-3 py-2 hover:bg-gray-800 transition duration-300">
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              className="w-6 h-6"
+            />
+            <span
+              className={`${
+                theme === "dark" ? "text-text-primary" : "text-gray-900"
+              }`}
             >
-              {provider}
-            </button>
-          ))}
+              Sign in with Google
+            </span>
+          </button>
         </div>
 
-        {/* Footer */}
-        <div className="text-xs text-text-secondary text-center">
-          By signing in, you agree to our{" "}
-          <span className="underline cursor-pointer">Terms of Service</span> and{" "}
-          <span className="underline cursor-pointer">Privacy Policy</span>.
-        </div>
-
-        <div className="text-center text-xs text-text-muted">
-          Demo seed accounts: <strong>host@hotel.com</strong> / host1234
-          &nbsp;|&nbsp; <strong>admin@hotel.com</strong> / admin123
+        {/* Sign Up Link */}
+        <div className="text-center">
+          <p
+            className={`text-sm ${
+              theme === "dark" ? "text-text-secondary" : "text-gray-600"
+            }`}
+          >
+            Don't have an account?{" "}
+            <Link
+              to="/signup"
+              className={`font-medium ${
+                theme === "dark"
+                  ? "text-primary hover:text-primary-hover"
+                  : "text-blue-600 hover:text-blue-500"
+              }`}
+            >
+              Sign up
+            </Link>
+          </p>
         </div>
       </div>
     </div>

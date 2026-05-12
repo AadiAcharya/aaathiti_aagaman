@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authAPI } from "../../services/api";
+import { useTheme } from "../context/ThemeContext";
 
 const SignUp = () => {
+  const { theme } = useTheme();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -12,9 +14,9 @@ const SignUp = () => {
     confirmPassword: "",
     role: "user",
   });
-  const [showPassword, setShowPassword]         = useState(false);
-  const [showConfirmPassword, setShowConfirm]   = useState(false);
-  const [errors, setErrors]   = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirm] = useState(false);
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
 
@@ -27,15 +29,17 @@ const SignUp = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!form.name.trim())            newErrors.name            = "Name is required";
-    if (!form.email.trim())           newErrors.email           = "Email is required";
+    if (!form.name.trim()) newErrors.name = "Name is required";
+    if (!form.email.trim()) newErrors.email = "Email is required";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-                                      newErrors.email           = "Invalid email format";
-    if (!form.password)               newErrors.password        = "Password is required";
-    else if (form.password.length < 8) newErrors.password       = "Password must be at least 8 characters";
-    if (!form.confirmPassword)        newErrors.confirmPassword = "Please confirm your password";
+      newErrors.email = "Invalid email format";
+    if (!form.password) newErrors.password = "Password is required";
+    else if (form.password.length < 8)
+      newErrors.password = "Password must be at least 8 characters";
+    if (!form.confirmPassword)
+      newErrors.confirmPassword = "Please confirm your password";
     else if (form.password !== form.confirmPassword)
-                                      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = "Passwords do not match";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -47,10 +51,10 @@ const SignUp = () => {
       setLoading(true);
       setApiError("");
       const { token, user } = await authAPI.register({
-        name:     form.name,
-        email:    form.email,
+        name: form.name,
+        email: form.email,
         password: form.password,
-        role:     form.role,
+        role: form.role,
       });
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
@@ -64,21 +68,50 @@ const SignUp = () => {
   };
 
   const inputClass = (field) =>
-    `w-full rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary transition bg-background text-text-primary ${
-      errors[field] ? "border-2 border-red-400" : "border border-gray-700"
-    } disabled:opacity-60`;
+    `w-full rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary transition disabled:opacity-60 ${
+      theme === "dark"
+        ? "bg-background text-text-primary"
+        : "bg-gray-50 text-gray-900"
+    } ${
+      errors[field]
+        ? "border-2 border-red-400"
+        : `border ${theme === "dark" ? "border-gray-700" : "border-gray-300"}`
+    }`;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background text-text-primary py-10">
-      <div className="w-full max-w-md bg-bg-secondary rounded-2xl shadow-lg p-8 space-y-5 border border-gray-700">
-
+    <div
+      className={`min-h-screen flex items-center justify-center py-10 ${
+        theme === "dark" ? "bg-background" : "bg-gray-50"
+      }`}
+    >
+      <div
+        className={`w-full max-w-md rounded-2xl shadow-lg p-8 space-y-5 border ${
+          theme === "dark"
+            ? "bg-bg-secondary border-gray-700"
+            : "bg-white border-gray-200"
+        }`}
+      >
         {/* Header */}
         <div className="text-center space-y-1">
-          <h2 className="text-3xl font-bold text-text-primary">Create Account</h2>
-          <p className="text-sm text-text-secondary">Join us today and start exploring</p>
+          <h2
+            className={`text-3xl font-bold ${
+              theme === "dark" ? "text-text-primary" : "text-gray-900"
+            }`}
+          >
+            Create Account
+          </h2>
+          <p
+            className={`text-sm ${
+              theme === "dark" ? "text-text-secondary" : "text-gray-600"
+            }`}
+          >
+            Join us today and start exploring
+          </p>
         </div>
 
-        <hr className="border-gray-700" />
+        <hr
+          className={`${theme === "dark" ? "border-gray-700" : "border-gray-200"}`}
+        />
 
         {/* API Error */}
         {apiError && (
@@ -88,10 +121,15 @@ const SignUp = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-
           {/* Name */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-text-secondary">Full Name</label>
+            <label
+              className={`block mb-1 text-sm font-medium ${
+                theme === "dark" ? "text-text-secondary" : "text-gray-700"
+              }`}
+            >
+              Full Name
+            </label>
             <input
               type="text"
               name="name"
@@ -99,14 +137,22 @@ const SignUp = () => {
               onChange={handleChange}
               disabled={loading}
               className={inputClass("name")}
-              placeholder="John Doe"
+              placeholder="Enter your full name"
             />
-            {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
+            {errors.name && (
+              <p className="text-red-400 text-xs mt-1">{errors.name}</p>
+            )}
           </div>
 
           {/* Email */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-text-secondary">Email Address</label>
+            <label
+              className={`block mb-1 text-sm font-medium ${
+                theme === "dark" ? "text-text-secondary" : "text-gray-700"
+              }`}
+            >
+              Email Address
+            </label>
             <input
               type="email"
               name="email"
@@ -114,104 +160,169 @@ const SignUp = () => {
               onChange={handleChange}
               disabled={loading}
               className={inputClass("email")}
-              placeholder="you@example.com"
+              placeholder="Enter your email"
             />
-            {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
-          </div>
-
-          {/* Role */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-text-secondary">I want to</label>
-            <select
-              name="role"
-              value={form.role}
-              onChange={handleChange}
-              disabled={loading}
-              className="w-full rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary border border-gray-700 bg-background text-text-primary disabled:opacity-60"
-            >
-              <option value="user">Book properties (Guest)</option>
-              <option value="host">List my property (Host)</option>
-            </select>
+            {errors.email && (
+              <p className="text-red-400 text-xs mt-1">{errors.email}</p>
+            )}
           </div>
 
           {/* Password */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-text-secondary">Password</label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                disabled={loading}
-                className={inputClass("password") + " pr-10"}
-                placeholder="At least 8 characters"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-lg text-text-secondary transition hover:text-text-primary"
-              >
-                {showPassword ? "🙈" : "👁️‍🗨️"}
-              </button>
-            </div>
-            {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
+          <div className="relative">
+            <label
+              className={`block mb-1 text-sm font-medium ${
+                theme === "dark" ? "text-text-secondary" : "text-gray-700"
+              }`}
+            >
+              Password
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              disabled={loading}
+              className={inputClass("password") + " pr-10"}
+              placeholder="Create a password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-9 text-gray-400 hover:text-gray-200"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+            {errors.password && (
+              <p className="text-red-400 text-xs mt-1">{errors.password}</p>
+            )}
           </div>
 
           {/* Confirm Password */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-text-secondary">Confirm Password</label>
-            <div className="relative">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                value={form.confirmPassword}
-                onChange={handleChange}
-                disabled={loading}
-                className={inputClass("confirmPassword") + " pr-10"}
-                placeholder="Re-enter your password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirm(!showConfirmPassword)}
-                className="absolute right-3 top-2.5 text-lg text-text-secondary transition hover:text-text-primary"
-              >
-                {showConfirmPassword ? "🙈" : "👁️‍🗨️"}
-              </button>
-            </div>
-            {errors.confirmPassword && <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>}
+          <div className="relative">
+            <label
+              className={`block mb-1 text-sm font-medium ${
+                theme === "dark" ? "text-text-secondary" : "text-gray-700"
+              }`}
+            >
+              Confirm Password
+            </label>
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              value={form.confirmPassword}
+              onChange={handleChange}
+              disabled={loading}
+              className={inputClass("confirmPassword") + " pr-10"}
+              placeholder="Confirm your password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirm(!showConfirmPassword)}
+              className="absolute right-3 top-9 text-gray-400 hover:text-gray-200"
+            >
+              {showConfirmPassword ? "Hide" : "Show"}
+            </button>
+            {errors.confirmPassword && (
+              <p className="text-red-400 text-xs mt-1">
+                {errors.confirmPassword}
+              </p>
+            )}
           </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-white rounded-full px-6 py-3 font-semibold transition hover:bg-primary-hover disabled:opacity-60 flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <>
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Creating account...
-              </>
-            ) : "Sign Up"}
-          </button>
+          {/* Role Selection */}
+          <div>
+            <label
+              className={`block mb-2 text-sm font-medium ${
+                theme === "dark" ? "text-text-secondary" : "text-gray-700"
+              }`}
+            >
+              I want to sign up as a...
+            </label>
+            <div className="flex gap-4">
+              <label
+                className={`flex items-center p-3 border rounded-lg cursor-pointer flex-1 ${
+                  form.role === "user"
+                    ? "border-primary bg-primary/10"
+                    : theme === "dark"
+                      ? "border-gray-700 hover:border-gray-600"
+                      : "border-gray-300 hover:border-gray-400"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="role"
+                  value="user"
+                  checked={form.role === "user"}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-primary focus:ring-primary-hover"
+                />
+                <span
+                  className={`ml-3 font-medium ${
+                    theme === "dark" ? "text-text-primary" : "text-gray-800"
+                  }`}
+                >
+                  User
+                </span>
+              </label>
+              <label
+                className={`flex items-center p-3 border rounded-lg cursor-pointer flex-1 ${
+                  form.role === "host"
+                    ? "border-primary bg-primary/10"
+                    : theme === "dark"
+                      ? "border-gray-700 hover:border-gray-600"
+                      : "border-gray-300 hover:border-gray-400"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="role"
+                  value="host"
+                  checked={form.role === "host"}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-primary focus:ring-primary-hover"
+                />
+                <span
+                  className={`ml-3 font-medium ${
+                    theme === "dark" ? "text-text-primary" : "text-gray-800"
+                  }`}
+                >
+                  Host
+                </span>
+              </label>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-hover disabled:opacity-50 transition duration-300"
+            >
+              {loading ? "Creating Account..." : "Create Account"}
+            </button>
+          </div>
         </form>
 
-        <hr className="border-gray-700" />
-
+        {/* Sign In Link */}
         <div className="text-center">
-          <p className="text-sm text-text-secondary">
+          <p
+            className={`text-sm ${
+              theme === "dark" ? "text-text-secondary" : "text-gray-600"
+            }`}
+          >
             Already have an account?{" "}
-            <Link to="/sign-in" className="font-semibold hover:underline text-primary">
+            <Link
+              to="/signin"
+              className={`font-medium ${
+                theme === "dark"
+                  ? "text-primary hover:text-primary-hover"
+                  : "text-blue-600 hover:text-blue-500"
+              }`}
+            >
               Sign In
             </Link>
           </p>
-        </div>
-
-        <div className="text-xs text-text-secondary text-center">
-          By signing up, you agree to our{" "}
-          <span className="underline cursor-pointer">Terms of Service</span> and{" "}
-          <span className="underline cursor-pointer">Privacy Policy</span>.
         </div>
       </div>
     </div>

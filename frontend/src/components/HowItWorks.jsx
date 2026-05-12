@@ -1,4 +1,7 @@
+import { useTheme } from "../context/ThemeContext";
+
 export default function HowItWorks() {
+  const { theme } = useTheme();
   const stepsForGuests = [
     {
       number: 1,
@@ -92,12 +95,28 @@ export default function HowItWorks() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-text-primary">
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-slate-900 text-slate-100"
+          : "bg-gray-50 text-gray-900"
+      }`}
+    >
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-primary-dark to-primary-accent py-16 px-4 md:px-8">
+      <div
+        className={`py-16 px-4 md:px-8 ${
+          theme === "dark"
+            ? "bg-gradient-to-r from-slate-800 to-slate-900"
+            : "bg-gradient-to-r from-gray-100 to-gray-200"
+        }`}
+      >
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">How It Works</h1>
-          <p className="text-xl text-text-muted mb-8">
+          <p
+            className={`text-xl mb-8 ${
+              theme === "dark" ? "text-slate-400" : "text-gray-600"
+            }`}
+          >
             Your journey with us is simple, secure, and straightforward
           </p>
         </div>
@@ -110,7 +129,11 @@ export default function HowItWorks() {
             <h2 className="text-3xl font-bold mb-2 flex items-center">
               👥 For Guests
             </h2>
-            <p className="text-text-muted text-lg">
+            <p
+              className={`text-lg ${
+                theme === "dark" ? "text-slate-400" : "text-gray-600"
+              }`}
+            >
               Book your perfect stay in 6 simple steps
             </p>
           </div>
@@ -119,30 +142,60 @@ export default function HowItWorks() {
             {stepsForGuests.map((step) => (
               <div
                 key={step.number}
-                className="bg-secondary-dark border border-gray-700 rounded-lg p-6 hover:border-primary-accent transition-all duration-300 hover:shadow-lg hover:shadow-primary-accent/20"
+                className={`rounded-lg p-6 transition-all duration-300 ${
+                  theme === "dark"
+                    ? "bg-slate-800 border border-slate-700 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10"
+                    : "bg-white border border-gray-200 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10"
+                }`}
               >
                 <div className="mb-4">
                   <span className="text-5xl">{step.icon}</span>
-                  <div className="mt-3 inline-block bg-primary-accent rounded-full w-10 h-10 flex items-center justify-center font-bold text-white">
+                  <div
+                    className={`mt-3 inline-block rounded-full w-10 h-10 flex items-center justify-center font-bold text-white ${
+                      theme === "dark" ? "bg-blue-600" : "bg-blue-500"
+                    }`}
+                  >
                     {step.number}
                   </div>
                 </div>
                 <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                <p className="text-text-muted mb-3">{step.description}</p>
-                <p className="text-sm text-gray-400">{step.details}</p>
+                <p
+                  className={`mb-3 ${
+                    theme === "dark" ? "text-slate-400" : "text-gray-600"
+                  }`}
+                >
+                  {step.description}
+                </p>
+                <p
+                  className={`text-sm ${
+                    theme === "dark" ? "text-slate-500" : "text-gray-500"
+                  }`}
+                >
+                  {step.details}
+                </p>
               </div>
             ))}
           </div>
 
           {/* Guest Tips */}
-          <div className="mt-12 bg-gradient-to-r from-primary-accent/10 to-primary-dark/10 border border-primary-accent/30 rounded-lg p-8">
+          <div
+            className={`mt-12 rounded-lg p-8 ${
+              theme === "dark"
+                ? "bg-gradient-to-r from-blue-500/10 to-slate-800/10 border border-blue-500/20"
+                : "bg-gradient-to-r from-blue-500/10 to-gray-100/10 border border-blue-500/20"
+            }`}
+          >
             <h3 className="text-2xl font-bold mb-4">💡 Tips for Guests</h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="flex gap-3">
                 <span className="text-2xl flex-shrink-0">🔒</span>
                 <div>
                   <p className="font-semibold">Always verify the host</p>
-                  <p className="text-text-muted text-sm">
+                  <p
+                    className={`text-sm ${
+                      theme === "dark" ? "text-slate-400" : "text-gray-600"
+                    }`}
+                  >
                     Check reviews and host ratings
                   </p>
                 </div>
@@ -151,7 +204,11 @@ export default function HowItWorks() {
                 <span className="text-2xl flex-shrink-0">📸</span>
                 <div>
                   <p className="font-semibold">Check photos carefully</p>
-                  <p className="text-text-muted text-sm">
+                  <p
+                    className={`text-sm ${
+                      theme === "dark" ? "text-slate-400" : "text-gray-600"
+                    }`}
+                  >
                     Look for recent photos and 360° views
                   </p>
                 </div>
@@ -160,7 +217,11 @@ export default function HowItWorks() {
                 <span className="text-2xl flex-shrink-0">🗨️</span>
                 <div>
                   <p className="font-semibold">Message before booking</p>
-                  <p className="text-text-muted text-sm">
+                  <p
+                    className={`text-sm ${
+                      theme === "dark" ? "text-slate-400" : "text-gray-600"
+                    }`}
+                  >
                     Ask questions to clarify any doubts
                   </p>
                 </div>
@@ -169,7 +230,11 @@ export default function HowItWorks() {
                 <span className="text-2xl flex-shrink-0">⭐</span>
                 <div>
                   <p className="font-semibold">Leave honest reviews</p>
-                  <p className="text-text-muted text-sm">
+                  <p
+                    className={`text-sm ${
+                      theme === "dark" ? "text-slate-400" : "text-gray-600"
+                    }`}
+                  >
                     Help other travelers make decisions
                   </p>
                 </div>
@@ -180,7 +245,11 @@ export default function HowItWorks() {
       </div>
 
       {/* Divider */}
-      <div className="border-t border-gray-700"></div>
+      <div
+        className={`border-t ${
+          theme === "dark" ? "border-slate-700" : "border-gray-200"
+        }`}
+      ></div>
 
       {/* For Hosts Section */}
       <div className="py-16 px-4 md:px-8">
@@ -189,7 +258,11 @@ export default function HowItWorks() {
             <h2 className="text-3xl font-bold mb-2 flex items-center">
               🏘️ For Hosts
             </h2>
-            <p className="text-text-muted text-lg">
+            <p
+              className={`text-lg ${
+                theme === "dark" ? "text-slate-400" : "text-gray-600"
+              }`}
+            >
               Start earning by sharing your property in 6 steps
             </p>
           </div>
@@ -198,30 +271,60 @@ export default function HowItWorks() {
             {stepsForHosts.map((step) => (
               <div
                 key={step.number}
-                className="bg-secondary-dark border border-gray-700 rounded-lg p-6 hover:border-primary-accent transition-all duration-300 hover:shadow-lg hover:shadow-primary-accent/20"
+                className={`rounded-lg p-6 transition-all duration-300 ${
+                  theme === "dark"
+                    ? "bg-slate-800 border border-slate-700 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10"
+                    : "bg-white border border-gray-200 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10"
+                }`}
               >
                 <div className="mb-4">
                   <span className="text-5xl">{step.icon}</span>
-                  <div className="mt-3 inline-block bg-primary-accent rounded-full w-10 h-10 flex items-center justify-center font-bold text-white">
+                  <div
+                    className={`mt-3 inline-block rounded-full w-10 h-10 flex items-center justify-center font-bold text-white ${
+                      theme === "dark" ? "bg-blue-600" : "bg-blue-500"
+                    }`}
+                  >
                     {step.number}
                   </div>
                 </div>
                 <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                <p className="text-text-muted mb-3">{step.description}</p>
-                <p className="text-sm text-gray-400">{step.details}</p>
+                <p
+                  className={`mb-3 ${
+                    theme === "dark" ? "text-slate-400" : "text-gray-600"
+                  }`}
+                >
+                  {step.description}
+                </p>
+                <p
+                  className={`text-sm ${
+                    theme === "dark" ? "text-slate-500" : "text-gray-500"
+                  }`}
+                >
+                  {step.details}
+                </p>
               </div>
             ))}
           </div>
 
           {/* Host Tips */}
-          <div className="mt-12 bg-gradient-to-r from-primary-accent/10 to-primary-dark/10 border border-primary-accent/30 rounded-lg p-8">
+          <div
+            className={`mt-12 rounded-lg p-8 ${
+              theme === "dark"
+                ? "bg-gradient-to-r from-blue-500/10 to-slate-800/10 border border-blue-500/20"
+                : "bg-gradient-to-r from-blue-500/10 to-gray-100/10 border border-blue-500/20"
+            }`}
+          >
             <h3 className="text-2xl font-bold mb-4">💡 Tips for Hosts</h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="flex gap-3">
                 <span className="text-2xl flex-shrink-0">📷</span>
                 <div>
                   <p className="font-semibold">Professional photos matter</p>
-                  <p className="text-text-muted text-sm">
+                  <p
+                    className={`text-sm ${
+                      theme === "dark" ? "text-slate-400" : "text-gray-600"
+                    }`}
+                  >
                     Use natural lighting and showcase all rooms
                   </p>
                 </div>
@@ -230,7 +333,11 @@ export default function HowItWorks() {
                 <span className="text-2xl flex-shrink-0">💬</span>
                 <div>
                   <p className="font-semibold">Respond quickly</p>
-                  <p className="text-text-muted text-sm">
+                  <p
+                    className={`text-sm ${
+                      theme === "dark" ? "text-slate-400" : "text-gray-600"
+                    }`}
+                  >
                     Quick responses increase booking chances
                   </p>
                 </div>
@@ -239,7 +346,11 @@ export default function HowItWorks() {
                 <span className="text-2xl flex-shrink-0">🏆</span>
                 <div>
                   <p className="font-semibold">Provide excellent service</p>
-                  <p className="text-text-muted text-sm">
+                  <p
+                    className={`text-sm ${
+                      theme === "dark" ? "text-slate-400" : "text-gray-600"
+                    }`}
+                  >
                     High ratings lead to more bookings
                   </p>
                 </div>
@@ -248,7 +359,11 @@ export default function HowItWorks() {
                 <span className="text-2xl flex-shrink-0">💵</span>
                 <div>
                   <p className="font-semibold">Price competitively</p>
-                  <p className="text-text-muted text-sm">
+                  <p
+                    className={`text-sm ${
+                      theme === "dark" ? "text-slate-400" : "text-gray-600"
+                    }`}
+                  >
                     Research similar properties in your area
                   </p>
                 </div>
@@ -259,7 +374,11 @@ export default function HowItWorks() {
       </div>
 
       {/* FAQ Section */}
-      <div className="py-16 px-4 md:px-8 bg-secondary-dark/50">
+      <div
+        className={`py-16 px-4 md:px-8 ${
+          theme === "dark" ? "bg-slate-800/50" : "bg-gray-100/50"
+        }`}
+      >
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-12 text-center">
             Frequently Asked Questions
@@ -293,12 +412,26 @@ export default function HowItWorks() {
             ].map((faq, idx) => (
               <div
                 key={idx}
-                className="bg-secondary-dark border border-gray-700 rounded-lg p-6"
+                className={`rounded-lg p-6 ${
+                  theme === "dark"
+                    ? "bg-slate-800 border border-slate-700"
+                    : "bg-white border border-gray-200"
+                }`}
               >
-                <h4 className="text-lg font-bold mb-3 text-primary-accent">
+                <h4
+                  className={`text-lg font-bold mb-3 ${
+                    theme === "dark" ? "text-blue-400" : "text-blue-600"
+                  }`}
+                >
                   {faq.q}
                 </h4>
-                <p className="text-text-muted">{faq.a}</p>
+                <p
+                  className={`${
+                    theme === "dark" ? "text-slate-400" : "text-gray-600"
+                  }`}
+                >
+                  {faq.a}
+                </p>
               </div>
             ))}
           </div>

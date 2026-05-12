@@ -3,22 +3,19 @@ import { createContext, useContext, useState, useLayoutEffect } from "react";
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("light"); // Default to light
 
-  // Set theme on mount and whenever it changes
   useLayoutEffect(() => {
-    if (typeof window !== "undefined") {
-      const isDark = theme === "dark";
-      if (isDark) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+    const isDark = theme === "dark";
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
   return (

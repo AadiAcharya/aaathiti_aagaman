@@ -41,17 +41,15 @@ export default function Profile() {
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
-        theme === "dark"
-          ? "bg-slate-900 text-slate-100"
-          : "bg-gray-50 text-gray-900"
+        theme === "dark" ? "bg-background" : "bg-gray-50"
       }`}
     >
       {/* Header Banner */}
       <div
         className={`h-40 ${
           theme === "dark"
-            ? "bg-gradient-to-r from-blue-600 to-blue-800"
-            : "bg-gradient-to-r from-blue-500 to-blue-700"
+            ? "bg-gradient-to-r from-primary to-primary-hover"
+            : "bg-gradient-to-r from-blue-500 to-blue-600"
         }`}
       ></div>
 
@@ -61,7 +59,7 @@ export default function Profile() {
           <div
             className={`rounded-2xl p-6 shadow-xl border ${
               theme === "dark"
-                ? "bg-slate-800 border-slate-700"
+                ? "bg-bg-secondary border-primary/10"
                 : "bg-white border-gray-200"
             }`}
           >
@@ -69,7 +67,7 @@ export default function Profile() {
               {/* Avatar */}
               <div
                 className={`w-24 h-24 rounded-full flex items-center justify-center text-5xl font-bold text-white ${
-                  theme === "dark" ? "bg-blue-600" : "bg-blue-500"
+                  theme === "dark" ? "bg-primary" : "bg-blue-500"
                 }`}
               >
                 {user.name?.charAt(0).toUpperCase() || "U"}
@@ -77,10 +75,16 @@ export default function Profile() {
 
               {/* User Info */}
               <div className="flex-1">
-                <h1 className="text-4xl font-bold mb-2">{user.name}</h1>
+                <h1
+                  className={`text-4xl font-bold mb-2 ${
+                    theme === "dark" ? "text-text-primary" : "text-gray-900"
+                  }`}
+                >
+                  {user.name}
+                </h1>
                 <p
                   className={`text-sm mb-3 ${
-                    theme === "dark" ? "text-slate-400" : "text-gray-600"
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
                   }`}
                 >
                   Member since{" "}
@@ -90,17 +94,35 @@ export default function Profile() {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {user.emailVerified && (
-                    <span className="px-3 py-1 bg-green-500/20 text-green-600 rounded-full text-xs font-semibold">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        theme === "dark"
+                          ? "bg-green-500/20 text-green-400"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                    >
                       ✅ Email Verified
                     </span>
                   )}
                   {user.role === "host" && (
-                    <span className="px-3 py-1 bg-blue-500/20 text-blue-600 rounded-full text-xs font-semibold">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        theme === "dark"
+                          ? "bg-blue-500/20 text-blue-400"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
+                    >
                       🏠 Host
                     </span>
                   )}
                   {user.role === "admin" && (
-                    <span className="px-3 py-1 bg-red-500/20 text-red-600 rounded-full text-xs font-semibold">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        theme === "dark"
+                          ? "bg-red-500/20 text-red-400"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
                       👑 Admin
                     </span>
                   )}
@@ -111,10 +133,10 @@ export default function Profile() {
               {!editMode && (
                 <button
                   onClick={() => setEditMode(true)}
-                  className={`px-6 py-2 rounded-lg font-semibold transition ${
+                  className={`px-6 py-2 rounded-lg font-semibold transition text-white ${
                     theme === "dark"
-                      ? "bg-blue-600 hover:bg-blue-700 text-white"
-                      : "bg-blue-500 hover:bg-blue-600 text-white"
+                      ? "bg-primary hover:bg-primary-hover"
+                      : "bg-blue-500 hover:bg-blue-600"
                   }`}
                 >
                   ✏️ Edit Profile
@@ -127,7 +149,7 @@ export default function Profile() {
         {/* Tabs */}
         <div
           className={`flex gap-4 mb-6 border-b ${
-            theme === "dark" ? "border-slate-700" : "border-gray-200"
+            theme === "dark" ? "border-primary/10" : "border-gray-200"
           }`}
         >
           {["personal", "preferences", "security"].map((tab) => (
@@ -137,11 +159,11 @@ export default function Profile() {
               className={`px-4 py-3 font-semibold capitalize border-b-2 transition ${
                 activeTab === tab
                   ? theme === "dark"
-                    ? "border-blue-600 text-blue-400"
+                    ? "border-primary text-primary"
                     : "border-blue-500 text-blue-600"
                   : theme === "dark"
-                    ? "border-transparent text-slate-400 hover:text-slate-300"
-                    : "border-transparent text-gray-600 hover:text-gray-700"
+                    ? "border-transparent text-text-secondary hover:text-text-primary"
+                    : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
               {tab === "personal" && "👤 Personal Info"}
@@ -155,19 +177,31 @@ export default function Profile() {
         <div
           className={`rounded-2xl p-8 shadow-lg border ${
             theme === "dark"
-              ? "bg-slate-800 border-slate-700"
+              ? "bg-bg-secondary border-primary/10"
               : "bg-white border-gray-200"
           }`}
         >
           {/* Personal Info Tab */}
           {activeTab === "personal" && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold mb-6">Personal Information</h2>
+              <h2
+                className={`text-2xl font-bold mb-6 ${
+                  theme === "dark" ? "text-text-primary" : "text-gray-900"
+                }`}
+              >
+                Personal Information
+              </h2>
 
               {editMode ? (
                 <>
                   <div>
-                    <label className="block font-semibold mb-2">
+                    <label
+                      className={`block font-semibold mb-2 ${
+                        theme === "dark"
+                          ? "text-text-secondary"
+                          : "text-gray-700"
+                      }`}
+                    >
                       Full Name
                     </label>
                     <input
@@ -177,14 +211,22 @@ export default function Profile() {
                       onChange={handleInputChange}
                       className={`w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 ${
                         theme === "dark"
-                          ? "bg-slate-700 border-slate-600 focus:ring-blue-600"
-                          : "bg-gray-50 border-gray-300 focus:ring-blue-500"
+                          ? "bg-background border-primary/20 focus:ring-primary text-text-primary"
+                          : "bg-gray-50 border-gray-300 focus:ring-blue-500 text-gray-900"
                       }`}
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold mb-2">Email</label>
+                    <label
+                      className={`block font-semibold mb-2 ${
+                        theme === "dark"
+                          ? "text-text-secondary"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      Email
+                    </label>
                     <input
                       type="email"
                       name="email"
@@ -192,335 +234,153 @@ export default function Profile() {
                       onChange={handleInputChange}
                       className={`w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 ${
                         theme === "dark"
-                          ? "bg-slate-700 border-slate-600 focus:ring-blue-600"
-                          : "bg-gray-50 border-gray-300 focus:ring-blue-500"
+                          ? "bg-background border-primary/20 focus:ring-primary text-text-primary"
+                          : "bg-gray-50 border-gray-300 focus:ring-blue-500 text-gray-900"
                       }`}
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold mb-2">Phone</label>
+                    <label
+                      className={`block font-semibold mb-2 ${
+                        theme === "dark"
+                          ? "text-text-secondary"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      Phone Number
+                    </label>
                     <input
                       type="tel"
                       name="phone"
                       value={formData.phone || ""}
                       onChange={handleInputChange}
-                      placeholder="+1 (555) 000-0000"
                       className={`w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 ${
                         theme === "dark"
-                          ? "bg-slate-700 border-slate-600 focus:ring-blue-600"
-                          : "bg-gray-50 border-gray-300 focus:ring-blue-500"
+                          ? "bg-background border-primary/20 focus:ring-primary text-text-primary"
+                          : "bg-gray-50 border-gray-300 focus:ring-blue-500 text-gray-900"
                       }`}
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold mb-2">Bio</label>
-                    <textarea
-                      name="bio"
-                      value={formData.bio || ""}
+                    <label
+                      className={`block font-semibold mb-2 ${
+                        theme === "dark"
+                          ? "text-text-secondary"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      Address
+                    </label>
+                    <input
+                      type="text"
+                      name="address"
+                      value={formData.address || ""}
                       onChange={handleInputChange}
-                      placeholder="Tell us about yourself..."
-                      rows="4"
                       className={`w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 ${
                         theme === "dark"
-                          ? "bg-slate-700 border-slate-600 focus:ring-blue-600"
-                          : "bg-gray-50 border-gray-300 focus:ring-blue-500"
+                          ? "bg-background border-primary/20 focus:ring-primary text-text-primary"
+                          : "bg-gray-50 border-gray-300 focus:ring-blue-500 text-gray-900"
                       }`}
                     />
                   </div>
 
-                  <div className="flex gap-3 pt-4">
+                  <div className="flex gap-4 pt-4">
                     <button
                       onClick={handleSaveProfile}
                       className={`px-6 py-2 rounded-lg font-semibold transition text-white ${
                         theme === "dark"
-                          ? "bg-green-600 hover:bg-green-700"
-                          : "bg-green-500 hover:bg-green-600"
+                          ? "bg-primary hover:bg-primary-hover"
+                          : "bg-blue-500 hover:bg-blue-600"
                       }`}
                     >
-                      ✅ Save Changes
+                      Save Changes
                     </button>
                     <button
                       onClick={handleCancel}
                       className={`px-6 py-2 rounded-lg font-semibold transition ${
                         theme === "dark"
-                          ? "bg-slate-700 hover:bg-slate-600 text-slate-200"
-                          : "bg-gray-300 hover:bg-gray-400 text-gray-800"
+                          ? "bg-primary/20 text-primary hover:bg-primary/30"
+                          : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                       }`}
                     >
-                      ❌ Cancel
+                      Cancel
                     </button>
                   </div>
                 </>
               ) : (
-                <>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <p
-                        className={`text-sm font-semibold uppercase tracking-wide ${
-                          theme === "dark" ? "text-slate-400" : "text-gray-600"
-                        }`}
-                      >
-                        Email
-                      </p>
-                      <p className="text-lg mt-1">{user.email}</p>
-                    </div>
-                    <div>
-                      <p
-                        className={`text-sm font-semibold uppercase tracking-wide ${
-                          theme === "dark" ? "text-slate-400" : "text-gray-600"
-                        }`}
-                      >
-                        Phone
-                      </p>
-                      <p className="text-lg mt-1">
-                        {user.phone || "Not provided"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {user.bio && (
-                    <div className="mt-6">
-                      <p
-                        className={`text-sm font-semibold uppercase tracking-wide ${
-                          theme === "dark" ? "text-slate-400" : "text-gray-600"
-                        }`}
-                      >
-                        Bio
-                      </p>
-                      <p className="text-base mt-2 leading-relaxed">
-                        {user.bio}
-                      </p>
-                    </div>
-                  )}
-                </>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  <InfoItem label="Full Name" value={user.name} />
+                  <InfoItem label="Email Address" value={user.email} />
+                  <InfoItem label="Phone Number" value={user.phone} />
+                  <InfoItem label="Address" value={user.address} />
+                </div>
               )}
             </div>
           )}
 
           {/* Preferences Tab */}
           {activeTab === "preferences" && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold mb-6">Preferences</h2>
-
-              <div className="space-y-4">
-                <div
-                  className={`p-4 rounded-lg border flex items-center justify-between ${
-                    theme === "dark"
-                      ? "bg-slate-700/50 border-slate-600"
-                      : "bg-gray-50 border-gray-200"
-                  }`}
-                >
-                  <div>
-                    <p className="font-semibold">Email Notifications</p>
-                    <p
-                      className={`text-sm ${
-                        theme === "dark" ? "text-slate-400" : "text-gray-600"
-                      }`}
-                    >
-                      Receive updates about your bookings
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    defaultChecked
-                    className="w-5 h-5 cursor-pointer"
-                  />
-                </div>
-
-                <div
-                  className={`p-4 rounded-lg border flex items-center justify-between ${
-                    theme === "dark"
-                      ? "bg-slate-700/50 border-slate-600"
-                      : "bg-gray-50 border-gray-200"
-                  }`}
-                >
-                  <div>
-                    <p className="font-semibold">Marketing Communications</p>
-                    <p
-                      className={`text-sm ${
-                        theme === "dark" ? "text-slate-400" : "text-gray-600"
-                      }`}
-                    >
-                      Get special offers and new property alerts
-                    </p>
-                  </div>
-                  <input type="checkbox" className="w-5 h-5 cursor-pointer" />
-                </div>
-
-                <div
-                  className={`p-4 rounded-lg border flex items-center justify-between ${
-                    theme === "dark"
-                      ? "bg-slate-700/50 border-slate-600"
-                      : "bg-gray-50 border-gray-200"
-                  }`}
-                >
-                  <div>
-                    <p className="font-semibold">Message Notifications</p>
-                    <p
-                      className={`text-sm ${
-                        theme === "dark" ? "text-slate-400" : "text-gray-600"
-                      }`}
-                    >
-                      Get notified when hosts or guests message you
-                    </p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    defaultChecked
-                    className="w-5 h-5 cursor-pointer"
-                  />
-                </div>
-              </div>
-
-              <div className="mt-8">
-                <h3 className="text-lg font-bold mb-4">Language & Region</h3>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block font-semibold mb-2">Language</label>
-                    <select
-                      className={`w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 ${
-                        theme === "dark"
-                          ? "bg-slate-700 border-slate-600 focus:ring-blue-600"
-                          : "bg-gray-50 border-gray-300 focus:ring-blue-500"
-                      }`}
-                    >
-                      <option>English</option>
-                      <option>Spanish</option>
-                      <option>Hindi</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block font-semibold mb-2">Currency</label>
-                    <select
-                      className={`w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 ${
-                        theme === "dark"
-                          ? "bg-slate-700 border-slate-600 focus:ring-blue-600"
-                          : "bg-gray-50 border-gray-300 focus:ring-blue-500"
-                      }`}
-                    >
-                      <option>USD ($)</option>
-                      <option>EUR (€)</option>
-                      <option>INR (₹)</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+            <div className="space-y-8">
+              <h2
+                className={`text-2xl font-bold mb-6 ${
+                  theme === "dark" ? "text-text-primary" : "text-gray-900"
+                }`}
+              >
+                Preferences
+              </h2>
+              <PreferenceItem
+                label="Language"
+                description="Choose your preferred language"
+                value="English"
+              />
+              <PreferenceItem
+                label="Currency"
+                description="Set your default currency for payments"
+                value="USD"
+              />
+              <TogglePreference
+                label="Email Notifications"
+                description="Receive updates about your bookings and account"
+                enabled={true}
+              />
+              <TogglePreference
+                label="Promotional Emails"
+                description="Get news, special offers, and travel tips"
+                enabled={false}
+              />
             </div>
           )}
 
           {/* Security Tab */}
           {activeTab === "security" && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold mb-6">Security & Privacy</h2>
-
-              <div className="space-y-4">
-                <div
-                  className={`p-4 rounded-lg border ${
-                    theme === "dark"
-                      ? "bg-slate-700/50 border-slate-600"
-                      : "bg-gray-50 border-gray-200"
-                  }`}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <p className="font-semibold">Change Password</p>
-                      <p
-                        className={`text-sm ${
-                          theme === "dark" ? "text-slate-400" : "text-gray-600"
-                        }`}
-                      >
-                        Update your password regularly for security
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    className={`px-4 py-2 rounded-lg font-semibold transition ${
-                      theme === "dark"
-                        ? "bg-slate-700 hover:bg-slate-600 text-slate-200"
-                        : "bg-gray-300 hover:bg-gray-400"
-                    }`}
-                  >
-                    Update Password
-                  </button>
-                </div>
-
-                <div
-                  className={`p-4 rounded-lg border ${
-                    theme === "dark"
-                      ? "bg-slate-700/50 border-slate-600"
-                      : "bg-gray-50 border-gray-200"
-                  }`}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <p className="font-semibold">Two-Factor Authentication</p>
-                      <p
-                        className={`text-sm ${
-                          theme === "dark" ? "text-slate-400" : "text-gray-600"
-                        }`}
-                      >
-                        Add an extra layer of security to your account
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    className={`px-4 py-2 rounded-lg font-semibold transition ${
-                      theme === "dark"
-                        ? "bg-slate-700 hover:bg-slate-600 text-slate-200"
-                        : "bg-gray-300 hover:bg-gray-400"
-                    }`}
-                  >
-                    Enable 2FA
-                  </button>
-                </div>
-
-                <div
-                  className={`p-4 rounded-lg border ${
-                    theme === "dark"
-                      ? "bg-slate-700/50 border-slate-600"
-                      : "bg-gray-50 border-gray-200"
-                  }`}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <p className="font-semibold">Login Activity</p>
-                      <p
-                        className={`text-sm ${
-                          theme === "dark" ? "text-slate-400" : "text-gray-600"
-                        }`}
-                      >
-                        View your recent login activity
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    className={`px-4 py-2 rounded-lg font-semibold transition ${
-                      theme === "dark"
-                        ? "bg-slate-700 hover:bg-slate-600 text-slate-200"
-                        : "bg-gray-300 hover:bg-gray-400"
-                    }`}
-                  >
-                    View Activity
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-8 pt-8 border-t">
-                <h3 className="text-lg font-bold mb-4 text-red-600">
-                  Danger Zone
-                </h3>
-                <button
-                  className={`px-6 py-2 rounded-lg font-semibold transition text-white ${
-                    theme === "dark"
-                      ? "bg-red-600 hover:bg-red-700"
-                      : "bg-red-500 hover:bg-red-600"
-                  }`}
-                >
-                  🗑️ Delete Account
-                </button>
-              </div>
+            <div className="space-y-8">
+              <h2
+                className={`text-2xl font-bold mb-6 ${
+                  theme === "dark" ? "text-text-primary" : "text-gray-900"
+                }`}
+              >
+                Security
+              </h2>
+              <SecurityItem
+                label="Change Password"
+                description="Update your password regularly to keep your account secure"
+                actionText="Change"
+                onAction={() => alert("Redirect to change password page")}
+              />
+              <SecurityItem
+                label="Two-Factor Authentication"
+                description="Add an extra layer of security to your account"
+                actionText="Enable"
+                onAction={() => alert("Show 2FA setup modal")}
+              />
+              <SecurityItem
+                label="Login History"
+                description="Review recent login activity on your account"
+                actionText="View History"
+                onAction={() => alert("Show login history")}
+              />
             </div>
           )}
         </div>
@@ -528,3 +388,157 @@ export default function Profile() {
     </div>
   );
 }
+
+const InfoItem = ({ label, value }) => {
+  const { theme } = useTheme();
+  return (
+    <div>
+      <p
+        className={`text-sm font-semibold mb-1 ${
+          theme === "dark" ? "text-text-secondary" : "text-gray-600"
+        }`}
+      >
+        {label}
+      </p>
+      <p
+        className={`text-lg ${
+          theme === "dark" ? "text-text-primary" : "text-gray-900"
+        }`}
+      >
+        {value || "Not set"}
+      </p>
+    </div>
+  );
+};
+
+const PreferenceItem = ({ label, description, value }) => {
+  const { theme } = useTheme();
+  return (
+    <div
+      className={`flex justify-between items-center p-4 rounded-lg ${
+        theme === "dark" ? "bg-background" : "bg-gray-50"
+      } border ${theme === "dark" ? "border-primary/10" : "border-gray-200"}`}
+    >
+      <div>
+        <p
+          className={`font-semibold ${
+            theme === "dark" ? "text-text-primary" : "text-gray-900"
+          }`}
+        >
+          {label}
+        </p>
+        <p
+          className={`text-sm ${
+            theme === "dark" ? "text-text-secondary" : "text-gray-600"
+          }`}
+        >
+          {description}
+        </p>
+      </div>
+      <div className="flex items-center gap-4">
+        <p
+          className={`font-semibold ${
+            theme === "dark" ? "text-text-primary" : "text-gray-800"
+          }`}
+        >
+          {value}
+        </p>
+        <button
+          className={`text-sm font-semibold ${
+            theme === "dark"
+              ? "text-primary hover:underline"
+              : "text-blue-600 hover:underline"
+          }`}
+        >
+          Change
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const TogglePreference = ({ label, description, enabled }) => {
+  const { theme } = useTheme();
+  const [isEnabled, setIsEnabled] = useState(enabled);
+
+  return (
+    <div
+      className={`flex justify-between items-center p-4 rounded-lg ${
+        theme === "dark" ? "bg-background" : "bg-gray-50"
+      } border ${theme === "dark" ? "border-primary/10" : "border-gray-200"}`}
+    >
+      <div>
+        <p
+          className={`font-semibold ${
+            theme === "dark" ? "text-text-primary" : "text-gray-900"
+          }`}
+        >
+          {label}
+        </p>
+        <p
+          className={`text-sm ${
+            theme === "dark" ? "text-text-secondary" : "text-gray-600"
+          }`}
+        >
+          {description}
+        </p>
+      </div>
+      <button
+        onClick={() => setIsEnabled(!isEnabled)}
+        className={`w-14 h-8 rounded-full p-1 transition-colors ${
+          isEnabled
+            ? theme === "dark"
+              ? "bg-primary"
+              : "bg-blue-600"
+            : theme === "dark"
+              ? "bg-slate-600"
+              : "bg-gray-300"
+        }`}
+      >
+        <span
+          className={`block w-6 h-6 rounded-full bg-white transform transition-transform ${
+            isEnabled ? "translate-x-6" : "translate-x-0"
+          }`}
+        />
+      </button>
+    </div>
+  );
+};
+
+const SecurityItem = ({ label, description, actionText, onAction }) => {
+  const { theme } = useTheme();
+  return (
+    <div
+      className={`flex justify-between items-center p-4 rounded-lg ${
+        theme === "dark" ? "bg-background" : "bg-gray-50"
+      } border ${theme === "dark" ? "border-primary/10" : "border-gray-200"}`}
+    >
+      <div>
+        <p
+          className={`font-semibold ${
+            theme === "dark" ? "text-text-primary" : "text-gray-900"
+          }`}
+        >
+          {label}
+        </p>
+        <p
+          className={`text-sm ${
+            theme === "dark" ? "text-text-secondary" : "text-gray-600"
+          }`}
+        >
+          {description}
+        </p>
+      </div>
+      <button
+        onClick={onAction}
+        className={`px-4 py-2 rounded-lg font-semibold transition text-sm ${
+          theme === "dark"
+            ? "bg-primary/20 text-primary hover:bg-primary/30"
+            : "bg-blue-100 text-blue-800 hover:bg-blue-200"
+        }`}
+      >
+        {actionText}
+      </button>
+    </div>
+  );
+};

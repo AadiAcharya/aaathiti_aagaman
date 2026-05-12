@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 import { propertiesAPI } from "../services/api";
 
 // ─── Property Card ────────────────────────────────────────────────────────────
@@ -24,7 +25,10 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <button
-          onClick={(e) => { e.stopPropagation(); onToggleFavorite(property._id || property.id); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleFavorite(property._id || property.id);
+          }}
           className="absolute top-3 left-3 text-2xl w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition"
         >
           {isFavorite ? "❤️" : "🤍"}
@@ -35,18 +39,26 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
           </div>
         )}
         <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <p className="text-white font-bold text-lg truncate">{property.title}</p>
+          <p className="text-white font-bold text-lg truncate">
+            {property.title}
+          </p>
         </div>
       </div>
       <div className="p-5">
         <p className="text-accent text-sm font-bold mb-1">{property.price}</p>
-        <h3 className="text-text-primary font-bold text-base mb-1 truncate">{property.title}</h3>
+        <h3 className="text-text-primary font-bold text-base mb-1 truncate">
+          {property.title}
+        </h3>
         <p className="text-text-secondary text-sm mb-3 flex items-center gap-1">
           <span>📍</span> {property.location}
         </p>
         <div className="flex gap-3 text-text-secondary text-xs border-t border-text-muted/10 pt-3">
-          <span className="flex items-center gap-1">🛏️ {property.bedrooms}</span>
-          <span className="flex items-center gap-1">🚿 {property.bathrooms}</span>
+          <span className="flex items-center gap-1">
+            🛏️ {property.bedrooms}
+          </span>
+          <span className="flex items-center gap-1">
+            🚿 {property.bathrooms}
+          </span>
           <span className="flex items-center gap-1">🚗 {property.parking}</span>
           <span className="flex items-center gap-1">🐾 {property.pets}</span>
         </div>
@@ -68,39 +80,50 @@ const SkeletonCard = () => (
 );
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-const TABS      = ["rooms", "flats", "hostels", "villas"];
-const LIMIT     = 9;
+const TABS = ["rooms", "flats", "hostels", "villas"];
+const LIMIT = 9;
 
 export default function Properties() {
-  const navigate        = useNavigate();
+  const navigate = useNavigate();
+  const { theme } = useTheme();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // ── Filter state (synced with URL params) ─────────────────────────────────
-  const [category,   setCategory]   = useState(searchParams.get("category") || "rooms");
-  const [search,     setSearch]     = useState(searchParams.get("search")   || "");
-  const [sortBy,     setSortBy]     = useState(searchParams.get("sort")     || "default");
-  const [maxPrice,   setMaxPrice]   = useState(Number(searchParams.get("maxPrice")) || 20000);
-  const [page,       setPage]       = useState(1);
+  const [category, setCategory] = useState(
+    searchParams.get("category") || "rooms",
+  );
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [sortBy, setSortBy] = useState(searchParams.get("sort") || "default");
+  const [maxPrice, setMaxPrice] = useState(
+    Number(searchParams.get("maxPrice")) || 20000,
+  );
+  const [page, setPage] = useState(1);
   const [showFilter, setShowFilter] = useState(false);
 
   // ── Data state ────────────────────────────────────────────────────────────
   const [properties, setProperties] = useState([]);
-  const [total,      setTotal]      = useState(0);
-  const [loading,    setLoading]    = useState(true);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   // ── Favorites ─────────────────────────────────────────────────────────────
   const [favorites, setFavorites] = useState(() => {
     try {
       const saved = localStorage.getItem("favorites");
       const parsed = saved ? JSON.parse(saved) : [];
-      return parsed.filter((id) => typeof id === "string" && /^[a-f\d]{24}$/i.test(id));
-    } catch { return []; }
+      return parsed.filter(
+        (id) => typeof id === "string" && /^[a-f\d]{24}$/i.test(id),
+      );
+    } catch {
+      return [];
+    }
   });
   useEffect(() => {
     localStorage.setItem("favorites", JSON.stringify(favorites));
   }, [favorites]);
   const toggleFavorite = (id) =>
-    setFavorites((prev) => prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]);
+    setFavorites((prev) =>
+      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id],
+    );
 
   // ── Fetch ─────────────────────────────────────────────────────────────────
   const fetchProperties = useCallback(async () => {
@@ -119,14 +142,16 @@ export default function Properties() {
     }
   }, [category, page, search]);
 
-  useEffect(() => { fetchProperties(); }, [fetchProperties]);
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
 
   // Sync URL params
   useEffect(() => {
     const params = { category };
-    if (search)            params.search   = search;
-    if (sortBy !== "default") params.sort  = sortBy;
-    if (maxPrice !== 20000)   params.maxPrice = maxPrice;
+    if (search) params.search = search;
+    if (sortBy !== "default") params.sort = sortBy;
+    if (maxPrice !== 20000) params.maxPrice = maxPrice;
     setSearchParams(params, { replace: true });
   }, [category, search, sortBy, maxPrice]);
 
@@ -135,30 +160,53 @@ export default function Properties() {
     .filter((p) => !p.priceMax || p.priceMax <= maxPrice)
     .sort((a, b) => {
       const n = (p) => p.priceMin || 0;
-      if (sortBy === "price-low")  return n(a) - n(b);
+      if (sortBy === "price-low") return n(a) - n(b);
       if (sortBy === "price-high") return n(b) - n(a);
-      if (sortBy === "name")       return a.title.localeCompare(b.title);
-      if (sortBy === "rating")     return (b.rating || 0) - (a.rating || 0);
+      if (sortBy === "name") return a.title.localeCompare(b.title);
+      if (sortBy === "rating") return (b.rating || 0) - (a.rating || 0);
       return 0;
     });
 
   const totalPages = Math.ceil(total / LIMIT);
 
-  const handleCategoryChange = (cat) => { setCategory(cat); setPage(1); };
-  const handleSearch = (e) => { e.preventDefault(); setPage(1); fetchProperties(); };
-  const resetFilters = () => {
-    setCategory("rooms"); setSearch(""); setSortBy("default");
-    setMaxPrice(20000); setPage(1);
+  const handleCategoryChange = (cat) => {
+    setCategory(cat);
+    setPage(1);
   };
-  const filtersActive = search || sortBy !== "default" || maxPrice !== 20000 || category !== "rooms";
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(1);
+    fetchProperties();
+  };
+  const resetFilters = () => {
+    setCategory("rooms");
+    setSearch("");
+    setSortBy("default");
+    setMaxPrice(20000);
+    setPage(1);
+  };
+  const filtersActive =
+    search ||
+    sortBy !== "default" ||
+    maxPrice !== 20000 ||
+    category !== "rooms";
 
   return (
-    <div className="w-full bg-background min-h-screen">
-
+    <div
+      className={`w-full min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-slate-900 text-white"
+          : "bg-gray-50 text-gray-900"
+      }`}
+    >
       {/* ── Page Header ──────────────────────────────────────────────────── */}
-      <div className="bg-bg-secondary border-b border-text-muted/10">
+      <div
+        className={`${theme === "dark" ? "bg-slate-800" : "bg-white"} border-b border-text-muted/10`}
+      >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">Browse Properties</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">
+            Browse Properties
+          </h1>
           <p className="text-text-secondary">
             {loading ? "Searching..." : `${total} properties found`}
           </p>
@@ -166,12 +214,21 @@ export default function Properties() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-
         {/* ── Search + Filter Bar ─────────────────────────────────────────── */}
         <form onSubmit={handleSearch} className="flex gap-3 mb-6">
           <div className="relative flex-1">
-            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
             <input
               type="text"
@@ -181,31 +238,54 @@ export default function Properties() {
               className="w-full pl-10 pr-4 py-3 bg-bg-secondary border border-text-muted/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary text-sm"
             />
           </div>
-          <button type="submit"
-            className="bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-xl font-semibold transition text-sm">
+          <button
+            type="submit"
+            className="bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-xl font-semibold transition text-sm"
+          >
             Search
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={() => setShowFilter((v) => !v)}
             className={`border-2 px-4 py-3 rounded-xl font-semibold transition text-sm flex items-center gap-2 ${
-              showFilter ? "border-primary bg-primary text-white" : "border-primary/30 text-text-primary hover:border-primary"
-            }`}>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              showFilter
+                ? "border-primary bg-primary text-white"
+                : "border-primary/30 text-text-primary hover:border-primary"
+            }`}
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+              />
             </svg>
-            Filters {filtersActive && <span className="w-2 h-2 rounded-full bg-accent" />}
+            Filters{" "}
+            {filtersActive && (
+              <span className="w-2 h-2 rounded-full bg-accent" />
+            )}
           </button>
         </form>
 
         {/* ── Expandable Filters ──────────────────────────────────────────── */}
         {showFilter && (
-          <div className="bg-bg-secondary border border-primary/20 rounded-2xl p-6 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div
+            className={`${theme === "dark" ? "bg-slate-800" : "bg-white"} border border-primary/20 rounded-2xl p-6 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-6`}
+          >
             <div>
-              <label className="text-text-secondary text-xs font-semibold uppercase tracking-wide block mb-2">Sort By</label>
+              <label className="text-text-secondary text-xs font-semibold uppercase tracking-wide block mb-2">
+                Sort By
+              </label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full bg-background border border-text-muted/20 text-text-primary rounded-xl py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                className={`w-full ${theme === "dark" ? "bg-slate-700" : "bg-gray-100"} border border-text-muted/20 text-text-primary rounded-xl py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
               >
                 <option value="default">Default</option>
                 <option value="price-low">Price: Low to High</option>
@@ -216,10 +296,16 @@ export default function Properties() {
             </div>
             <div>
               <label className="text-text-secondary text-xs font-semibold uppercase tracking-wide block mb-2">
-                Max Price: <span className="text-primary font-bold">${maxPrice.toLocaleString()}</span>
+                Max Price:{" "}
+                <span className="text-primary font-bold">
+                  ${maxPrice.toLocaleString()}
+                </span>
               </label>
               <input
-                type="range" min="0" max="20000" step={500}
+                type="range"
+                min="0"
+                max="20000"
+                step={500}
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
                 className="w-full accent-primary mt-2"
@@ -228,7 +314,7 @@ export default function Properties() {
             <div className="flex items-end">
               <button
                 onClick={resetFilters}
-                className="w-full border-2 border-primary/30 hover:border-primary text-text-primary hover:text-primary rounded-xl py-2.5 font-semibold transition text-sm"
+                className={`w-full border-2 ${theme === "dark" ? "border-slate-600 hover:border-primary text-slate-300 hover:text-primary" : "border-gray-300 hover:border-primary text-gray-700 hover:text-primary"} rounded-xl py-2.5 font-semibold transition text-sm`}
               >
                 Reset All Filters
               </button>
@@ -256,10 +342,15 @@ export default function Properties() {
         {/* ── Results Info ────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-text-secondary text-sm">
-            {loading ? "Loading..." : `Showing ${displayed.length} of ${total} properties`}
+            {loading
+              ? "Loading..."
+              : `Showing ${displayed.length} of ${total} properties`}
           </p>
           {filtersActive && (
-            <button onClick={resetFilters} className="text-primary text-sm hover:underline font-semibold">
+            <button
+              onClick={resetFilters}
+              className="text-primary text-sm hover:underline font-semibold"
+            >
               Clear filters ✕
             </button>
           )}
@@ -268,15 +359,23 @@ export default function Properties() {
         {/* ── Grid ────────────────────────────────────────────────────────── */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
           </div>
         ) : displayed.length === 0 ? (
           <div className="text-center py-24">
             <p className="text-5xl mb-4">🔍</p>
-            <p className="text-xl font-bold text-text-primary mb-2">No properties found</p>
-            <p className="text-text-secondary mb-6">Try adjusting your search or filters</p>
-            <button onClick={resetFilters}
-              className="bg-primary text-white px-8 py-3 rounded-full font-semibold hover:bg-primary-hover transition">
+            <p className="text-xl font-bold text-text-primary mb-2">
+              No properties found
+            </p>
+            <p className="text-text-secondary mb-6">
+              Try adjusting your search or filters
+            </p>
+            <button
+              onClick={resetFilters}
+              className="bg-primary text-white px-8 py-3 rounded-full font-semibold hover:bg-primary-hover transition"
+            >
               Reset Filters
             </button>
           </div>
@@ -305,7 +404,9 @@ export default function Properties() {
             </button>
 
             {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+              .filter(
+                (p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1,
+              )
               .reduce((acc, p, idx, arr) => {
                 if (idx > 0 && p - arr[idx - 1] > 1) acc.push("...");
                 acc.push(p);
@@ -313,7 +414,9 @@ export default function Properties() {
               }, [])
               .map((p, i) =>
                 p === "..." ? (
-                  <span key={`ellipsis-${i}`} className="text-text-muted px-1">…</span>
+                  <span key={`ellipsis-${i}`} className="text-text-muted px-1">
+                    …
+                  </span>
                 ) : (
                   <button
                     key={p}
@@ -326,7 +429,7 @@ export default function Properties() {
                   >
                     {p}
                   </button>
-                )
+                ),
               )}
 
             <button
@@ -340,25 +443,31 @@ export default function Properties() {
         )}
 
         {/* ── CTA ─────────────────────────────────────────────────────────── */}
-        <div className="mt-20 bg-gradient-to-br from-primary/10 to-accent/5 rounded-3xl p-8 md:p-12 border border-primary/20 text-center">
+        <div
+          className={`mt-20 ${theme === "dark" ? "bg-slate-800" : "bg-white"} rounded-3xl p-8 md:p-12 border ${theme === "dark" ? "border-slate-700" : "border-gray-200"} text-center`}
+        >
           <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-3">
             Can't find what you're looking for?
           </h2>
           <p className="text-text-secondary mb-6 max-w-lg mx-auto">
-            List your own property and reach thousands of guests, or contact us and we'll help you find the perfect stay.
+            List your own property and reach thousands of guests, or contact us
+            and we'll help you find the perfect stay.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
-            <button onClick={() => navigate("/add-property")}
-              className="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-full font-semibold transition shadow-lg shadow-primary/20">
+            <button
+              onClick={() => navigate("/add-property")}
+              className="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-full font-semibold transition shadow-lg shadow-primary/20"
+            >
               List Your Property
             </button>
-            <button onClick={() => navigate("/help")}
-              className="border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-3 rounded-full font-semibold transition">
+            <button
+              onClick={() => navigate("/help")}
+              className="border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-3 rounded-full font-semibold transition"
+            >
               Contact Us
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );

@@ -35,7 +35,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
           <Header />
 
           <main className="flex-1">

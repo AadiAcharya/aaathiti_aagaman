@@ -1,15 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 import { propertiesAPI } from "../services/api";
 import { blogs } from "../data/propertyData";
 
 // ─── Property Card ────────────────────────────────────────────────────────────
 const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   return (
     <div
       onClick={() => navigate(`/properties`)}
-      className="bg-bg-secondary rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 border border-text-muted/10 group cursor-pointer hover:-translate-y-1"
+      className={`${
+        theme === "dark"
+          ? "bg-bg-secondary border-text-muted/10 hover:shadow-2xl hover:shadow-primary/10"
+          : "bg-white border-gray-200 hover:shadow-lg"
+      } rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer hover:-translate-y-1`}
     >
       <div className="h-52 relative overflow-hidden">
         {property.image ? (
@@ -46,13 +52,27 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
       </div>
       <div className="p-5">
         <p className="text-accent text-sm font-bold mb-1">{property.price}</p>
-        <h3 className="text-text-primary font-bold text-base mb-1 truncate">
+        <h3
+          className={`${
+            theme === "dark" ? "text-text-primary" : "text-gray-900"
+          } font-bold text-base mb-1 truncate`}
+        >
           {property.title}
         </h3>
-        <p className="text-text-secondary text-sm mb-3 flex items-center gap-1">
+        <p
+          className={`${
+            theme === "dark" ? "text-text-secondary" : "text-gray-600"
+          } text-sm mb-3 flex items-center gap-1`}
+        >
           <span>📍</span> {property.location}
         </p>
-        <div className="flex gap-3 text-text-secondary text-xs border-t border-text-muted/10 pt-3">
+        <div
+          className={`flex gap-3 ${
+            theme === "dark" ? "text-text-secondary" : "text-gray-500"
+          } text-xs border-t ${
+            theme === "dark" ? "border-text-muted/10" : "border-gray-200"
+          } pt-3`}
+        >
           <span className="flex items-center gap-1">
             🛏️ {property.bedrooms}
           </span>
@@ -68,73 +88,158 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
 };
 
 // ─── Blog Card ────────────────────────────────────────────────────────────────
-const BlogCard = ({ title, category, image, excerpt, date, onClick }) => (
-  <div
-    onClick={onClick}
-    className="group cursor-pointer rounded-2xl overflow-hidden bg-bg-secondary border border-text-muted/10 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1"
-  >
-    <div className="h-48 overflow-hidden">
-      <img
-        src={image}
-        alt={title}
-        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-      />
-    </div>
-    <div className="p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
-          {category}
-        </span>
-        <span className="text-text-muted text-xs">{date}</span>
+const BlogCard = ({ title, category, image, excerpt, date, onClick }) => {
+  const { theme } = useTheme();
+  return (
+    <div
+      onClick={onClick}
+      className={`group cursor-pointer rounded-2xl overflow-hidden ${
+        theme === "dark"
+          ? "bg-bg-secondary border-text-muted/10 hover:shadow-xl hover:shadow-primary/5"
+          : "bg-white border-gray-200 hover:shadow-lg"
+      } transition-all duration-300 hover:-translate-y-1`}
+    >
+      <div className="h-48 overflow-hidden">
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+        />
       </div>
-      <h3 className="text-text-primary font-bold text-base mb-2 group-hover:text-primary transition-colors line-clamp-2">
-        {title}
-      </h3>
-      {excerpt && (
-        <p className="text-text-secondary text-sm line-clamp-2">{excerpt}</p>
-      )}
+      <div className="p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <span
+            className={`px-3 py-1 ${
+              theme === "dark"
+                ? "bg-primary/10 text-primary"
+                : "bg-blue-100 text-blue-800"
+            } text-xs font-bold rounded-full`}
+          >
+            {category}
+          </span>
+          <span
+            className={`${
+              theme === "dark" ? "text-text-muted" : "text-gray-500"
+            } text-xs`}
+          >
+            {date}
+          </span>
+        </div>
+        <h3
+          className={`${
+            theme === "dark"
+              ? "text-text-primary group-hover:text-primary"
+              : "text-gray-900 group-hover:text-blue-600"
+          } font-bold text-base mb-2 transition-colors line-clamp-2`}
+        >
+          {title}
+        </h3>
+        {excerpt && (
+          <p
+            className={`${
+              theme === "dark" ? "text-text-secondary" : "text-gray-600"
+            } text-sm line-clamp-2`}
+          >
+            {excerpt}
+          </p>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ─── Skeleton Card ────────────────────────────────────────────────────────────
-const SkeletonCard = () => (
-  <div className="bg-bg-secondary rounded-2xl overflow-hidden border border-text-muted/10 animate-pulse">
-    <div className="h-52 bg-primary/10" />
-    <div className="p-5 space-y-3">
-      <div className="h-3 bg-primary/10 rounded w-1/3" />
-      <div className="h-4 bg-primary/10 rounded w-3/4" />
-      <div className="h-3 bg-primary/10 rounded w-1/2" />
+const SkeletonCard = () => {
+  const { theme } = useTheme();
+  return (
+    <div
+      className={`${
+        theme === "dark"
+          ? "bg-bg-secondary border-text-muted/10"
+          : "bg-white border-gray-200"
+      } rounded-2xl overflow-hidden animate-pulse`}
+    >
+      <div
+        className={`h-52 ${theme === "dark" ? "bg-primary/10" : "bg-gray-300"}`}
+      />
+      <div className="p-5 space-y-3">
+        <div
+          className={`h-3 ${
+            theme === "dark" ? "bg-primary/10" : "bg-gray-300"
+          } rounded w-1/3`}
+        />
+        <div
+          className={`h-4 ${
+            theme === "dark" ? "bg-primary/10" : "bg-gray-300"
+          } rounded w-3/4`}
+        />
+        <div
+          className={`h-3 ${
+            theme === "dark" ? "bg-primary/10" : "bg-gray-300"
+          } rounded w-1/2`}
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ─── Section Header ───────────────────────────────────────────────────────────
-const SectionHeader = ({ title, subtitle, action }) => (
-  <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-    <div>
-      <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">
-        {title}
-      </h2>
-      {subtitle && <p className="text-text-secondary">{subtitle}</p>}
-      <div className="w-16 h-1 bg-primary rounded-full mt-3" />
+const SectionHeader = ({ title, subtitle, action }) => {
+  const { theme } = useTheme();
+  return (
+    <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div>
+        <h2
+          className={`text-3xl md:text-4xl font-bold ${
+            theme === "dark" ? "text-text-primary" : "text-gray-900"
+          } mb-2`}
+        >
+          {title}
+        </h2>
+        {subtitle && (
+          <p
+            className={`${
+              theme === "dark" ? "text-text-secondary" : "text-gray-600"
+            }`}
+          >
+            {subtitle}
+          </p>
+        )}
+        <div className="w-16 h-1 bg-primary rounded-full mt-3" />
+      </div>
+      {action}
     </div>
-    {action}
-  </div>
-);
+  );
+};
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
-const StatCard = ({ icon, value, label }) => (
-  <div className="text-center p-6 bg-bg-secondary rounded-2xl border border-text-muted/10 hover:border-primary/30 transition">
-    <div className="text-4xl mb-2">{icon}</div>
-    <p className="text-3xl font-bold text-primary mb-1">{value}</p>
-    <p className="text-text-secondary text-sm">{label}</p>
-  </div>
-);
+const StatCard = ({ icon, value, label }) => {
+  const { theme } = useTheme();
+  return (
+    <div
+      className={`text-center p-6 ${
+        theme === "dark"
+          ? "bg-bg-secondary border-text-muted/10 hover:border-primary/30"
+          : "bg-white border-gray-200 hover:border-blue-200"
+      } rounded-2xl border transition`}
+    >
+      <div className="text-4xl mb-2">{icon}</div>
+      <p className="text-3xl font-bold text-primary mb-1">{value}</p>
+      <p
+        className={`${
+          theme === "dark" ? "text-text-secondary" : "text-gray-600"
+        } text-sm`}
+      >
+        {label}
+      </p>
+    </div>
+  );
+};
 
 // ─── Main Home Component ──────────────────────────────────────────────────────
 export default function Home() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const [selectedTab, setSelectedTab] = useState("rooms");
   const [searchTerm, setSearchTerm] = useState("");
@@ -201,7 +306,7 @@ export default function Home() {
   useEffect(() => {
     fetchProperties();
     setVisibleCount(4);
-  }, [selectedTab]);
+  }, [selectedTab, fetchProperties]);
 
   const handleSearch = () => {
     const params = {};
@@ -261,9 +366,17 @@ export default function Home() {
   const tabs = ["rooms", "flats", "hostels", "villas"];
 
   return (
-    <div className="w-full bg-background min-h-screen">
+    <div
+      className={`w-full min-h-screen transition-colors duration-300 ${
+        theme === "dark" ? "bg-background" : "bg-gray-50"
+      }`}
+    >
       {/* ── Hero / Banner ──────────────────────────────────────────────────── */}
-      <div className="relative bg-bg-secondary overflow-hidden">
+      <div
+        className={`relative ${
+          theme === "dark" ? "bg-bg-secondary" : "bg-gray-100"
+        } overflow-hidden`}
+      >
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full -translate-x-1/2 -translate-y-1/2" />
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent rounded-full translate-x-1/2 translate-y-1/2" />
@@ -273,18 +386,32 @@ export default function Home() {
             <p className="text-primary font-semibold text-sm tracking-widest uppercase mb-3">
               Welcome to
             </p>
-            <h1 className="text-5xl md:text-7xl font-bold text-text-primary mb-4 leading-tight">
+            <h1
+              className={`text-5xl md:text-7xl font-bold ${
+                theme === "dark" ? "text-text-primary" : "text-gray-900"
+              } mb-4 leading-tight`}
+            >
               Aatithi
               <br />
               <span className="text-primary">Aagaman</span>
             </h1>
-            <p className="text-text-secondary text-lg md:text-xl max-w-xl mx-auto md:mx-0">
+            <p
+              className={`${
+                theme === "dark" ? "text-text-secondary" : "text-gray-600"
+              } text-lg md:text-xl max-w-xl mx-auto md:mx-0`}
+            >
               Find your perfect stay — rooms, flats, villas & hostels across the
               country
             </p>
           </div>
 
-          <div className="bg-background border border-primary/20 rounded-3xl p-6 md:p-8 shadow-2xl shadow-primary/5">
+          <div
+            className={`${
+              theme === "dark"
+                ? "bg-background border-primary/20 shadow-2xl shadow-primary/5"
+                : "bg-white border-gray-200 shadow-lg"
+            } rounded-3xl p-6 md:p-8 border`}
+          >
             <div className="flex gap-2 sm:gap-6 mb-6 overflow-x-auto pb-1">
               {tabs.map((tab) => (
                 <button
@@ -293,7 +420,11 @@ export default function Home() {
                   className={`capitalize font-semibold pb-2 px-1 text-sm sm:text-base whitespace-nowrap transition border-b-2 ${
                     selectedTab === tab
                       ? "text-primary border-primary"
-                      : "text-text-secondary border-transparent hover:text-primary"
+                      : `${
+                          theme === "dark"
+                            ? "text-text-secondary"
+                            : "text-gray-500"
+                        } border-transparent hover:text-primary`
                   }`}
                 >
                   {tab}
@@ -303,7 +434,11 @@ export default function Home() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
               <div>
-                <label className="text-text-secondary text-xs font-semibold block mb-1 uppercase tracking-wide">
+                <label
+                  className={`${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                  } text-xs font-semibold block mb-1 uppercase tracking-wide`}
+                >
                   Location
                 </label>
                 <input
@@ -312,22 +447,38 @@ export default function Home() {
                   onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   type="text"
                   placeholder="Which city?"
-                  className="w-full bg-bg-secondary text-text-primary placeholder-text-muted rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                  className={`w-full ${
+                    theme === "dark"
+                      ? "bg-bg-secondary text-text-primary placeholder-text-muted"
+                      : "bg-gray-100 text-gray-900 placeholder-gray-400"
+                  } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
                 />
               </div>
               <div>
-                <label className="text-text-secondary text-xs font-semibold block mb-1 uppercase tracking-wide">
+                <label
+                  className={`${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                  } text-xs font-semibold block mb-1 uppercase tracking-wide`}
+                >
                   Check In
                 </label>
                 <input
                   type="date"
                   value={checkIn}
                   onChange={(e) => setCheckIn(e.target.value)}
-                  className="w-full bg-bg-secondary text-text-primary rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                  className={`w-full ${
+                    theme === "dark"
+                      ? "bg-bg-secondary text-text-primary"
+                      : "bg-gray-100 text-gray-900"
+                  } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
                 />
               </div>
               <div>
-                <label className="text-text-secondary text-xs font-semibold block mb-1 uppercase tracking-wide">
+                <label
+                  className={`${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                  } text-xs font-semibold block mb-1 uppercase tracking-wide`}
+                >
                   Check Out
                 </label>
                 <input
@@ -335,11 +486,19 @@ export default function Home() {
                   value={checkOut}
                   min={checkIn}
                   onChange={(e) => setCheckOut(e.target.value)}
-                  className="w-full bg-bg-secondary text-text-primary rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                  className={`w-full ${
+                    theme === "dark"
+                      ? "bg-bg-secondary text-text-primary"
+                      : "bg-gray-100 text-gray-900"
+                  } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
                 />
               </div>
               <div>
-                <label className="text-text-secondary text-xs font-semibold block mb-1 uppercase tracking-wide">
+                <label
+                  className={`${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                  } text-xs font-semibold block mb-1 uppercase tracking-wide`}
+                >
                   Guests
                 </label>
                 <input
@@ -348,18 +507,30 @@ export default function Home() {
                   min={1}
                   onChange={(e) => setGuests(e.target.value)}
                   placeholder="How many?"
-                  className="w-full bg-bg-secondary text-text-primary placeholder-text-muted rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                  className={`w-full ${
+                    theme === "dark"
+                      ? "bg-bg-secondary text-text-primary placeholder-text-muted"
+                      : "bg-gray-100 text-gray-900 placeholder-gray-400"
+                  } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
               <div>
-                <label className="text-text-secondary text-xs font-semibold block mb-1 uppercase tracking-wide">
+                <label
+                  className={`${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                  } text-xs font-semibold block mb-1 uppercase tracking-wide`}
+                >
                   Sort By
                 </label>
                 <select
-                  className="w-full bg-bg-secondary text-text-primary rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                  className={`w-full ${
+                    theme === "dark"
+                      ? "bg-bg-secondary text-text-primary"
+                      : "bg-gray-100 text-gray-900"
+                  } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                 >
@@ -370,7 +541,11 @@ export default function Home() {
                 </select>
               </div>
               <div>
-                <label className="text-text-secondary text-xs font-semibold block mb-1 uppercase tracking-wide">
+                <label
+                  className={`${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                  } text-xs font-semibold block mb-1 uppercase tracking-wide`}
+                >
                   Max Price:{" "}
                   <span className="text-primary font-bold">
                     ${maxPrice.toLocaleString()}
@@ -392,28 +567,19 @@ export default function Home() {
               {filtersActive && (
                 <button
                   onClick={resetFilters}
-                  className="border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-full px-6 py-2.5 font-semibold transition text-sm"
+                  className={`px-6 py-3 rounded-xl font-semibold text-sm transition ${
+                    theme === "dark"
+                      ? "bg-primary/10 text-primary hover:bg-primary/20"
+                      : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                  }`}
                 >
-                  Clear
+                  Reset
                 </button>
               )}
               <button
                 onClick={handleSearch}
-                className="bg-primary hover:bg-primary-hover text-white rounded-full px-8 py-2.5 font-semibold transition text-sm flex items-center gap-2"
+                className="px-8 py-3 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-hover transition w-full sm:w-auto"
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
                 Search
               </button>
             </div>
@@ -873,7 +1039,7 @@ export default function Home() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleNewsletterSubmit()}
-                className="flex-1 min-w-0 bg-background text-text-primary placeholder-text-muted rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-primary border border-text-muted/20 text-sm"
+                className={`flex-1 min-w-0 bg-background text-text-primary placeholder-text-muted rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-primary border border-text-muted/20 text-sm`}
               />
               <button
                 onClick={handleNewsletterSubmit}
