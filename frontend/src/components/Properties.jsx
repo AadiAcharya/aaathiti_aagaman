@@ -6,10 +6,15 @@ import { propertiesAPI } from "../services/api";
 // ─── Property Card ────────────────────────────────────────────────────────────
 const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   return (
     <div
       onClick={() => navigate("/properties")}
-      className="bg-bg-secondary rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 border border-text-muted/10 group cursor-pointer hover:-translate-y-1"
+      className={`${
+        theme === "dark"
+          ? "bg-bg-secondary border-text-muted/10 hover:shadow-2xl hover:shadow-primary/10"
+          : "bg-white border-gray-200 hover:shadow-lg"
+      } rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer hover:-translate-y-1`}
     >
       <div className="h-52 relative overflow-hidden">
         {property.image ? (
@@ -46,13 +51,27 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
       </div>
       <div className="p-5">
         <p className="text-accent text-sm font-bold mb-1">{property.price}</p>
-        <h3 className="text-text-primary font-bold text-base mb-1 truncate">
+        <h3
+          className={`${
+            theme === "dark" ? "text-text-primary" : "text-gray-900"
+          } font-bold text-base mb-1 truncate`}
+        >
           {property.title}
         </h3>
-        <p className="text-text-secondary text-sm mb-3 flex items-center gap-1">
+        <p
+          className={`${
+            theme === "dark" ? "text-text-secondary" : "text-gray-600"
+          } text-sm mb-3 flex items-center gap-1`}
+        >
           <span>📍</span> {property.location}
         </p>
-        <div className="flex gap-3 text-text-secondary text-xs border-t border-text-muted/10 pt-3">
+        <div
+          className={`flex gap-3 ${
+            theme === "dark" ? "text-text-secondary" : "text-gray-500"
+          } text-xs border-t ${
+            theme === "dark" ? "border-text-muted/10" : "border-gray-200"
+          } pt-3`}
+        >
           <span className="flex items-center gap-1">
             🛏️ {property.bedrooms}
           </span>
@@ -68,16 +87,39 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
 };
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
-const SkeletonCard = () => (
-  <div className="bg-bg-secondary rounded-2xl overflow-hidden border border-text-muted/10 animate-pulse">
-    <div className="h-52 bg-primary/10" />
-    <div className="p-5 space-y-3">
-      <div className="h-3 bg-primary/10 rounded w-1/3" />
-      <div className="h-4 bg-primary/10 rounded w-3/4" />
-      <div className="h-3 bg-primary/10 rounded w-1/2" />
+const SkeletonCard = () => {
+  const { theme } = useTheme();
+  return (
+    <div
+      className={`${
+        theme === "dark"
+          ? "bg-bg-secondary border-text-muted/10"
+          : "bg-white border-gray-200"
+      } rounded-2xl overflow-hidden animate-pulse`}
+    >
+      <div
+        className={`h-52 ${theme === "dark" ? "bg-primary/10" : "bg-gray-300"}`}
+      />
+      <div className="p-5 space-y-3">
+        <div
+          className={`h-3 ${
+            theme === "dark" ? "bg-primary/10" : "bg-gray-300"
+          } rounded w-1/3`}
+        />
+        <div
+          className={`h-4 ${
+            theme === "dark" ? "bg-primary/10" : "bg-gray-300"
+          } rounded w-3/4`}
+        />
+        <div
+          className={`h-3 ${
+            theme === "dark" ? "bg-primary/10" : "bg-gray-300"
+          } rounded w-1/2`}
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const TABS = ["rooms", "flats", "hostels", "villas"];
@@ -194,20 +236,30 @@ export default function Properties() {
   return (
     <div
       className={`w-full min-h-screen transition-colors duration-300 ${
-        theme === "dark"
-          ? "bg-slate-900 text-white"
-          : "bg-gray-50 text-gray-900"
+        theme === "dark" ? "bg-background" : "bg-gray-50"
       }`}
     >
       {/* ── Page Header ──────────────────────────────────────────────────── */}
       <div
-        className={`${theme === "dark" ? "bg-slate-800" : "bg-white"} border-b border-text-muted/10`}
+        className={`${
+          theme === "dark" ? "bg-bg-secondary" : "bg-white"
+        } border-b ${
+          theme === "dark" ? "border-text-muted/10" : "border-gray-200"
+        }`}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">
+          <h1
+            className={`text-3xl md:text-4xl font-bold ${
+              theme === "dark" ? "text-text-primary" : "text-gray-900"
+            } mb-2`}
+          >
             Browse Properties
           </h1>
-          <p className="text-text-secondary">
+          <p
+            className={`${
+              theme === "dark" ? "text-text-secondary" : "text-gray-600"
+            }`}
+          >
             {loading ? "Searching..." : `${total} properties found`}
           </p>
         </div>
@@ -218,7 +270,9 @@ export default function Properties() {
         <form onSubmit={handleSearch} className="flex gap-3 mb-6">
           <div className="relative flex-1">
             <svg
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted"
+              className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 ${
+                theme === "dark" ? "text-text-muted" : "text-gray-400"
+              }`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -235,7 +289,11 @@ export default function Properties() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by location or title..."
-              className="w-full pl-10 pr-4 py-3 bg-bg-secondary border border-text-muted/20 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+              className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-sm ${
+                theme === "dark"
+                  ? "bg-bg-secondary border-text-muted/20 text-text-primary placeholder-text-muted"
+                  : "bg-white border-gray-300 text-gray-900 placeholder-gray-400"
+              }`}
             />
           </div>
           <button
@@ -250,7 +308,11 @@ export default function Properties() {
             className={`border-2 px-4 py-3 rounded-xl font-semibold transition text-sm flex items-center gap-2 ${
               showFilter
                 ? "border-primary bg-primary text-white"
-                : "border-primary/30 text-text-primary hover:border-primary"
+                : `${
+                    theme === "dark"
+                      ? "border-primary/30 text-text-primary hover:border-primary"
+                      : "border-gray-300 text-gray-700 hover:border-blue-500 hover:text-blue-600"
+                  }`
             }`}
           >
             <svg
@@ -276,16 +338,28 @@ export default function Properties() {
         {/* ── Expandable Filters ──────────────────────────────────────────── */}
         {showFilter && (
           <div
-            className={`${theme === "dark" ? "bg-slate-800" : "bg-white"} border border-primary/20 rounded-2xl p-6 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-6`}
+            className={`${
+              theme === "dark" ? "bg-bg-secondary" : "bg-white"
+            } border ${
+              theme === "dark" ? "border-primary/20" : "border-gray-200"
+            } rounded-2xl p-6 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-6`}
           >
             <div>
-              <label className="text-text-secondary text-xs font-semibold uppercase tracking-wide block mb-2">
+              <label
+                className={`${
+                  theme === "dark" ? "text-text-secondary" : "text-gray-500"
+                } text-xs font-semibold uppercase tracking-wide block mb-2`}
+              >
                 Sort By
               </label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className={`w-full ${theme === "dark" ? "bg-slate-700" : "bg-gray-100"} border border-text-muted/20 text-text-primary rounded-xl py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
+                className={`w-full border rounded-xl py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm ${
+                  theme === "dark"
+                    ? "bg-slate-700 border-text-muted/20 text-text-primary"
+                    : "bg-gray-100 border-gray-300 text-gray-900"
+                }`}
               >
                 <option value="default">Default</option>
                 <option value="price-low">Price: Low to High</option>
@@ -295,7 +369,11 @@ export default function Properties() {
               </select>
             </div>
             <div>
-              <label className="text-text-secondary text-xs font-semibold uppercase tracking-wide block mb-2">
+              <label
+                className={`${
+                  theme === "dark" ? "text-text-secondary" : "text-gray-500"
+                } text-xs font-semibold uppercase tracking-wide block mb-2`}
+              >
                 Max Price:{" "}
                 <span className="text-primary font-bold">
                   ${maxPrice.toLocaleString()}
@@ -314,7 +392,11 @@ export default function Properties() {
             <div className="flex items-end">
               <button
                 onClick={resetFilters}
-                className={`w-full border-2 ${theme === "dark" ? "border-slate-600 hover:border-primary text-slate-300 hover:text-primary" : "border-gray-300 hover:border-primary text-gray-700 hover:text-primary"} rounded-xl py-2.5 font-semibold transition text-sm`}
+                className={`w-full border-2 rounded-xl py-2.5 font-semibold transition text-sm ${
+                  theme === "dark"
+                    ? "border-slate-600 hover:border-primary text-slate-300 hover:text-primary"
+                    : "border-gray-300 hover:border-blue-500 text-gray-700 hover:text-blue-600"
+                }`}
               >
                 Reset All Filters
               </button>
@@ -331,7 +413,11 @@ export default function Properties() {
               className={`capitalize whitespace-nowrap px-5 py-2.5 rounded-full font-semibold text-sm transition border-2 ${
                 category === tab
                   ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
-                  : "border-primary/20 text-text-secondary hover:border-primary hover:text-primary"
+                  : `${
+                      theme === "dark"
+                        ? "border-primary/20 text-text-secondary hover:border-primary hover:text-primary"
+                        : "border-gray-300 text-gray-500 hover:border-blue-500 hover:text-blue-600"
+                    }`
               }`}
             >
               {tab}
@@ -341,7 +427,11 @@ export default function Properties() {
 
         {/* ── Results Info ────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between mb-6">
-          <p className="text-text-secondary text-sm">
+          <p
+            className={`${
+              theme === "dark" ? "text-text-secondary" : "text-gray-600"
+            } text-sm`}
+          >
             {loading
               ? "Loading..."
               : `Showing ${displayed.length} of ${total} properties`}
@@ -364,12 +454,24 @@ export default function Properties() {
             ))}
           </div>
         ) : displayed.length === 0 ? (
-          <div className="text-center py-24">
+          <div
+            className={`text-center py-24 rounded-2xl ${
+              theme === "dark" ? "bg-bg-secondary" : "bg-gray-100"
+            }`}
+          >
             <p className="text-5xl mb-4">🔍</p>
-            <p className="text-xl font-bold text-text-primary mb-2">
+            <p
+              className={`text-xl font-bold ${
+                theme === "dark" ? "text-text-primary" : "text-gray-900"
+              } mb-2`}
+            >
               No properties found
             </p>
-            <p className="text-text-secondary mb-6">
+            <p
+              className={`${
+                theme === "dark" ? "text-text-secondary" : "text-gray-600"
+              } mb-6`}
+            >
               Try adjusting your search or filters
             </p>
             <button
@@ -398,46 +500,37 @@ export default function Properties() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="w-10 h-10 rounded-full border-2 border-primary/20 text-text-secondary hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition font-bold"
+              className={`px-4 py-2 rounded-lg font-semibold transition ${
+                page === 1
+                  ? "bg-bg-secondary text-text-muted cursor-not-allowed"
+                  : "bg-bg-secondary text-text-primary hover:bg-primary hover:text-white"
+              }`}
             >
-              ‹
+              &larr;
             </button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter(
-                (p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1,
-              )
-              .reduce((acc, p, idx, arr) => {
-                if (idx > 0 && p - arr[idx - 1] > 1) acc.push("...");
-                acc.push(p);
-                return acc;
-              }, [])
-              .map((p, i) =>
-                p === "..." ? (
-                  <span key={`ellipsis-${i}`} className="text-text-muted px-1">
-                    …
-                  </span>
-                ) : (
-                  <button
-                    key={p}
-                    onClick={() => setPage(p)}
-                    className={`w-10 h-10 rounded-full border-2 font-semibold text-sm transition ${
-                      page === p
-                        ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
-                        : "border-primary/20 text-text-secondary hover:border-primary hover:text-primary"
-                    }`}
-                  >
-                    {p}
-                  </button>
-                ),
-              )}
-
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i + 1)}
+                className={`w-10 h-10 rounded-lg font-semibold transition ${
+                  page === i + 1
+                    ? "bg-primary text-white"
+                    : "bg-bg-secondary text-text-primary hover:bg-primary/20"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="w-10 h-10 rounded-full border-2 border-primary/20 text-text-secondary hover:border-primary hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition font-bold"
+              className={`px-4 py-2 rounded-lg font-semibold transition ${
+                page === totalPages
+                  ? "bg-bg-secondary text-text-muted cursor-not-allowed"
+                  : "bg-bg-secondary text-text-primary hover:bg-primary hover:text-white"
+              }`}
             >
-              ›
+              &rarr;
             </button>
           </div>
         )}

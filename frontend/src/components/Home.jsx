@@ -243,8 +243,6 @@ export default function Home() {
 
   const [selectedTab, setSelectedTab] = useState("rooms");
   const [searchTerm, setSearchTerm] = useState("");
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState("");
   const [sortBy, setSortBy] = useState("default");
   const [maxPrice, setMaxPrice] = useState(20000);
@@ -381,7 +379,7 @@ export default function Home() {
           <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full -translate-x-1/2 -translate-y-1/2" />
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent rounded-full translate-x-1/2 translate-y-1/2" />
         </div>
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-16">
           <div className="mb-10 text-center md:text-left">
             <p className="text-primary font-semibold text-sm tracking-widest uppercase mb-3">
               Welcome to
@@ -432,7 +430,7 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
                 <label
                   className={`${
@@ -460,38 +458,22 @@ export default function Home() {
                     theme === "dark" ? "text-text-secondary" : "text-gray-600"
                   } text-xs font-semibold block mb-1 uppercase tracking-wide`}
                 >
-                  Check In
+                  Sort By
                 </label>
-                <input
-                  type="date"
-                  value={checkIn}
-                  onChange={(e) => setCheckIn(e.target.value)}
+                <select
                   className={`w-full ${
                     theme === "dark"
                       ? "bg-bg-secondary text-text-primary"
                       : "bg-gray-100 text-gray-900"
                   } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
-                />
-              </div>
-              <div>
-                <label
-                  className={`${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                  } text-xs font-semibold block mb-1 uppercase tracking-wide`}
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
                 >
-                  Check Out
-                </label>
-                <input
-                  type="date"
-                  value={checkOut}
-                  min={checkIn}
-                  onChange={(e) => setCheckOut(e.target.value)}
-                  className={`w-full ${
-                    theme === "dark"
-                      ? "bg-bg-secondary text-text-primary"
-                      : "bg-gray-100 text-gray-900"
-                  } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
-                />
+                  <option value="default">Default</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="name">Name: A to Z</option>
+                </select>
               </div>
               <div>
                 <label
@@ -513,32 +495,6 @@ export default function Home() {
                       : "bg-gray-100 text-gray-900 placeholder-gray-400"
                   } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
                 />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-              <div>
-                <label
-                  className={`${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                  } text-xs font-semibold block mb-1 uppercase tracking-wide`}
-                >
-                  Sort By
-                </label>
-                <select
-                  className={`w-full ${
-                    theme === "dark"
-                      ? "bg-bg-secondary text-text-primary"
-                      : "bg-gray-100 text-gray-900"
-                  } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  <option value="default">Default</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="name">Name: A to Z</option>
-                </select>
               </div>
               <div>
                 <label
