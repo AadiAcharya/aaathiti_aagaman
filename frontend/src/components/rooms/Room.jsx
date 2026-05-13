@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { roomsAPI, bookingsAPI } from "../../services/api";
+import Reviews from "../Reviews";
 
 const amenityIcons = {
   WiFi: "📶",
@@ -29,18 +30,11 @@ export default function Room() {
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Booking form state
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
   const [booking, setBooking] = useState(false);
   const [bookingMsg, setBookingMsg] = useState(null);
-
-  // Review form state
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewComment, setReviewComment] = useState("");
-  const [submittingReview, setSubmittingReview] = useState(false);
 
   useEffect(() => {
     const fetchRoom = async () => {
@@ -88,30 +82,6 @@ export default function Room() {
       setBookingMsg({ type: "error", text: err.message });
     } finally {
       setBooking(false);
-    }
-  };
-
-  const handleReview = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/sign-in");
-      return;
-    }
-    if (!reviewComment.trim()) return;
-
-    try {
-      setSubmittingReview(true);
-      const { reviews, rating } = await roomsAPI.addReview(room._id, {
-        rating: reviewRating,
-        comment: reviewComment,
-      });
-      setRoom((prev) => ({ ...prev, reviewsArray: reviews, rating }));
-      setReviewComment("");
-      setReviewRating(5);
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setSubmittingReview(false);
     }
   };
 
@@ -219,9 +189,8 @@ export default function Room() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-8">
-          {/* Left column */}
-          <div className="col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="lg:col-span-2">
             {/* Title */}
             <div className="mb-8 flex justify-between items-start">
               <div>
@@ -509,244 +478,162 @@ export default function Room() {
                   </div>
                 ))}
               </div>
-
-              {/* Add Review */}
-              {localStorage.getItem("token") && (
-                <div
-                  className={`${
-                    theme === "dark"
-                      ? "bg-bg-secondary border-primary/20"
-                      : "bg-white border-gray-200"
-                  } p-6 rounded-lg border`}
-                >
-                  <h3
-                    className={`font-bold ${
-                      theme === "dark" ? "text-text-primary" : "text-gray-900"
-                    } mb-4`}
-                  >
-                    Leave a Review
-                  </h3>
-                  <div className="flex gap-2 mb-4">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        onClick={() => setReviewRating(star)}
-                        className={`text-2xl transition ${star <= reviewRating ? "text-yellow-400" : "text-gray-300"}`}
-                      >
-                        ⭐
-                      </button>
-                    ))}
-                  </div>
-                  <textarea
-                    value={reviewComment}
-                    onChange={(e) => setReviewComment(e.target.value)}
-                    placeholder="Share your experience..."
-                    rows={3}
-                    className={`w-full px-4 py-3 ${
-                      theme === "dark"
-                        ? "bg-background border-primary/20 text-text-primary placeholder-text-secondary"
-                        : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
-                    } border rounded-lg focus:outline-none focus:border-primary resize-none mb-4`}
-                  />
-                  <button
-                    onClick={handleReview}
-                    disabled={submittingReview || !reviewComment.trim()}
-                    className="px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-hover transition disabled:opacity-50"
-                  >
-                    {submittingReview ? "Submitting..." : "Submit Review"}
-                  </button>
-                </div>
-              )}
             </div>
           </div>
 
-          {/* Right sidebar — Booking */}
-          <div className="col-span-1">
-            <div
-              className={`${
-                theme === "dark"
-                  ? "bg-gradient-to-br from-bg-secondary to-bg-secondary/50 border-primary/30 shadow-xl shadow-primary/10"
-                  : "bg-gradient-to-br from-white to-gray-100/50 border-gray-200 shadow-lg"
-              } border-2 rounded-lg p-6 sticky top-32`}
+          <div
+            className={`lg:col-span-1 p-8 rounded-2xl border ${
+              theme === "dark"
+                ? "bg-bg-secondary border-primary/20"
+                : "bg-white border-gray-200"
+            } h-fit sticky top-28`}
+          >
+            <p
+              className={`text-2xl font-bold ${
+                theme === "dark" ? "text-accent" : "text-blue-600"
+              } mb-2`}
             >
-              <p
-                className={`text-2xl font-bold ${
-                  theme === "dark" ? "text-accent" : "text-blue-600"
-                } mb-2`}
+              ${room.price}
+              <span
+                className={`text-sm font-normal ${
+                  theme === "dark" ? "text-text-secondary" : "text-gray-500"
+                }`}
               >
-                ${room.price}
-                <span
-                  className={`text-sm font-normal ${
+                {" "}
+                / night
+              </span>
+            </p>
+
+            {/* Date pickers */}
+            <div className="space-y-3 mb-4">
+              <div>
+                <label
+                  className={`text-xs ${
                     theme === "dark" ? "text-text-secondary" : "text-gray-500"
-                  }`}
+                  } font-semibold uppercase tracking-wide`}
                 >
-                  {" "}
-                  / night
-                </span>
-              </p>
-
-              {/* Date pickers */}
-              <div className="space-y-3 mb-4">
-                <div>
-                  <label
-                    className={`text-xs ${
-                      theme === "dark" ? "text-text-secondary" : "text-gray-500"
-                    } font-semibold uppercase tracking-wide`}
-                  >
-                    Check-in
-                  </label>
-                  <input
-                    type="date"
-                    value={checkIn}
-                    min={new Date().toISOString().split("T")[0]}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                    className={`w-full mt-1 px-3 py-2 ${
-                      theme === "dark"
-                        ? "bg-background border-primary/20 text-text-primary"
-                        : "bg-gray-50 border-gray-300 text-gray-900"
-                    } border rounded-lg focus:outline-none focus:border-primary`}
-                  />
-                </div>
-                <div>
-                  <label
-                    className={`text-xs ${
-                      theme === "dark" ? "text-text-secondary" : "text-gray-500"
-                    } font-semibold uppercase tracking-wide`}
-                  >
-                    Check-out
-                  </label>
-                  <input
-                    type="date"
-                    value={checkOut}
-                    min={checkIn || new Date().toISOString().split("T")[0]}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                    className={`w-full mt-1 px-3 py-2 ${
-                      theme === "dark"
-                        ? "bg-background border-primary/20 text-text-primary"
-                        : "bg-gray-50 border-gray-300 text-gray-900"
-                    } border rounded-lg focus:outline-none focus:border-primary`}
-                  />
-                </div>
-                <div>
-                  <label
-                    className={`text-xs ${
-                      theme === "dark" ? "text-text-secondary" : "text-gray-500"
-                    } font-semibold uppercase tracking-wide`}
-                  >
-                    Guests
-                  </label>
-                  <input
-                    type="number"
-                    value={guests}
-                    min={1}
-                    max={room.maxGuests}
-                    onChange={(e) => setGuests(e.target.value)}
-                    className={`w-full mt-1 px-3 py-2 ${
-                      theme === "dark"
-                        ? "bg-background border-primary/20 text-text-primary"
-                        : "bg-gray-50 border-gray-300 text-gray-900"
-                    } border rounded-lg focus:outline-none focus:border-primary`}
-                  />
-                </div>
+                  Check-in
+                </label>
+                <input
+                  type="date"
+                  value={checkIn}
+                  min={new Date().toISOString().split("T")[0]}
+                  onChange={(e) => setCheckIn(e.target.value)}
+                  className={`w-full mt-1 px-3 py-2 ${
+                    theme === "dark"
+                      ? "bg-background border-primary/20 text-text-primary"
+                      : "bg-gray-50 border-gray-300 text-gray-900"
+                  } border rounded-lg focus:outline-none focus:border-primary`}
+                />
               </div>
-
-              {/* Pricing */}
-              {nights > 0 && (
-                <div className="border-t border-b border-primary/10 py-3 my-3 space-y-2">
-                  <div className="flex justify-between">
-                    <p
-                      className={`${
-                        theme === "dark"
-                          ? "text-text-secondary"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      ${room.price} x {nights} nights
-                    </p>
-                    <p
-                      className={`${
-                        theme === "dark"
-                          ? "text-text-secondary"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      ${subtotal}
-                    </p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p
-                      className={`${
-                        theme === "dark"
-                          ? "text-text-secondary"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      Taxes & fees
-                    </p>
-                    <p
-                      className={`${
-                        theme === "dark"
-                          ? "text-text-secondary"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      ${taxes}
-                    </p>
-                  </div>
-                  <div className="flex justify-between font-bold text-text-primary pt-2">
-                    <p>Grand Total</p>
-                    <p>${grandTotal}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Booking Message */}
-              {bookingMsg && (
-                <div
-                  className={`p-3 rounded-lg my-3 text-sm ${
-                    bookingMsg.type === "error"
-                      ? "bg-red-500/10 text-red-500"
-                      : "bg-green-500/10 text-green-500"
-                  }`}
+              <div>
+                <label
+                  className={`text-xs ${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-500"
+                  } font-semibold uppercase tracking-wide`}
                 >
-                  {bookingMsg.text}
-                </div>
-              )}
-
-              <button
-                onClick={handleReserve}
-                disabled={booking}
-                className="w-full bg-primary text-white font-bold py-3 rounded-lg hover:bg-primary-hover transition disabled:opacity-50"
-              >
-                {booking ? "Reserving..." : "Reserve"}
-              </button>
+                  Check-out
+                </label>
+                <input
+                  type="date"
+                  value={checkOut}
+                  min={checkIn || new Date().toISOString().split("T")[0]}
+                  onChange={(e) => setCheckOut(e.target.value)}
+                  className={`w-full mt-1 px-3 py-2 ${
+                    theme === "dark"
+                      ? "bg-background border-primary/20 text-text-primary"
+                      : "bg-gray-50 border-gray-300 text-gray-900"
+                  } border rounded-lg focus:outline-none focus:border-primary`}
+                />
+              </div>
+              <div>
+                <label
+                  className={`text-xs ${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-500"
+                  } font-semibold uppercase tracking-wide`}
+                >
+                  Guests
+                </label>
+                <input
+                  type="number"
+                  value={guests}
+                  min={1}
+                  max={room.maxGuests}
+                  onChange={(e) => setGuests(e.target.value)}
+                  className={`w-full mt-1 px-3 py-2 ${
+                    theme === "dark"
+                      ? "bg-background border-primary/20 text-text-primary"
+                      : "bg-gray-50 border-gray-300 text-gray-900"
+                  } border rounded-lg focus:outline-none focus:border-primary`}
+                />
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Nearby Services placeholder */}
-        <div className="mt-16 mb-12">
-          <h2 className="text-2xl font-bold text-text-primary mb-6">
-            Nearby Services
-          </h2>
-          <div className="grid grid-cols-3 gap-6">
-            {["Restaurant", "Gym", "Spa"].map((s) => (
-              <div
-                key={s}
-                className="bg-bg-secondary border border-primary/20 rounded-lg p-4 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 cursor-pointer"
-              >
-                <div className="flex items-center gap-1 mb-2">
-                  <span className="text-accent">⭐⭐⭐⭐⭐</span>
+            {/* Pricing */}
+            {nights > 0 && (
+              <div className="border-t border-b border-primary/10 py-3 my-3 space-y-2">
+                <div className="flex justify-between">
+                  <p
+                    className={`${
+                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                    }`}
+                  >
+                    ${room.price} x {nights} nights
+                  </p>
+                  <p
+                    className={`${
+                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                    }`}
+                  >
+                    ${subtotal}
+                  </p>
                 </div>
-                <h3 className="font-bold text-text-primary">{s}</h3>
-                <p className="text-sm text-text-secondary">0.3 km away</p>
+                <div className="flex justify-between">
+                  <p
+                    className={`${
+                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                    }`}
+                  >
+                    Taxes & fees
+                  </p>
+                  <p
+                    className={`${
+                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                    }`}
+                  >
+                    ${taxes}
+                  </p>
+                </div>
+                <div className="flex justify-between font-bold text-text-primary pt-2">
+                  <p>Grand Total</p>
+                  <p>${grandTotal}</p>
+                </div>
               </div>
-            ))}
+            )}
+
+            {/* Booking Message */}
+            {bookingMsg && (
+              <div
+                className={`p-3 rounded-lg my-3 text-sm ${
+                  bookingMsg.type === "error"
+                    ? "bg-red-500/10 text-red-500"
+                    : "bg-green-500/10 text-green-500"
+                }`}
+              >
+                {bookingMsg.text}
+              </div>
+            )}
+
+            <button
+              onClick={handleReserve}
+              disabled={booking}
+              className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-hover disabled:opacity-50 transition"
+            >
+              {booking ? "Reserving..." : "Reserve"}
+            </button>
           </div>
-          <button className="mt-6 px-8 py-3 bg-primary text-background rounded-full font-semibold hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105">
-            Show On Map
-          </button>
         </div>
+        <Reviews propertyId={roomId} />
       </div>
     </div>
   );

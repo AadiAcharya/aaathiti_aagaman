@@ -315,8 +315,7 @@ export default function Home() {
 
   const resetFilters = () => {
     setSearchTerm("");
-    setCheckIn("");
-    setCheckOut("");
+    
     setGuests("");
     setSortBy("default");
     setMaxPrice(20000);
