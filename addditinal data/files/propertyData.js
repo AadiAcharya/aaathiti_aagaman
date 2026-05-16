@@ -219,6 +219,170 @@ export const properties = [
     category: "hostels",
     isTopRated: true,
     image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop"
+  },
+
+  // More Rooms
+  {
+    id: 17,
+    title: "Serene Lakeside Retreat",
+    location: "Lake Tahoe, California, USA",
+    bedrooms: "3",
+    bathrooms: "2",
+    parking: "2",
+    pets: "Yes",
+    price: "$2800 - 4500 USD",
+    category: "rooms",
+    isTopRated: true,
+    image: "https://images.unsplash.com/photo-1475503572774-15a45e5d60b9?w=800&h=600&fit=crop"
+  },
+  {
+    id: 18,
+    title: "Chic Urban Studio",
+    location: "Brooklyn, New York, USA",
+    bedrooms: "1",
+    bathrooms: "1",
+    parking: "0",
+    pets: "No",
+    price: "$2200 - 3200 USD",
+    category: "rooms",
+    isTopRated: false,
+    image: "https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=800&h=600&fit=crop"
+  },
+
+  // More Flats
+  {
+    id: 19,
+    title: "Sunny Garden Apartment",
+    location: "Savannah, Georgia, USA",
+    bedrooms: "2",
+    bathrooms: "1",
+    parking: "1",
+    pets: "Yes",
+    price: "$1500 - 2300 USD",
+    category: "flats",
+    isTopRated: true,
+    image: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=600&fit=crop"
+  },
+  {
+    id: 20,
+    title: "Penthouse with City Views",
+    location: "Philadelphia, Pennsylvania, USA",
+    bedrooms: "3",
+    bathrooms: "3",
+    parking: "2",
+    pets: "No",
+    price: "$3500 - 5500 USD",
+    category: "flats",
+    isTopRated: true,
+    image: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&h=600&fit=crop"
+  },
+
+  // More Villas
+  {
+    id: 21,
+    title: "Desert Modern Villa",
+    location: "Scottsdale, Arizona, USA",
+    bedrooms: "4",
+    bathrooms: "4",
+    parking: "3",
+    pets: "Yes",
+    price: "$5500 - 9000 USD",
+    category: "villas",
+    isTopRated: false,
+    image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&h=600&fit=crop"
+  },
+  {
+    id: 22,
+    title: "Coastal Spanish Villa",
+    location: "Santa Barbara, California, USA",
+    bedrooms: "5",
+    bathrooms: "5",
+    parking: "4",
+    pets: "Yes",
+    price: "$7000 - 12000 USD",
+    category: "villas",
+    isTopRated: true,
+    image: "https://images.unsplash.com/photo-1598228723793-52759bba239c?w=800&h=600&fit=crop"
+  },
+
+  // More Hostels
+  {
+    id: 23,
+    title: "Digital Nomad Hub",
+    location: "Lisbon, Portugal",
+    bedrooms: "10",
+    bathrooms: "8",
+    parking: "0",
+    pets: "No",
+    price: "$25 - 70 USD",
+    category: "hostels",
+    isTopRated: true,
+    image: "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800&h=600&fit=crop"
+  },
+  {
+    id: 24,
+    title: "The Social Corner",
+    location: "Barcelona, Spain",
+    bedrooms: "8",
+    bathrooms: "6",
+    parking: "0",
+    pets: "No",
+    price: "$30 - 80 USD",
+    category: "hostels",
+    isTopRated: false,
+    image: "https://images.unsplash.com/photo-1591088398332-877795762378?w=800&h=600&fit=crop"
+  },
+  {
+    id: 25,
+    title: "Historic Downtown Apartment",
+    location: "Charleston, South Carolina, USA",
+    bedrooms: "2",
+    bathrooms: "2",
+    parking: "1",
+    pets: "No",
+    price: "$1800 - 2800 USD",
+    category: "apartments",
+    isTopRated: true,
+    image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&h=600&fit=crop"
+  },
+  {
+    id: 26,
+    title: "Ski-In/Ski-Out Chalet",
+    location: "Whistler, British Columbia, Canada",
+    bedrooms: "4",
+    bathrooms: "3",
+    parking: "2",
+    pets: "Yes",
+    price: "$5000 - 9000 USD",
+    category: "houses",
+    isTopRated: true,
+    image: "https://images.unsplash.com/photo-1593213249939-d593a35c4c48?w=800&h=600&fit=crop"
+  },
+  {
+    id: 27,
+    title: "Countryside Farmhouse Stay",
+    location: "Tuscany, Italy",
+    bedrooms: "3",
+    bathrooms: "2",
+    parking: "3",
+    pets: "Yes",
+    price: "$2500 - 4000 USD",
+    category: "homestays",
+    isTopRated: false,
+    image: "https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=800&h=600&fit=crop"
+  },
+  {
+    id: 28,
+    title: "Tokyo Capsule Pod",
+    location: "Shibuya, Tokyo, Japan",
+    bedrooms: "1",
+    bathrooms: "10",
+    parking: "0",
+    pets: "No",
+    price: "$40 - 100 USD",
+    category: "hostels",
+    isTopRated: true,
+    image: "https://images.unsplash.com/photo-1583513995594-a8a26c457c1d?w=800&h=600&fit=crop"
   }
 ];
 
