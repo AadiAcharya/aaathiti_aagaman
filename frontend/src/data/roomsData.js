@@ -111,8 +111,10 @@ export const roomsData = [
     id: 5,
     name: "Urban Loft with Skyline View",
     location: "88 Skyscraper Ave, Chicago, IL, USA",
-    image: "https://images.unsplash.com/photo-1464983953574-0892a716854b?w=800&h=600&fit=crop",
-    description: "Chic loft in the heart of downtown with panoramic skyline views, modern furnishings, and smart home features.",
+    image:
+      "https://images.unsplash.com/photo-1464983953574-0892a716854b?w=800&h=600&fit=crop",
+    description:
+      "Chic loft in the heart of downtown with panoramic skyline views, modern furnishings, and smart home features.",
     bedrooms: 2,
     bathrooms: 2,
     parking: "1 Car/1 Bike",
@@ -129,13 +131,9 @@ export const roomsData = [
       "Free Wireless Internet",
       "Washer/Dryer",
       "Rooftop Access",
-      "Gym Access"
+      "Gym Access",
     ],
-    safetyFeatures: [
-      "24/7 Security",
-      "Fire Extinguishers",
-      "Smoke Detectors"
-    ],
+    safetyFeatures: ["24/7 Security", "Fire Extinguishers", "Smoke Detectors"],
     rating: 4.7,
     reviews: 77,
   },
@@ -143,8 +141,10 @@ export const roomsData = [
     id: 6,
     name: "Lakeview Family Suite",
     location: "12 Lake Road, Zurich, Switzerland",
-    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=600&fit=crop",
-    description: "Spacious suite with stunning lake views, ideal for families. Includes a play area and easy access to parks.",
+    image:
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=600&fit=crop",
+    description:
+      "Spacious suite with stunning lake views, ideal for families. Includes a play area and easy access to parks.",
     bedrooms: 3,
     bathrooms: 2,
     parking: "2 Cars/2 Bikes",
@@ -160,13 +160,9 @@ export const roomsData = [
       "Play Area",
       "Balcony",
       "Free Wireless Internet",
-      "Breakfast Included"
+      "Breakfast Included",
     ],
-    safetyFeatures: [
-      "Daily Cleaning",
-      "Fire Extinguishers",
-      "Smoke Detectors"
-    ],
+    safetyFeatures: ["Daily Cleaning", "Fire Extinguishers", "Smoke Detectors"],
     rating: 4.95,
     reviews: 54,
   },
@@ -174,8 +170,10 @@ export const roomsData = [
     id: 7,
     name: "Desert Oasis Room",
     location: "77 Palm Lane, Dubai, UAE",
-    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&h=600&fit=crop",
-    description: "Experience tranquility in this desert oasis with luxury amenities, private pool, and palm garden.",
+    image:
+      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&h=600&fit=crop",
+    description:
+      "Experience tranquility in this desert oasis with luxury amenities, private pool, and palm garden.",
     bedrooms: 1,
     bathrooms: 1,
     parking: "1 Car",
@@ -191,13 +189,9 @@ export const roomsData = [
       "Garden",
       "Air Conditioner",
       "Free Wireless Internet",
-      "Concierge Service"
+      "Concierge Service",
     ],
-    safetyFeatures: [
-      "24/7 Security",
-      "Fire Extinguishers",
-      "Smoke Detectors"
-    ],
+    safetyFeatures: ["24/7 Security", "Fire Extinguishers", "Smoke Detectors"],
     rating: 4.85,
     reviews: 39,
   },
@@ -494,16 +488,8 @@ export const roomsData = [
     mediumPeriod: 1100,
     longPeriod: 1400,
     listedBy: "Antoine Leblanc",
-    amenities: [
-      "Kitchen",
-      "Exposed Brick",
-      "Historic Charm",
-    ],
-    safetyFeatures: [
-      "Smoke Detectors",
-      "Fire Extinguisher",
-      "First Aid Kit",
-    ],
+    amenities: ["Kitchen", "Exposed Brick", "Historic Charm"],
+    safetyFeatures: ["Smoke Detectors", "Fire Extinguisher", "First Aid Kit"],
     rating: 4.6,
     reviews: 92,
   },
@@ -511,8 +497,10 @@ export const roomsData = [
     id: 13,
     name: "Scandinavian Design Apartment",
     location: "789 Design District, Copenhagen, Denmark",
-    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop",
-    description: "Minimalist and functional apartment in the heart of Copenhagen's design district. A perfect blend of style and comfort.",
+    image:
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop",
+    description:
+      "Minimalist and functional apartment in the heart of Copenhagen's design district. A perfect blend of style and comfort.",
     bedrooms: 2,
     bathrooms: 1,
     parking: "1 Car/2 Bikes",
@@ -528,12 +516,12 @@ export const roomsData = [
       "Hygge-inspired Decor",
       "Balcony",
       "Free Wireless Internet",
-      "Heated Floors"
+      "Heated Floors",
     ],
     safetyFeatures: [
       "Smoke Detectors",
       "Fire Extinguisher",
-      "Secure Building Entry"
+      "Secure Building Entry",
     ],
     rating: 4.9,
     reviews: 105,
@@ -542,8 +530,10 @@ export const roomsData = [
     id: 14,
     name: "Rainforest Treehouse",
     location: "50 Canopy Way, Costa Rica",
-    image: "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=800&h=600&fit=crop",
-    description: "Live among the treetops in this unique rainforest treehouse. Wake up to the sounds of nature and stunning views.",
+    image:
+      "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=800&h=600&fit=crop",
+    description:
+      "Live among the treetops in this unique rainforest treehouse. Wake up to the sounds of nature and stunning views.",
     bedrooms: 1,
     bathrooms: 1,
     parking: "1 Car",
@@ -559,13 +549,9 @@ export const roomsData = [
       "Hammock",
       "Kitchenette",
       "360-degree Views",
-      "Guided Nature Walks"
+      "Guided Nature Walks",
     ],
-    safetyFeatures: [
-      "Emergency Radio",
-      "First Aid Kit",
-      "Safe Trail Paths"
-    ],
+    safetyFeatures: ["Emergency Radio", "First Aid Kit", "Safe Trail Paths"],
     rating: 4.95,
     reviews: 210,
   },
@@ -573,8 +559,10 @@ export const roomsData = [
     id: 15,
     name: "Santorini Cave House",
     location: "1 Cliffside Path, Oia, Greece",
-    image: "https://images.unsplash.com/photo-1533104816-322493141295?w=800&h=600&fit=crop",
-    description: "Traditional cave house carved into the cliffs of Santorini, offering breathtaking caldera views and a private plunge pool.",
+    image:
+      "https://images.unsplash.com/photo-1533104816-322493141295?w=800&h=600&fit=crop",
+    description:
+      "Traditional cave house carved into the cliffs of Santorini, offering breathtaking caldera views and a private plunge pool.",
     bedrooms: 2,
     bathrooms: 2,
     parking: "0 Cars",
@@ -590,13 +578,9 @@ export const roomsData = [
       "Caldera View",
       "Kitchenette",
       "Free Wireless Internet",
-      "Daily Breakfast"
+      "Daily Breakfast",
     ],
-    safetyFeatures: [
-      "Secure Location",
-      "First Aid Kit",
-      "Smoke Detectors"
-    ],
+    safetyFeatures: ["Secure Location", "First Aid Kit", "Smoke Detectors"],
     rating: 5.0,
     reviews: 180,
   },
@@ -604,8 +588,10 @@ export const roomsData = [
     id: 16,
     name: "Kyoto Traditional Ryokan",
     location: "123 Sakura Lane, Kyoto, Japan",
-    image: "https://images.unsplash.com/photo-1542038784-56e98e742998?w=800&h=600&fit=crop",
-    description: "Experience authentic Japanese hospitality in a traditional Ryokan with tatami floors, futon beds, and an onsen (hot spring).",
+    image:
+      "https://images.unsplash.com/photo-1542038784-56e98e742998?w=800&h=600&fit=crop",
+    description:
+      "Experience authentic Japanese hospitality in a traditional Ryokan with tatami floors, futon beds, and an onsen (hot spring).",
     bedrooms: 1,
     bathrooms: 1,
     parking: "1 Car",
@@ -621,14 +607,14 @@ export const roomsData = [
       "Kaiseki Dinner",
       "Japanese Garden",
       "Tatami Floors",
-      "Yukata Robes"
+      "Yukata Robes",
     ],
     safetyFeatures: [
       "Fire Safety Certified",
       "First Aid Kit",
-      "Smoke Detectors"
+      "Smoke Detectors",
     ],
     rating: 4.9,
     reviews: 150,
-  }
+  },
 ];
