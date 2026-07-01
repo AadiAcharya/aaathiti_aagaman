@@ -1,7 +1,8 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const Booking = require("../models/Booking.model");
 const { Transaction } = require("../models/extras.model");
-const eSewaApi = require("esewa");
+const crypto = require("crypto");
+const { v4: uuidv4 } = require("uuid");
 
 // Initialize eSewa
 const esewaConfig = {
@@ -12,6 +13,21 @@ const esewaConfig = {
   failureUrl:
     process.env.ESEWA_FAILURE_URL || "http://localhost:3000/payment-failure",
   environment: process.env.ESEWA_ENV || "test",
+};
+
+// ─── Helper: Generate eSewa Signature ──────────────────────────────────────────
+const generateESewaSignature = (
+  totalAmount,
+  transactionUuid,
+  productCode,
+  secret,
+) => {
+  const message = `total_amount=${totalAmount},transaction_uuid=${transactionUuid},product_code=${productCode}`;
+  const signature = crypto
+    .createHmac("sha256", secret)
+    .update(message)
+    .digest("base64");
+  return signature;
 };
 
 // ─── POST /api/payments/create-intent ────────────────────────────────────────
@@ -133,7 +149,7 @@ exports.getMyTransactions = async (req, res) => {
 };
 
 // ─── POST /api/payments/esewa/initiate ────────────────────────────────────────
-// Initiate eSewa payment
+// Initiate eSewa payment with proper signature
 exports.initiateESewaPayment = async (req, res) => {
   try {
     const { bookingId } = req.body;
@@ -150,29 +166,46 @@ exports.initiateESewaPayment = async (req, res) => {
         .json({ success: false, message: "Not authorized" });
     }
 
-    // Generate unique transaction UUID
-    const uuid = `${booking._id}-${Date.now()}`;
-
     // eSewa payment parameters
-    const esewaPaymentParams = {
-      amt: Math.floor(booking.grandTotal),
-      psc: 0,
-      pdc: 0,
-      txAmt: 0,
-      tAmt: Math.floor(booking.grandTotal),
-      pid: uuid,
-      scd: esewaConfig.merchantCode,
-      su: esewaConfig.successUrl,
-      fu: esewaConfig.failureUrl,
+    const amount = Math.floor(booking.grandTotal);
+    const taxAmount = 0;
+    const productServiceCharge = 0;
+    const productDeliveryCharge = 0;
+    const totalAmount =
+      amount + taxAmount + productServiceCharge + productDeliveryCharge;
+    const transactionUuid = uuidv4();
+    const productCode = esewaConfig.merchantCode;
+
+    // Generate signature using HMAC-SHA256
+    const signature = generateESewaSignature(
+      totalAmount,
+      transactionUuid,
+      productCode,
+      esewaConfig.secret,
+    );
+
+    const esewaPayload = {
+      amount: amount.toString(),
+      tax_amount: taxAmount.toString(),
+      total_amount: totalAmount.toString(),
+      transaction_uuid: transactionUuid,
+      product_code: productCode,
+      product_service_charge: productServiceCharge.toString(),
+      product_delivery_charge: productDeliveryCharge.toString(),
+      success_url: esewaConfig.successUrl,
+      failure_url: esewaConfig.failureUrl,
+      signed_field_names: "total_amount,transaction_uuid,product_code",
+      signature: signature,
     };
 
     // Save booking reference
-    booking.esewaTransactionId = uuid;
+    booking.esewaTransactionId = transactionUuid;
+    booking.paymentMethod = "esewa";
     await booking.save();
 
     res.json({
       success: true,
-      paymentParams: esewaPaymentParams,
+      payload: esewaPayload,
       esewaUrl:
         esewaConfig.environment === "production"
           ? "https://esewa.com.np/api/epay/main/v2/form"
