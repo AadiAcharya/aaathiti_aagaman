@@ -53,7 +53,10 @@ export default function Account() {
       try {
         setLoadingB(true);
         const data = await bookingsAPI.getMine();
-        setBookings(data.bookings || []);
+        const bookingsList = Array.isArray(data)
+          ? data
+          : data.bookings || data.data?.bookings || [];
+        setBookings(bookingsList);
       } catch {
         setBookings([]);
       } finally {
