@@ -98,6 +98,16 @@ export const paymentsAPI = {
       method: "POST",
       body: JSON.stringify(body),
     }),
+  // eSewa payment methods
+  initiateEsewa: (bookingId) =>
+    request("/payments/esewa/initiate", {
+      method: "POST",
+      body: JSON.stringify({ bookingId }),
+    }),
+  verifyEsewa: (refId, pid) =>
+    request(`/payments/esewa/verify?refId=${refId}&pid=${pid}`),
+  getTransactions: () => request("/payments/transactions"),
+};
   getTransactions: () => request("/payments/transactions"),
 };
 
