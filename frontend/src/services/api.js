@@ -108,8 +108,6 @@ export const paymentsAPI = {
     request(`/payments/esewa/verify?refId=${refId}&pid=${pid}`),
   getTransactions: () => request("/payments/transactions"),
 };
-  getTransactions: () => request("/payments/transactions"),
-};
 
 // ─── HOST ─────────────────────────────────────────────────────────────────────
 export const hostAPI = {
