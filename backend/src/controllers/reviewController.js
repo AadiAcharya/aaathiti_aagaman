@@ -1,6 +1,6 @@
-import Review from "../models/Review.js";
-import Property from "../models/Property.model.js";
-import asyncHandler from "express-async-handler";
+const Review = require("../models/Review.js");
+const Property = require("../models/Property.model.js");
+const asyncHandler = require("express-async-handler");
 
 // @desc    Get all reviews for a property
 // @route   GET /api/reviews/property/:propertyId
@@ -54,4 +54,4 @@ const createReview = asyncHandler(async (req, res) => {
   }
 });
 
-export { getReviewsForProperty, createReview };
+module.exports = { getReviewsForProperty, createReview };
