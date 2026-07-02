@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User.model');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Helper: sign JWT
 const signToken = (id) =>
@@ -41,6 +44,47 @@ exports.register = async (req, res) => {
     sendTokenResponse(user, 201, res);
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─── POST /api/auth/google ────────────────────────────────────────────────────
+exports.googleAuth = async (req, res) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ success: false, message: 'Missing Google credential' });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture, email_verified: emailVerified } = payload;
+
+    let user = await User.findOne({ googleId });
+
+    if (!user) {
+      // Link to an existing email/password account if one exists
+      user = await User.findOne({ email });
+      if (user) {
+        user.googleId = googleId;
+        if (!user.avatar) user.avatar = picture;
+        await user.save();
+      } else {
+        user = await User.create({
+          name,
+          email,
+          googleId,
+          avatar: picture,
+          isVerified: !!emailVerified,
+        });
+      }
+    }
+
+    sendTokenResponse(user, 200, res);
+  } catch (err) {
+    res.status(401).json({ success: false, message: 'Google authentication failed' });
   }
 };
 
@@ -102,6 +146,28 @@ exports.changePassword = async (req, res) => {
     user.password = newPassword;
     await user.save();
     sendTokenResponse(user, 200, res);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─── PUT /api/auth/become-host ────────────────────────────────────────────────
+exports.becomeHost = async (req, res) => {
+  try {
+    if (req.user.role === 'admin') {
+      return res.status(400).json({ success: false, message: 'Admins do not need host status' });
+    }
+    if (req.user.role === 'host') {
+      return res.json({ success: true, user: req.user });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { role: 'host' },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    res.json({ success: true, user });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

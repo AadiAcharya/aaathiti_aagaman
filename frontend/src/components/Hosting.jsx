@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 import { DollarSign, Shield, Globe } from "lucide-react";
+import BecomeHostModal from "./BecomeHostModal";
 
 export default function Hosting() {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { user } = useAuth();
+  const isHost = user?.role === "host" || user?.role === "admin";
+  const [hostModalOpen, setHostModalOpen] = useState(false);
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
@@ -49,7 +54,9 @@ export default function Hosting() {
 
                 {/* Become A Host Button */}
                 <button
-                  onClick={() => navigate("/add-property")}
+                  onClick={() =>
+                    isHost ? navigate("/add-property") : setHostModalOpen(true)
+                  }
                   className={`text-white font-['Montserrat:Bold',sans-serif] font-bold text-[15px] px-8 py-3 rounded-full h-15 w-55 transition-colors ${
                     theme === "dark"
                       ? "bg-blue-600 hover:bg-blue-700"
@@ -262,6 +269,11 @@ export default function Hosting() {
           </div>
         </div>
       </section>
+
+      <BecomeHostModal
+        isOpen={hostModalOpen}
+        onClose={() => setHostModalOpen(false)}
+      />
     </div>
   );
 }

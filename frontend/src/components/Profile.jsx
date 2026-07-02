@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 import {
   CheckCircle,
   Home,
@@ -15,12 +16,9 @@ export default function Profile() {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
+  const { user, updateUser } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const [activeTab, setActiveTab] = useState("personal");
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem("user");
-    return saved ? JSON.parse(saved) : null;
-  });
 
   const [formData, setFormData] = useState(user || {});
 
@@ -36,9 +34,7 @@ export default function Profile() {
   };
 
   const handleSaveProfile = () => {
-    const updatedUser = { ...user, ...formData };
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    setUser(updatedUser);
+    updateUser(formData);
     setEditMode(false);
   };
 

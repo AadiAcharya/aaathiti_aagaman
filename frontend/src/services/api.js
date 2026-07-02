@@ -41,6 +41,7 @@ export const authAPI = {
       method: "PUT",
       body: JSON.stringify(body),
     }),
+  becomeHost: () => request("/auth/become-host", { method: "PUT" }),
   toggleWishlist: (roomId) =>
     request(`/auth/wishlist/${roomId}`, { method: "POST" }),
 };

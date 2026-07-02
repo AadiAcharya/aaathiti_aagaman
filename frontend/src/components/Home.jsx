@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 import { propertiesAPI } from "../services/api";
 import { blogs } from "../data/propertyData";
+import BecomeHostModal from "./BecomeHostModal";
 import {
   Home as HomeIcon,
   Heart,
@@ -267,7 +269,10 @@ const StatCard = ({ icon, value, label }) => {
 export default function Home() {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { user } = useAuth();
+  const isHost = user?.role === "host" || user?.role === "admin";
 
+  const [hostModalOpen, setHostModalOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("rooms");
   const [searchTerm, setSearchTerm] = useState("");
   const [guests, setGuests] = useState("");
@@ -811,7 +816,8 @@ export default function Home() {
         </div>
       )}
 
-      {/* ── Try Hosting ───────────────────────────────────────────────────── */}
+      {/* ── Try Hosting (hidden for existing hosts/admins) ─────────────────── */}
+      {!isHost && (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-20">
         <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-3xl p-8 md:p-12 border border-primary/20 overflow-hidden relative">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full translate-x-1/2 -translate-y-1/2" />
@@ -856,7 +862,7 @@ export default function Home() {
               </div>
               <div className="flex flex-wrap gap-3">
                 <button
-                  onClick={() => navigate("/add-property")}
+                  onClick={() => setHostModalOpen(true)}
                   className="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-full font-semibold transition shadow-lg shadow-primary/20"
                 >
                   Become A Host
@@ -883,6 +889,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      )}
 
       {/* ── Blog / Rental Guides ──────────────────────────────────────────── */}
       <div
@@ -1015,13 +1022,15 @@ export default function Home() {
             </p>
             <div className="space-y-2 mb-8">
               {[
-                { label: "Ask A Question", path: "/help" },
-                { label: "Find A Property", path: "/properties" },
-                { label: "Become A Host", path: "/add-property" },
-              ].map(({ label, path }) => (
+                { label: "Ask A Question", onClick: () => navigate("/help") },
+                { label: "Find A Property", onClick: () => navigate("/properties") },
+                ...(!isHost
+                  ? [{ label: "Become A Host", onClick: () => setHostModalOpen(true) }]
+                  : []),
+              ].map(({ label, onClick }) => (
                 <p
                   key={label}
-                  onClick={() => navigate(path)}
+                  onClick={onClick}
                   className={`font-semibold ${
                     theme === "dark" ? "text-text-secondary" : "text-gray-600"
                   } hover:text-primary cursor-pointer transition flex items-center gap-2`}
@@ -1096,6 +1105,11 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      <BecomeHostModal
+        isOpen={hostModalOpen}
+        onClose={() => setHostModalOpen(false)}
+      />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 import { propertiesAPI } from "../services/api";
 import {
   Home,
@@ -12,6 +13,7 @@ import {
   PawPrint,
   Search,
 } from "lucide-react";
+import BecomeHostModal from "./BecomeHostModal";
 
 // ─── Property Card ────────────────────────────────────────────────────────────
 const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
@@ -148,6 +150,9 @@ const LIMIT = 9;
 export default function Properties() {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { user } = useAuth();
+  const isHost = user?.role === "host" || user?.role === "admin";
+  const [hostModalOpen, setHostModalOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   // ── Filter state (synced with URL params) ─────────────────────────────────
@@ -561,16 +566,26 @@ export default function Properties() {
         <div
           className={`mt-20 ${theme === "dark" ? "bg-slate-800" : "bg-white"} rounded-3xl p-8 md:p-12 border ${theme === "dark" ? "border-slate-700" : "border-gray-200"} text-center`}
         >
-          <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-3">
+          <h2
+            className={`text-2xl md:text-3xl font-bold mb-3 ${
+              theme === "dark" ? "text-text-primary" : "text-gray-900"
+            }`}
+          >
             Can't find what you're looking for?
           </h2>
-          <p className="text-text-secondary mb-6 max-w-lg mx-auto">
+          <p
+            className={`mb-6 max-w-lg mx-auto ${
+              theme === "dark" ? "text-text-secondary" : "text-gray-600"
+            }`}
+          >
             List your own property and reach thousands of guests, or contact us
             and we'll help you find the perfect stay.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <button
-              onClick={() => navigate("/add-property")}
+              onClick={() =>
+                isHost ? navigate("/add-property") : setHostModalOpen(true)
+              }
               className="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-full font-semibold transition shadow-lg shadow-primary/20"
             >
               List Your Property
@@ -584,6 +599,11 @@ export default function Properties() {
           </div>
         </div>
       </div>
+
+      <BecomeHostModal
+        isOpen={hostModalOpen}
+        onClose={() => setHostModalOpen(false)}
+      />
     </div>
   );
 }

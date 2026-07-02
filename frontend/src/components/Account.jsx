@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 import { authAPI, bookingsAPI } from "../services/api";
 import { User, Calendar, Lock, Settings, DoorOpen, Luggage } from "lucide-react";
 
@@ -14,14 +15,7 @@ const TAB_LIST = [
 export default function Account() {
   const navigate = useNavigate();
   const { theme } = useTheme();
-
-  const [user, setUser] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("user")) || null;
-    } catch {
-      return null;
-    }
-  });
+  const { user, updateUser, logout: authLogout } = useAuth();
 
   const [activeTab, setActiveTab] = useState("profile");
   const [editMode, setEditMode] = useState(false);
@@ -76,9 +70,7 @@ export default function Account() {
       setSaving(true);
       setSaveMsg("");
       const { user: updated } = await authAPI.updateProfile(formData);
-      const merged = { ...user, ...updated };
-      localStorage.setItem("user", JSON.stringify(merged));
-      setUser(merged);
+      updateUser(updated);
       setEditMode(false);
       setSaveMsg("Profile updated successfully!");
       setTimeout(() => setSaveMsg(""), 3000);
@@ -118,8 +110,7 @@ export default function Account() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    authLogout();
     navigate("/");
   };
 

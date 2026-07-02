@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 import BecomeHostModal from "./BecomeHostModal";
 import {
   Settings,
@@ -16,6 +17,8 @@ import {
 export default function Header() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const { user, isAuthenticated, role, logout } = useAuth();
+  const isHost = role === "host" || role === "admin";
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -144,20 +147,22 @@ export default function Header() {
             )}
           </button>
 
-          {/* Become A Host Button */}
-          <button
-            onClick={() => setHostModalOpen(true)}
-            className={`rounded-full px-6 py-2 font-semibold transition-colors text-white ${
-              theme === "dark"
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-blue-500 hover:bg-blue-600"
-            }`}
-          >
-            Become A Host
-          </button>
+          {/* Become A Host Button - hidden for existing hosts/admins */}
+          {!isHost && (
+            <button
+              onClick={() => setHostModalOpen(true)}
+              className={`rounded-full px-6 py-2 font-semibold transition-colors text-white ${
+                theme === "dark"
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
+            >
+              Become A Host
+            </button>
+          )}
 
           {/* Admin Link - Hidden unless user is admin */}
-          {localStorage.getItem("userRole") === "admin" && (
+          {role === "admin" && (
             <a
               href="http://localhost:5000/admin"
               target="_blank"
@@ -182,15 +187,13 @@ export default function Header() {
                   : "bg-white border-gray-300 text-gray-600 hover:bg-gray-50"
               }`}
             >
-              {localStorage.getItem("user") ? (
+              {isAuthenticated ? (
                 <div
                   className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold text-white ${
                     theme === "dark" ? "bg-blue-600" : "bg-blue-500"
                   }`}
                 >
-                  {JSON.parse(localStorage.getItem("user"))
-                    .name?.charAt(0)
-                    .toUpperCase() || "U"}
+                  {user?.name?.charAt(0).toUpperCase() || "U"}
                 </div>
               ) : (
                 <svg
@@ -215,7 +218,7 @@ export default function Header() {
                   : "bg-white border-gray-200"
               }`}
             >
-              {!localStorage.getItem("user") && (
+              {!isAuthenticated && (
                 <>
                   <button
                     onClick={() => {
@@ -295,26 +298,30 @@ export default function Header() {
                   <Heart className="w-4 h-4" /> Wishlist
                 </span>
               </button>
-              <div
-                className={`border-t ${
-                  theme === "dark" ? "border-slate-700" : "border-gray-200"
-                }`}
-              ></div>
-              <button
-                onClick={() => {
-                  navigate("/host");
-                  setDropdownOpen(false);
-                }}
-                className={`block w-full text-left px-4 py-2 font-semibold transition ${
-                  theme === "dark"
-                    ? "text-blue-400 hover:bg-slate-700"
-                    : "text-blue-600 hover:bg-gray-100"
-                }`}
-              >
-                <span className="inline-flex items-center gap-2">
-                  <Home className="w-4 h-4" /> Host Dashboard
-                </span>
-              </button>
+              {isHost && (
+                <>
+                  <div
+                    className={`border-t ${
+                      theme === "dark" ? "border-slate-700" : "border-gray-200"
+                    }`}
+                  ></div>
+                  <button
+                    onClick={() => {
+                      navigate("/host");
+                      setDropdownOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-2 font-semibold transition ${
+                      theme === "dark"
+                        ? "text-blue-400 hover:bg-slate-700"
+                        : "text-blue-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    <span className="inline-flex items-center gap-2">
+                      <Home className="w-4 h-4" /> Host Dashboard
+                    </span>
+                  </button>
+                </>
+              )}
               <button
                 onClick={() => {
                   navigate("/help");
@@ -330,7 +337,7 @@ export default function Header() {
                   <HelpCircle className="w-4 h-4" /> Help Center
                 </span>
               </button>
-              {localStorage.getItem("user") && (
+              {isAuthenticated && (
                 <>
                   <div
                     className={`border-t ${
@@ -339,7 +346,7 @@ export default function Header() {
                   ></div>
                   <button
                     onClick={() => {
-                      localStorage.removeItem("user");
+                      logout();
                       localStorage.removeItem("userRole");
                       localStorage.removeItem("hostRequest");
                       setDropdownOpen(false);
@@ -418,7 +425,7 @@ export default function Header() {
           ></div>
 
           {/* Auth Links for Mobile - Hidden when logged in */}
-          {!localStorage.getItem("user") && (
+          {!isAuthenticated && (
             <>
               <button
                 onClick={() => {
@@ -507,21 +514,23 @@ export default function Header() {
           ></div>
 
           {/* Host & Help for Mobile */}
-          <button
-            onClick={() => {
-              navigate("/host");
-              setMenuOpen(false);
-            }}
-            className={`block w-full text-left font-semibold py-2 transition ${
-              theme === "dark"
-                ? "text-blue-400 hover:text-blue-300"
-                : "text-blue-600 hover:text-blue-700"
-            }`}
-          >
-            <span className="inline-flex items-center gap-2">
-              <Home className="w-4 h-4" /> Host Dashboard
-            </span>
-          </button>
+          {isHost && (
+            <button
+              onClick={() => {
+                navigate("/host");
+                setMenuOpen(false);
+              }}
+              className={`block w-full text-left font-semibold py-2 transition ${
+                theme === "dark"
+                  ? "text-blue-400 hover:text-blue-300"
+                  : "text-blue-600 hover:text-blue-700"
+              }`}
+            >
+              <span className="inline-flex items-center gap-2">
+                <Home className="w-4 h-4" /> Host Dashboard
+              </span>
+            </button>
+          )}
           <button
             onClick={() => {
               navigate("/help");
@@ -538,7 +547,7 @@ export default function Header() {
             </span>
           </button>
 
-          {localStorage.getItem("user") && (
+          {isAuthenticated && (
             <>
               <div
                 className={`border-t my-3 ${
@@ -547,7 +556,7 @@ export default function Header() {
               ></div>
               <button
                 onClick={() => {
-                  localStorage.removeItem("user");
+                  logout();
                   localStorage.removeItem("userRole");
                   localStorage.removeItem("hostRequest");
                   setMenuOpen(false);
@@ -623,20 +632,22 @@ export default function Header() {
             )}
           </button>
 
-          {/* Become A Host for Mobile */}
-          <button
-            onClick={() => {
-              navigate("/hosting");
-              setMenuOpen(false);
-            }}
-            className={`w-full mt-4 rounded-full px-6 py-2 font-semibold transition text-white ${
-              theme === "dark"
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-blue-500 hover:bg-blue-600"
-            }`}
-          >
-            Become A Host
-          </button>
+          {/* Become A Host for Mobile - hidden for existing hosts/admins */}
+          {!isHost && (
+            <button
+              onClick={() => {
+                navigate("/hosting");
+                setMenuOpen(false);
+              }}
+              className={`w-full mt-4 rounded-full px-6 py-2 font-semibold transition text-white ${
+                theme === "dark"
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
+            >
+              Become A Host
+            </button>
+          )}
         </nav>
       )}
 

@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
+import { AuthProvider } from "./context/AuthContext";
+import RoleRoute from "./RoleRoute";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
@@ -58,22 +61,106 @@ function AppContent() {
             <Route path="/rooms" element={<Rooms />} />
             <Route path="/search" element={<Search />} />
             <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/add-property" element={<AddProperty />} />
-            <Route path="/amenities" element={<Amenities />} />
-            <Route path="/description" element={<Description />} />
-            <Route path="/facilities" element={<Facilities />} />
-            <Route path="/post" element={<Post />} />
-            <Route path="/safety" element={<Saftey />} />
-            <Route path="/room-status" element={<RoomStatus />} />
-            <Route path="/reservation" element={<HostReservation />} />
-            <Route path="/transactionh" element={<TransactionHistory />} />
-            <Route path="notification" element={<NotificationsPage />} />
-            <Route path="message" element={<MessagesPage />} />
+            <Route
+              path="/add-property"
+              element={
+                <RoleRoute allow={["host", "admin"]}>
+                  <AddProperty />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/amenities"
+              element={
+                <RoleRoute allow={["host", "admin"]}>
+                  <Amenities />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/description"
+              element={
+                <RoleRoute allow={["host", "admin"]}>
+                  <Description />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/facilities"
+              element={
+                <RoleRoute allow={["host", "admin"]}>
+                  <Facilities />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/post"
+              element={
+                <RoleRoute allow={["host", "admin"]}>
+                  <Post />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/safety"
+              element={
+                <RoleRoute allow={["host", "admin"]}>
+                  <Saftey />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/room-status"
+              element={
+                <RoleRoute allow={["host", "admin"]}>
+                  <RoomStatus />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/reservation"
+              element={
+                <RoleRoute allow={["host", "admin"]}>
+                  <HostReservation />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/transactionh"
+              element={
+                <RoleRoute allow={["host", "admin"]}>
+                  <TransactionHistory />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="notification"
+              element={
+                <RoleRoute allow={["host", "admin"]}>
+                  <NotificationsPage />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="message"
+              element={
+                <RoleRoute allow={["host", "admin"]}>
+                  <MessagesPage />
+                </RoleRoute>
+              }
+            />
             <Route path="sign-in" element={<SignIn />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="signin" element={<SignIn />} />
             <Route path="signup" element={<SignUp />} />
-            <Route path="host" element={<Host />} />
+            <Route
+              path="host"
+              element={
+                <RoleRoute allow={["host", "admin"]}>
+                  <Host />
+                </RoleRoute>
+              }
+            />
             <Route path="help" element={<Help />} />
             <Route path="how-it-works" element={<HowItWorks />} />
             <Route path="rental-guide" element={<RentalGuide />} />
@@ -88,8 +175,12 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <AuthProvider>
+        <ThemeProvider>
+          <AppContent />
+        </ThemeProvider>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
