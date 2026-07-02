@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { hostAPI } from "../../services/api";
+import { Home, Calendar, Moon, Users, User, Banknote, Inbox } from "lucide-react";
 
 export default function HostReservation() {
   const [activeTab, setActiveTab]         = useState("upcoming");
@@ -88,7 +89,7 @@ export default function HostReservation() {
         {/* Empty */}
         {!loading && !error && reservations.length === 0 && (
           <div className="text-center py-16 text-text-secondary">
-            <p className="text-4xl mb-4">📭</p>
+            <Inbox className="w-9 h-9 mx-auto mb-4" />
             <p className="text-xl">No {activeTab} reservations</p>
           </div>
         )}
@@ -106,7 +107,9 @@ export default function HostReservation() {
                   {reservation.room?.image ? (
                     <img src={reservation.room.image} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center text-3xl">🏠</div>
+                    <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
+                      <Home className="w-8 h-8" />
+                    </div>
                   )}
                 </div>
 
@@ -116,14 +119,14 @@ export default function HostReservation() {
                     {reservation.room?.title || "Room"}
                   </h3>
                   <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-text-secondary mb-2">
-                    <span>📅 <span className="font-medium">Check In:</span> {formatDate(reservation.checkIn)}</span>
-                    <span>📅 <span className="font-medium">Check Out:</span> {formatDate(reservation.checkOut)}</span>
-                    <span>🌙 <span className="font-medium">Nights:</span> {reservation.nights}</span>
-                    <span>👥 <span className="font-medium">Guests:</span> {reservation.guests}</span>
+                    <span className="inline-flex items-center gap-1.5"><Calendar className="w-4 h-4" /> <span className="font-medium">Check In:</span> {formatDate(reservation.checkIn)}</span>
+                    <span className="inline-flex items-center gap-1.5"><Calendar className="w-4 h-4" /> <span className="font-medium">Check Out:</span> {formatDate(reservation.checkOut)}</span>
+                    <span className="inline-flex items-center gap-1.5"><Moon className="w-4 h-4" /> <span className="font-medium">Nights:</span> {reservation.nights}</span>
+                    <span className="inline-flex items-center gap-1.5"><Users className="w-4 h-4" /> <span className="font-medium">Guests:</span> {reservation.guests}</span>
                   </div>
                   <div className="flex gap-4 text-sm text-text-muted">
-                    <span>👤 By: {reservation.user?.name || reservation.guestName}</span>
-                    <span className="font-bold text-accent">💵 ${reservation.grandTotal}</span>
+                    <span className="inline-flex items-center gap-1.5"><User className="w-4 h-4" /> By: {reservation.user?.name || reservation.guestName}</span>
+                    <span className="font-bold text-accent inline-flex items-center gap-1.5"><Banknote className="w-4 h-4" /> ${reservation.grandTotal}</span>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
                       reservation.paymentStatus === "paid" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
                     }`}>

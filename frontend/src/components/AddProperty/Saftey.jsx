@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  FireExtinguisher, Hospital, Bell, Video, AlertTriangle, DoorOpen,
+  KeyRound, DollarSign, ShieldCheck, Flashlight, Droplet, Brush,
+} from "lucide-react";
 
 const ALL_SAFETY = [
-  { id: "Fire Extinguisher",    icon: "🧯" },
-  { id: "First Aid Kit",        icon: "🏥" },
-  { id: "Smoke Alarm",          icon: "🔔" },
-  { id: "Security Camera",      icon: "📹" },
-  { id: "Carbon Monoxide Alarm",icon: "⚠️" },
-  { id: "Emergency Exit",       icon: "🚪" },
-  { id: "Lock on Bedroom",      icon: "🔐" },
-  { id: "Safe",                 icon: "💰" },
-  { id: "Security Guard",       icon: "💂" },
-  { id: "Motion Sensor",        icon: "🔦" },
-  { id: "Fire Sprinkler",       icon: "💧" },
-  { id: "Daily Cleaning",       icon: "🧹" },
+  { id: "Fire Extinguisher",    icon: FireExtinguisher },
+  { id: "First Aid Kit",        icon: Hospital },
+  { id: "Smoke Alarm",          icon: Bell },
+  { id: "Security Camera",      icon: Video },
+  { id: "Carbon Monoxide Alarm",icon: AlertTriangle },
+  { id: "Emergency Exit",       icon: DoorOpen },
+  { id: "Lock on Bedroom",      icon: KeyRound },
+  { id: "Safe",                 icon: DollarSign },
+  { id: "Security Guard",       icon: ShieldCheck },
+  { id: "Motion Sensor",        icon: Flashlight },
+  { id: "Fire Sprinkler",       icon: Droplet },
+  { id: "Daily Cleaning",       icon: Brush },
 ];
 
 const steps = ["Type", "Amenities", "Description", "Facilities", "Safety", "Post"];
@@ -81,8 +85,8 @@ export default function Safety() {
                 {isSelected && (
                   <div className="absolute top-3 right-3 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-xs font-bold">✓</div>
                 )}
-                <div className={`text-5xl mb-4 transition-transform duration-300 ${isSelected ? "scale-110" : "group-hover:scale-110"}`}>
-                  {item.icon}
+                <div className={`flex justify-center mb-4 transition-transform duration-300 ${isSelected ? "scale-110" : "group-hover:scale-110"}`}>
+                  <item.icon className="w-12 h-12 text-primary" />
                 </div>
                 <h3 className={`text-lg font-bold transition-colors ${isSelected ? "text-primary" : "text-text-primary"}`}>{item.id}</h3>
               </div>

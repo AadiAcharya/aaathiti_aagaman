@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Bed, ShowerHead, Car } from "lucide-react";
 
 export default function Search() {
   const [favorites, setFavorites] = useState({});
@@ -370,13 +371,14 @@ export default function Search() {
                         {/* Amenities Icons */}
                         <div className="flex gap-4 text-xs text-text-primary font-semibold">
                           <span className="flex items-center gap-1">
-                            🛏️ {property.bedrooms}
+                            <Bed className="w-4 h-4" /> {property.bedrooms}
                           </span>
                           <span className="flex items-center gap-1">
-                            🚿 {property.bathrooms}
+                            <ShowerHead className="w-4 h-4" />{" "}
+                            {property.bathrooms}
                           </span>
                           <span className="flex items-center gap-1">
-                            🚗 {property.parking}
+                            <Car className="w-4 h-4" /> {property.parking}
                           </span>
                         </div>
                       </div>

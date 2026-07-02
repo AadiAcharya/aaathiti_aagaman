@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { roomsAPI, authAPI } from "../../services/api";
+import { Heart } from "lucide-react";
 
 export default function Rooms() {
   const navigate = useNavigate();
@@ -372,9 +373,13 @@ export default function Rooms() {
                           : "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
                       } font-semibold rounded-lg transition`}
                     >
-                      <span className="text-2xl">
-                        {isWishlisted(room._id) ? "❤️" : "🤍"}
-                      </span>
+                      <Heart
+                        className={`w-6 h-6 mx-auto ${
+                          isWishlisted(room._id)
+                            ? "fill-red-500 text-red-500"
+                            : "fill-none text-current"
+                        }`}
+                      />
                     </button>
                   </div>
                 </div>

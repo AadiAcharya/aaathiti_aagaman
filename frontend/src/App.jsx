@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "./context/ThemeContext";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
@@ -31,50 +31,65 @@ import HowItWorks from "./components/HowItWorks.jsx";
 import RentalGuide from "./components/RentalGuide.jsx";
 import Profile from "./components/Profile.jsx";
 
+function AppContent() {
+  const { theme } = useTheme();
+  return (
+    <BrowserRouter>
+      <div
+        className={`min-h-screen flex flex-col ${
+          theme === "dark"
+            ? "bg-background text-text-primary"
+            : "bg-gray-50 text-gray-900"
+        }`}
+      >
+        <Header />
+
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* <Route element={<MainLayout />} /> */}
+            <Route path="/properties" element={<Properties />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/hosting" element={<Hosting />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/room/:roomId" element={<Room />} />
+            <Route path="/room" element={<Room />} />
+            <Route path="/rooms" element={<Rooms />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/add-property" element={<AddProperty />} />
+            <Route path="/amenities" element={<Amenities />} />
+            <Route path="/description" element={<Description />} />
+            <Route path="/facilities" element={<Facilities />} />
+            <Route path="/post" element={<Post />} />
+            <Route path="/safety" element={<Saftey />} />
+            <Route path="/room-status" element={<RoomStatus />} />
+            <Route path="/reservation" element={<HostReservation />} />
+            <Route path="/transactionh" element={<TransactionHistory />} />
+            <Route path="notification" element={<NotificationsPage />} />
+            <Route path="message" element={<MessagesPage />} />
+            <Route path="sign-in" element={<SignIn />} />
+            <Route path="sign-up" element={<SignUp />} />
+            <Route path="signin" element={<SignIn />} />
+            <Route path="signup" element={<SignUp />} />
+            <Route path="host" element={<Host />} />
+            <Route path="help" element={<Help />} />
+            <Route path="how-it-works" element={<HowItWorks />} />
+            <Route path="rental-guide" element={<RentalGuide />} />
+          </Routes>
+        </main>
+
+        <Footer />
+      </div>
+    </BrowserRouter>
+  );
+}
+
 export default function App() {
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 text-gray-900 dark:text-white">
-          <Header />
-
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              {/* <Route element={<MainLayout />} /> */}
-              <Route path="/properties" element={<Properties />} />
-              <Route path="/account" element={<Account />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/hosting" element={<Hosting />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/room/:roomId" element={<Room />} />
-              <Route path="/room" element={<Room />} />
-              <Route path="/rooms" element={<Rooms />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/wishlist" element={<Wishlist />} />
-              <Route path="/add-property" element={<AddProperty />} />
-              <Route path="/amenities" element={<Amenities />} />
-              <Route path="/description" element={<Description />} />
-              <Route path="/facilities" element={<Facilities />} />
-              <Route path="/post" element={<Post />} />
-              <Route path="/safety" element={<Saftey />} />
-              <Route path="/room-status" element={<RoomStatus />} />
-              <Route path="/reservation" element={<HostReservation />} />
-              <Route path="/transactionh" element={<TransactionHistory />} />
-              <Route path="notification" element={<NotificationsPage />} />
-              <Route path="message" element={<MessagesPage />} />
-              <Route path="sign-in" element={<SignIn />} />
-              <Route path="sign-up" element={<SignUp />} />
-              <Route path="host" element={<Host />} />
-              <Route path="help" element={<Help />} />
-              <Route path="how-it-works" element={<HowItWorks />} />
-              <Route path="rental-guide" element={<RentalGuide />} />
-            </Routes>
-          </main>
-
-          <Footer />
-        </div>
-      </BrowserRouter>
+      <AppContent />
     </ThemeProvider>
   );
 }

@@ -3,6 +3,22 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { propertiesAPI } from "../services/api";
 import { blogs } from "../data/propertyData";
+import {
+  Home as HomeIcon,
+  Heart,
+  HeartCrack,
+  MapPin,
+  Bed,
+  ShowerHead,
+  Car,
+  PawPrint,
+  Search,
+  Users,
+  Building2,
+  Star,
+  Smartphone,
+  Apple,
+} from "lucide-react";
 
 // ─── Property Card ────────────────────────────────────────────────────────────
 const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
@@ -26,7 +42,7 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
           />
         ) : (
           <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-            <span className="text-4xl">🏠</span>
+            <HomeIcon className="w-9 h-9 text-primary" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -35,12 +51,18 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
             e.stopPropagation();
             onToggleFavorite(property._id || property.id);
           }}
-          className="absolute top-3 left-3 text-2xl w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition"
+          className="absolute top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition"
         >
-          {isFavorite ? "❤️" : "🤍"}
+          <Heart
+            className={`w-5 h-5 ${
+              isFavorite
+                ? "fill-red-500 text-red-500"
+                : "fill-white/80 text-gray-700"
+            }`}
+          />
         </button>
         {property.isTopRated && (
-          <div className="absolute top-3 right-3 bg-accent text-background px-3 py-1 rounded-full text-xs font-bold tracking-wide">
+          <div className="absolute top-3 right-3 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold tracking-wide">
             ★ TOP RATED
           </div>
         )}
@@ -51,7 +73,7 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
         </div>
       </div>
       <div className="p-5">
-        <p className="text-accent text-sm font-bold mb-1">{property.price}</p>
+        <p className="text-primary text-sm font-bold mb-1">{property.price}</p>
         <h3
           className={`${
             theme === "dark" ? "text-text-primary" : "text-gray-900"
@@ -64,7 +86,7 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
             theme === "dark" ? "text-text-secondary" : "text-gray-600"
           } text-sm mb-3 flex items-center gap-1`}
         >
-          <span>📍</span> {property.location}
+          <MapPin className="w-4 h-4" /> {property.location}
         </p>
         <div
           className={`flex gap-3 ${
@@ -74,13 +96,17 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
           } pt-3`}
         >
           <span className="flex items-center gap-1">
-            🛏️ {property.bedrooms}
+            <Bed className="w-4 h-4" /> {property.bedrooms}
           </span>
           <span className="flex items-center gap-1">
-            🚿 {property.bathrooms}
+            <ShowerHead className="w-4 h-4" /> {property.bathrooms}
           </span>
-          <span className="flex items-center gap-1">🚗 {property.parking}</span>
-          <span className="flex items-center gap-1">🐾 {property.pets}</span>
+          <span className="flex items-center gap-1">
+            <Car className="w-4 h-4" /> {property.parking}
+          </span>
+          <span className="flex items-center gap-1">
+            <PawPrint className="w-4 h-4" /> {property.pets}
+          </span>
         </div>
       </div>
     </div>
@@ -214,6 +240,7 @@ const SectionHeader = ({ title, subtitle, action }) => {
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 const StatCard = ({ icon, value, label }) => {
+  const Icon = icon;
   const { theme } = useTheme();
   return (
     <div
@@ -223,7 +250,9 @@ const StatCard = ({ icon, value, label }) => {
           : "bg-white border-gray-200 hover:border-blue-200"
       } rounded-2xl border transition`}
     >
-      <div className="text-4xl mb-2">{icon}</div>
+      <div className="mb-2 flex justify-center">
+        <Icon className="w-9 h-9 text-primary" />
+      </div>
       <p className="text-3xl font-bold text-primary mb-1">{value}</p>
       <p
         className={`${
@@ -376,7 +405,7 @@ export default function Home() {
       >
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent rounded-full translate-x-1/2 translate-y-1/2" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary rounded-full translate-x-1/2 translate-y-1/2" />
         </div>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-16">
           <div className="mb-10 text-center md:text-left">
@@ -547,10 +576,10 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: "🏠", value: "500+", label: "Properties Listed" },
-              { icon: "👥", value: "12K+", label: "Happy Guests" },
-              { icon: "🌆", value: "50+", label: "Cities Covered" },
-              { icon: "⭐", value: "4.8", label: "Average Rating" },
+              { icon: HomeIcon, value: "500+", label: "Properties Listed" },
+              { icon: Users, value: "12K+", label: "Happy Guests" },
+              { icon: Building2, value: "50+", label: "Cities Covered" },
+              { icon: Star, value: "4.8", label: "Average Rating" },
             ].map((s) => (
               <StatCard key={s.label} {...s} />
             ))}
@@ -579,8 +608,14 @@ export default function Home() {
             ))}
           </div>
         ) : sortedProperties.length === 0 ? (
-          <div className="text-center py-16 text-text-secondary">
-            <p className="text-4xl mb-4">🔍</p>
+          <div
+            className={`text-center py-16 ${
+              theme === "dark" ? "text-text-secondary" : "text-gray-600"
+            }`}
+          >
+            <div className="flex justify-center mb-4">
+              <Search className="w-9 h-9" />
+            </div>
             <p className="text-xl font-semibold mb-2">No properties found</p>
             <p className="mb-6">Try adjusting your filters</p>
             <button
@@ -606,7 +641,11 @@ export default function Home() {
               <div className="text-center mt-10">
                 <button
                   onClick={() => setVisibleCount((prev) => prev + 4)}
-                  className="bg-bg-secondary hover:bg-primary/10 text-text-primary font-semibold px-10 py-3 rounded-full border border-primary/20 transition"
+                  className={`${
+                    theme === "dark"
+                      ? "bg-bg-secondary text-text-primary"
+                      : "bg-white text-gray-900"
+                  } hover:bg-primary/10 font-semibold px-10 py-3 rounded-full border border-primary/20 transition`}
                 >
                   Load More ({sortedProperties.length - visibleCount} remaining)
                 </button>
@@ -618,7 +657,11 @@ export default function Home() {
 
       {/* ── Top Rated ──────────────────────────────────────────────────────── */}
       {topRated.length > 0 && (
-        <div className="bg-bg-secondary/50 py-16 md:py-20">
+        <div
+          className={`${
+            theme === "dark" ? "bg-bg-secondary/50" : "bg-gray-100"
+          } py-16 md:py-20`}
+        >
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <SectionHeader
               title="Top Rated Properties"
@@ -675,7 +718,7 @@ export default function Home() {
                       className="w-full h-full bg-primary/10 flex items-center justify-center"
                       style={{ minHeight: i === 0 ? "400px" : "200px" }}
                     >
-                      <span className="text-6xl">🏠</span>
+                      <HomeIcon className="w-14 h-14 text-primary" />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
@@ -686,10 +729,10 @@ export default function Home() {
                     <h3 className="text-white font-bold text-lg mb-1">
                       {property.title}
                     </h3>
-                    <p className="text-white/80 text-sm">
-                      📍 {property.location}
+                    <p className="text-white/80 text-sm flex items-center gap-1">
+                      <MapPin className="w-4 h-4" /> {property.location}
                     </p>
-                    <p className="text-accent font-bold mt-2">
+                    <p className="text-primary font-bold mt-2">
                       {property.price}
                     </p>
                   </div>
@@ -698,11 +741,15 @@ export default function Home() {
                       e.stopPropagation();
                       toggleFavorite(property._id || property.id);
                     }}
-                    className="absolute top-4 right-4 text-xl w-9 h-9 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition"
+                    className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition"
                   >
-                    {favorites.includes(property._id || property.id)
-                      ? "❤️"
-                      : "🤍"}
+                    <Heart
+                      className={`w-5 h-5 ${
+                        favorites.includes(property._id || property.id)
+                          ? "fill-red-500 text-red-500"
+                          : "fill-white/80 text-gray-700"
+                      }`}
+                    />
                   </button>
                 </div>
               </div>
@@ -713,7 +760,11 @@ export default function Home() {
 
       {/* ── Favorites ─────────────────────────────────────────────────────── */}
       {favorites.length > 0 && (
-        <div className="bg-bg-secondary/50 py-16">
+        <div
+          className={`${
+            theme === "dark" ? "bg-bg-secondary/50" : "bg-gray-100"
+          } py-16`}
+        >
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <SectionHeader
               title={`My Favorites (${favoriteProperties.length})`}
@@ -724,8 +775,14 @@ export default function Home() {
               }
             />
             {favoriteProperties.length === 0 ? (
-              <div className="text-center py-8 text-text-secondary">
-                <p className="text-4xl mb-3">💔</p>
+              <div
+                className={`text-center py-8 ${
+                  theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                }`}
+              >
+                <div className="flex justify-center mb-3">
+                  <HeartCrack className="w-9 h-9" />
+                </div>
                 <p>
                   Your saved favorites are from a previous session and are no
                   longer available.
@@ -758,24 +815,36 @@ export default function Home() {
 
       {/* ── Try Hosting ───────────────────────────────────────────────────── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-20">
-        <div className="bg-gradient-to-br from-primary/10 to-accent/5 rounded-3xl p-8 md:p-12 border border-primary/20 overflow-hidden relative">
+        <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-3xl p-8 md:p-12 border border-primary/20 overflow-hidden relative">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full translate-x-1/2 -translate-y-1/2" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center relative">
             <div>
               <p className="text-primary font-semibold text-sm tracking-widest uppercase mb-3">
                 For Property Owners
               </p>
-              <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+              <h2
+                className={`text-3xl md:text-4xl font-bold ${
+                  theme === "dark" ? "text-text-primary" : "text-gray-900"
+                } mb-4`}
+              >
                 Try Hosting
                 <br />
                 With Us
               </h2>
-              <p className="text-text-secondary mb-6 leading-relaxed">
+              <p
+                className={`${
+                  theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                } mb-6 leading-relaxed`}
+              >
                 Earn extra income by listing your property. Join thousands of
                 hosts earning with Aatithi Aagaman. Full control over your
                 listings, pricing, and availability.
               </p>
-              <div className="grid grid-cols-2 gap-3 mb-8 text-sm text-text-secondary">
+              <div
+                className={`grid grid-cols-2 gap-3 mb-8 text-sm ${
+                  theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                }`}
+              >
                 {[
                   "Set your own price",
                   "Full calendar control",
@@ -802,7 +871,11 @@ export default function Home() {
                 </button>
               </div>
             </div>
-            <div className="h-64 md:h-80 bg-background rounded-2xl overflow-hidden border border-primary/10">
+            <div
+              className={`h-64 md:h-80 ${
+                theme === "dark" ? "bg-background" : "bg-white"
+              } rounded-2xl overflow-hidden border border-primary/10`}
+            >
               <img
                 src="/images/hosting.svg"
                 alt="Start Hosting"
@@ -814,7 +887,11 @@ export default function Home() {
       </div>
 
       {/* ── Blog / Rental Guides ──────────────────────────────────────────── */}
-      <div className="bg-bg-secondary/50 py-16 md:py-20">
+      <div
+        className={`${
+          theme === "dark" ? "bg-bg-secondary/50" : "bg-gray-100"
+        } py-16 md:py-20`}
+      >
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <SectionHeader
             title="Property Rental Guides & Tips"
@@ -843,7 +920,13 @@ export default function Home() {
       {/* ── Browse Properties ─────────────────────────────────────────────── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-          <div className="h-72 bg-bg-secondary rounded-2xl overflow-hidden border border-text-muted/10 order-2 md:order-1">
+          <div
+            className={`h-72 ${
+              theme === "dark"
+                ? "bg-bg-secondary border-text-muted/10"
+                : "bg-white border-gray-200"
+            } rounded-2xl overflow-hidden border order-2 md:order-1`}
+          >
             <img
               src="/images/browse.svg"
               alt="Browse Properties"
@@ -854,10 +937,18 @@ export default function Home() {
             <p className="text-primary font-semibold text-sm tracking-widest uppercase mb-3">
               Explore
             </p>
-            <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+            <h2
+              className={`text-3xl md:text-4xl font-bold ${
+                theme === "dark" ? "text-text-primary" : "text-gray-900"
+              } mb-4`}
+            >
               Browse For More Properties
             </h2>
-            <p className="text-text-secondary mb-8 leading-relaxed">
+            <p
+              className={`${
+                theme === "dark" ? "text-text-secondary" : "text-gray-600"
+              } mb-8 leading-relaxed`}
+            >
               Explore our full catalogue of properties sorted by type, location,
               and price range.
             </p>
@@ -872,7 +963,9 @@ export default function Home() {
                   className={`capitalize px-4 py-2 border rounded-full text-sm font-semibold transition ${
                     selectedTab === tab
                       ? "bg-primary text-white border-primary"
-                      : "bg-bg-secondary border-primary/20 text-text-primary hover:bg-primary hover:text-white hover:border-primary"
+                      : theme === "dark"
+                        ? "bg-bg-secondary border-primary/20 text-text-primary hover:bg-primary hover:text-white hover:border-primary"
+                        : "bg-white border-primary/20 text-gray-900 hover:bg-primary hover:text-white hover:border-primary"
                   }`}
                 >
                   {tab}
@@ -890,32 +983,66 @@ export default function Home() {
       </div>
 
       {/* ── Download App ──────────────────────────────────────────────────── */}
-      <div className="bg-bg-secondary/50 py-16">
+      <div
+        className={`${
+          theme === "dark" ? "bg-bg-secondary/50" : "bg-gray-100"
+        } py-16`}
+      >
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="bg-gradient-to-r from-primary/10 to-accent/5 rounded-3xl p-8 md:p-12 border border-primary/10">
+          <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-3xl p-8 md:p-12 border border-primary/10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
               <div>
                 <p className="text-primary font-semibold text-sm tracking-widest uppercase mb-3">
                   Mobile App
                 </p>
-                <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+                <h2
+                  className={`text-3xl md:text-4xl font-bold ${
+                    theme === "dark" ? "text-text-primary" : "text-gray-900"
+                  } mb-4`}
+                >
                   Book On The Go
                 </h2>
-                <p className="text-text-secondary mb-8 leading-relaxed">
+                <p
+                  className={`${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                  } mb-8 leading-relaxed`}
+                >
                   Download our mobile app and manage your bookings, get
                   notifications, and explore properties anywhere, anytime.
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <button className="bg-background hover:bg-primary text-text-primary hover:text-white px-6 py-3 rounded-xl font-semibold transition border border-text-muted/20 flex items-center gap-2">
-                    <span className="text-xl">📱</span> Play Store
+                  <button
+                    className={`${
+                      theme === "dark"
+                        ? "bg-background text-text-primary border-text-muted/20"
+                        : "bg-white text-gray-900 border-gray-200"
+                    } hover:bg-primary hover:text-white px-6 py-3 rounded-xl font-semibold transition border flex items-center gap-2`}
+                  >
+                    <Smartphone className="w-5 h-5" /> Play Store
                   </button>
-                  <button className="bg-background hover:bg-primary text-text-primary hover:text-white px-6 py-3 rounded-xl font-semibold transition border border-text-muted/20 flex items-center gap-2">
-                    <span className="text-xl">🍎</span> App Store
+                  <button
+                    className={`${
+                      theme === "dark"
+                        ? "bg-background text-text-primary border-text-muted/20"
+                        : "bg-white text-gray-900 border-gray-200"
+                    } hover:bg-primary hover:text-white px-6 py-3 rounded-xl font-semibold transition border flex items-center gap-2`}
+                  >
+                    <Apple className="w-5 h-5" /> App Store
                   </button>
                 </div>
               </div>
-              <div className="h-64 bg-background rounded-2xl border border-text-muted/10 flex items-center justify-center">
-                <p className="text-6xl">📱</p>
+              <div
+                className={`h-64 ${
+                  theme === "dark"
+                    ? "bg-background border-text-muted/10"
+                    : "bg-white border-gray-200"
+                } rounded-2xl border flex items-center justify-center`}
+              >
+                <Smartphone
+                  className={`w-14 h-14 ${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-400"
+                  }`}
+                />
               </div>
             </div>
           </div>
@@ -929,16 +1056,28 @@ export default function Home() {
             <p className="text-primary font-semibold text-sm tracking-widest uppercase mb-3">
               About Us
             </p>
-            <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">
+            <h2
+              className={`text-3xl md:text-4xl font-bold ${
+                theme === "dark" ? "text-text-primary" : "text-gray-900"
+              } mb-4`}
+            >
               Discover More About Property Rental
             </h2>
             <div className="w-16 h-1 bg-primary rounded-full mb-6" />
-            <p className="text-text-secondary mb-6 leading-relaxed">
+            <p
+              className={`${
+                theme === "dark" ? "text-text-secondary" : "text-gray-600"
+              } mb-6 leading-relaxed`}
+            >
               Aatithi Aagaman connects guests with exceptional properties across
               the country. Whether you're looking for a cozy room, a modern
               flat, a luxury villa, or a budget hostel — we have it all.
             </p>
-            <p className="text-text-secondary mb-8 leading-relaxed">
+            <p
+              className={`${
+                theme === "dark" ? "text-text-secondary" : "text-gray-600"
+              } mb-8 leading-relaxed`}
+            >
               Our platform makes finding and booking your next stay simple,
               safe, and seamless — with verified listings, real reviews, and
               secure payments.
@@ -952,7 +1091,9 @@ export default function Home() {
                 <p
                   key={label}
                   onClick={() => navigate(path)}
-                  className="font-semibold text-text-secondary hover:text-primary cursor-pointer transition flex items-center gap-2"
+                  className={`font-semibold ${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                  } hover:text-primary cursor-pointer transition flex items-center gap-2`}
                 >
                   <span className="text-primary">→</span> {label}
                 </p>
@@ -965,7 +1106,13 @@ export default function Home() {
               Discover More
             </button>
           </div>
-          <div className="h-72 md:h-96 bg-bg-secondary rounded-2xl overflow-hidden border border-text-muted/10">
+          <div
+            className={`h-72 md:h-96 ${
+              theme === "dark"
+                ? "bg-bg-secondary border-text-muted/10"
+                : "bg-white border-gray-200"
+            } rounded-2xl overflow-hidden border`}
+          >
             <img
               src="/images/about.svg"
               alt="About Us"
@@ -980,10 +1127,18 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
           <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
             <div className="text-center md:text-left shrink-0">
-              <h3 className="text-2xl font-bold text-text-primary mb-1">
+              <h3
+                className={`text-2xl font-bold ${
+                  theme === "dark" ? "text-text-primary" : "text-gray-900"
+                } mb-1`}
+              >
                 Stay In The Loop
               </h3>
-              <p className="text-text-secondary text-sm">
+              <p
+                className={`${
+                  theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                } text-sm`}
+              >
                 Get the latest listings and rental tips in your inbox
               </p>
             </div>
@@ -994,7 +1149,11 @@ export default function Home() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleNewsletterSubmit()}
-                className={`flex-1 min-w-0 bg-background text-text-primary placeholder-text-muted rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-primary border border-text-muted/20 text-sm`}
+                className={`flex-1 min-w-0 ${
+                  theme === "dark"
+                    ? "bg-background text-text-primary placeholder-text-muted border-text-muted/20"
+                    : "bg-white text-gray-900 placeholder-gray-400 border-gray-200"
+                } rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-primary border text-sm`}
               />
               <button
                 onClick={handleNewsletterSubmit}

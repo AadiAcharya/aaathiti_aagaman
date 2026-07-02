@@ -313,7 +313,7 @@ const SignUp = () => {
           >
             Already have an account?{" "}
             <Link
-              to="/signin"
+              to="/sign-in"
               className={`font-medium ${
                 theme === "dark"
                   ? "text-primary hover:text-primary-hover"

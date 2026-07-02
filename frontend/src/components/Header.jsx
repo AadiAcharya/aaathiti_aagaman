@@ -2,6 +2,16 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import BecomeHostModal from "./BecomeHostModal";
+import {
+  Settings,
+  MessageCircle,
+  Heart,
+  Home,
+  HelpCircle,
+  DoorOpen,
+  Moon,
+  Sun,
+} from "lucide-react";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -251,7 +261,9 @@ export default function Header() {
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                ⚙️ Account
+                <span className="inline-flex items-center gap-2">
+                  <Settings className="w-4 h-4" /> Account
+                </span>
               </button>
               <button
                 onClick={() => {
@@ -264,7 +276,9 @@ export default function Header() {
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                💬 Messages
+                <span className="inline-flex items-center gap-2">
+                  <MessageCircle className="w-4 h-4" /> Messages
+                </span>
               </button>
               <button
                 onClick={() => {
@@ -277,7 +291,9 @@ export default function Header() {
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                ❤️ Wishlist
+                <span className="inline-flex items-center gap-2">
+                  <Heart className="w-4 h-4" /> Wishlist
+                </span>
               </button>
               <div
                 className={`border-t ${
@@ -295,7 +311,9 @@ export default function Header() {
                     : "text-blue-600 hover:bg-gray-100"
                 }`}
               >
-                🏠 Host Dashboard
+                <span className="inline-flex items-center gap-2">
+                  <Home className="w-4 h-4" /> Host Dashboard
+                </span>
               </button>
               <button
                 onClick={() => {
@@ -308,7 +326,9 @@ export default function Header() {
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                ❓ Help Center
+                <span className="inline-flex items-center gap-2">
+                  <HelpCircle className="w-4 h-4" /> Help Center
+                </span>
               </button>
               {localStorage.getItem("user") && (
                 <>
@@ -332,7 +352,9 @@ export default function Header() {
                         : "text-red-600 hover:bg-gray-100"
                     }`}
                   >
-                    🚪 Logout
+                    <span className="inline-flex items-center gap-2">
+                      <DoorOpen className="w-4 h-4" /> Logout
+                    </span>
                   </button>
                 </>
               )}
@@ -443,7 +465,9 @@ export default function Header() {
                 : "text-gray-700 hover:text-blue-600"
             }`}
           >
-            ⚙️ Account
+            <span className="inline-flex items-center gap-2">
+              <Settings className="w-4 h-4" /> Account
+            </span>
           </button>
           <button
             onClick={() => {
@@ -456,7 +480,9 @@ export default function Header() {
                 : "text-gray-700 hover:text-blue-600"
             }`}
           >
-            💬 Messages
+            <span className="inline-flex items-center gap-2">
+              <MessageCircle className="w-4 h-4" /> Messages
+            </span>
           </button>
           <button
             onClick={() => {
@@ -469,7 +495,9 @@ export default function Header() {
                 : "text-gray-700 hover:text-blue-600"
             }`}
           >
-            ❤️ Wishlist
+            <span className="inline-flex items-center gap-2">
+              <Heart className="w-4 h-4" /> Wishlist
+            </span>
           </button>
 
           <div
@@ -490,7 +518,9 @@ export default function Header() {
                 : "text-blue-600 hover:text-blue-700"
             }`}
           >
-            🏠 Host Dashboard
+            <span className="inline-flex items-center gap-2">
+              <Home className="w-4 h-4" /> Host Dashboard
+            </span>
           </button>
           <button
             onClick={() => {
@@ -503,7 +533,9 @@ export default function Header() {
                 : "text-gray-700 hover:text-blue-600"
             }`}
           >
-            ❓ Help Center
+            <span className="inline-flex items-center gap-2">
+              <HelpCircle className="w-4 h-4" /> Help Center
+            </span>
           </button>
 
           {localStorage.getItem("user") && (
@@ -528,7 +560,9 @@ export default function Header() {
                     : "text-red-600 hover:text-red-700"
                 }`}
               >
-                🚪 Logout
+                <span className="inline-flex items-center gap-2">
+                  <DoorOpen className="w-4 h-4" /> Logout
+                </span>
               </button>
             </>
           )}
@@ -548,7 +582,14 @@ export default function Header() {
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
           >
-            <span>{theme === "dark" ? "🌙 Dark Mode" : "☀️ Light Mode"}</span>
+            <span className="inline-flex items-center gap-2">
+              {theme === "dark" ? (
+                <Moon className="w-4 h-4" />
+              ) : (
+                <Sun className="w-4 h-4" />
+              )}
+              {theme === "dark" ? "Dark Mode" : "Light Mode"}
+            </span>
             {theme === "dark" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"

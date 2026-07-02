@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { DollarSign, Shield, Globe } from "lucide-react";
 
 export default function Hosting() {
   const navigate = useNavigate();
@@ -96,7 +97,7 @@ export default function Hosting() {
                   : "bg-white border border-gray-200"
               }`}
             >
-              <div className="text-4xl mb-4">💰</div>
+              <DollarSign className="w-9 h-9 mb-4" />
               <h3 className="text-xl font-bold mb-3">Earn Extra Income</h3>
               <p
                 className={`${
@@ -116,7 +117,7 @@ export default function Hosting() {
                   : "bg-white border border-gray-200"
               }`}
             >
-              <div className="text-4xl mb-4">🛡️</div>
+              <Shield className="w-9 h-9 mb-4" />
               <h3 className="text-xl font-bold mb-3">Safe & Secure</h3>
               <p
                 className={`${
@@ -136,7 +137,7 @@ export default function Hosting() {
                   : "bg-white border border-gray-200"
               }`}
             >
-              <div className="text-4xl mb-4">🌍</div>
+              <Globe className="w-9 h-9 mb-4" />
               <h3 className="text-xl font-bold mb-3">Reach Global Guests</h3>
               <p
                 className={`${

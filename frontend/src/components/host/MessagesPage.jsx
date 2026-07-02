@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { hostAPI } from "../../services/api";
+import { MessageCircle, Inbox } from "lucide-react";
 
 export default function MessagesPage() {
   const [messages, setMessages]           = useState([]);
@@ -103,13 +104,15 @@ export default function MessagesPage() {
             {/* Left: Thread List */}
             <div className="lg:col-span-1 bg-bg-secondary rounded-xl border border-text-muted/20 overflow-hidden flex flex-col">
               <div className="p-6 border-b border-text-muted/20 bg-gradient-to-r from-bg-secondary to-bg-secondary/70">
-                <h2 className="text-xl font-bold text-text-primary">💬 All Messages</h2>
+                <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5" /> All Messages
+                </h2>
               </div>
 
               {threads.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center text-text-secondary">
                   <div className="text-center">
-                    <p className="text-3xl mb-2">📭</p>
+                    <Inbox className="w-8 h-8 mx-auto mb-2" />
                     <p>No messages yet</p>
                   </div>
                 </div>
@@ -177,7 +180,7 @@ export default function MessagesPage() {
                 {!currentThread ? (
                   <div className="h-full flex items-center justify-center text-center text-text-secondary">
                     <div>
-                      <p className="text-5xl mb-4">💬</p>
+                      <MessageCircle className="w-12 h-12 mx-auto mb-4" />
                       <p className="text-xl">Select a message to view</p>
                     </div>
                   </div>

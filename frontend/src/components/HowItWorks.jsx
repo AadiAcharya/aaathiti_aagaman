@@ -1,4 +1,26 @@
 import { useTheme } from "../context/ThemeContext";
+import {
+  Search,
+  Camera,
+  Calendar,
+  CreditCard,
+  CheckCircle,
+  PartyPopper,
+  Home,
+  Pencil,
+  DollarSign,
+  Mail,
+  Hand,
+  Banknote,
+  Users,
+  Building2,
+  Lightbulb,
+  Lock,
+  MessageSquare,
+  Star,
+  MessageCircle,
+  Trophy,
+} from "lucide-react";
 
 export default function HowItWorks() {
   const { theme } = useTheme();
@@ -8,7 +30,7 @@ export default function HowItWorks() {
       title: "Search & Browse",
       description:
         "Explore thousands of unique properties and rooms on our platform",
-      icon: "🔍",
+      icon: Search,
       details:
         "Use our advanced filters to find exactly what you're looking for",
     },
@@ -16,35 +38,35 @@ export default function HowItWorks() {
       number: 2,
       title: "View Details",
       description: "Check out high-quality photos, descriptions, and reviews",
-      icon: "📸",
+      icon: Camera,
       details: "Get all the information you need before making a decision",
     },
     {
       number: 3,
       title: "Check Availability",
       description: "View the calendar and select your desired dates",
-      icon: "📅",
+      icon: Calendar,
       details: "See real-time availability and book instantly",
     },
     {
       number: 4,
       title: "Make Payment",
       description: "Secure payment processing with multiple options",
-      icon: "💳",
+      icon: CreditCard,
       details: "Your payment information is fully protected",
     },
     {
       number: 5,
       title: "Confirm Booking",
       description: "Receive confirmation and details from the host",
-      icon: "✅",
+      icon: CheckCircle,
       details: "Get check-in instructions and host contact info",
     },
     {
       number: 6,
       title: "Enjoy Your Stay",
       description: "Have an amazing experience and share your feedback",
-      icon: "🎉",
+      icon: PartyPopper,
       details: "Leave a review to help other travelers",
     },
   ];
@@ -54,42 +76,42 @@ export default function HowItWorks() {
       number: 1,
       title: "Join as Host",
       description: "Create an account and get verified as a property host",
-      icon: "🏠",
+      icon: Home,
       details: "Complete your profile with ID verification",
     },
     {
       number: 2,
       title: "List Your Property",
       description: "Add your property details, photos, and pricing",
-      icon: "📝",
+      icon: Pencil,
       details: "Choose from various property types and room configurations",
     },
     {
       number: 3,
       title: "Set Up Calendar",
       description: "Control availability and set your pricing rates",
-      icon: "💰",
+      icon: DollarSign,
       details: "Dynamic pricing for different seasons available",
     },
     {
       number: 4,
       title: "Receive Bookings",
       description: "Get notified when guests book your property",
-      icon: "📬",
+      icon: Mail,
       details: "Accept or decline bookings based on your preferences",
     },
     {
       number: 5,
       title: "Welcome Guests",
       description: "Meet your guests and provide excellent service",
-      icon: "👋",
+      icon: Hand,
       details: "Communication tools available through the platform",
     },
     {
       number: 6,
       title: "Earn Money",
       description: "Receive payments and manage your earnings",
-      icon: "💵",
+      icon: Banknote,
       details: "Track income and download financial reports",
     },
   ];
@@ -127,7 +149,8 @@ export default function HowItWorks() {
         <div className="max-w-6xl mx-auto">
           <div className="mb-12">
             <h2 className="text-3xl font-bold mb-2 flex items-center">
-              👥 For Guests
+              <Users className="w-7 h-7 mr-2" />
+              For Guests
             </h2>
             <p
               className={`text-lg ${
@@ -149,7 +172,7 @@ export default function HowItWorks() {
                 }`}
               >
                 <div className="mb-4">
-                  <span className="text-5xl">{step.icon}</span>
+                  <step.icon className="w-11 h-11" />
                   <div
                     className={`mt-3 inline-block rounded-full w-10 h-10 flex items-center justify-center font-bold text-white ${
                       theme === "dark" ? "bg-blue-600" : "bg-blue-500"
@@ -185,10 +208,10 @@ export default function HowItWorks() {
                 : "bg-gradient-to-r from-blue-500/10 to-gray-100/10 border border-blue-500/20"
             }`}
           >
-            <h3 className="text-2xl font-bold mb-4">💡 Tips for Guests</h3>
+            <h3 className="text-2xl font-bold mb-4 flex items-center gap-2"><Lightbulb className="w-6 h-6" /> Tips for Guests</h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="flex gap-3">
-                <span className="text-2xl flex-shrink-0">🔒</span>
+                <Lock className="w-6 h-6 flex-shrink-0" />
                 <div>
                   <p className="font-semibold">Always verify the host</p>
                   <p
@@ -201,7 +224,7 @@ export default function HowItWorks() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <span className="text-2xl flex-shrink-0">📸</span>
+                <Camera className="w-6 h-6 flex-shrink-0" />
                 <div>
                   <p className="font-semibold">Check photos carefully</p>
                   <p
@@ -214,7 +237,7 @@ export default function HowItWorks() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <span className="text-2xl flex-shrink-0">🗨️</span>
+                <MessageSquare className="w-6 h-6 flex-shrink-0" />
                 <div>
                   <p className="font-semibold">Message before booking</p>
                   <p
@@ -227,7 +250,7 @@ export default function HowItWorks() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <span className="text-2xl flex-shrink-0">⭐</span>
+                <Star className="w-6 h-6 flex-shrink-0" />
                 <div>
                   <p className="font-semibold">Leave honest reviews</p>
                   <p
@@ -256,7 +279,8 @@ export default function HowItWorks() {
         <div className="max-w-6xl mx-auto">
           <div className="mb-12">
             <h2 className="text-3xl font-bold mb-2 flex items-center">
-              🏘️ For Hosts
+              <Building2 className="w-7 h-7 mr-2" />
+              For Hosts
             </h2>
             <p
               className={`text-lg ${
@@ -278,7 +302,7 @@ export default function HowItWorks() {
                 }`}
               >
                 <div className="mb-4">
-                  <span className="text-5xl">{step.icon}</span>
+                  <step.icon className="w-11 h-11" />
                   <div
                     className={`mt-3 inline-block rounded-full w-10 h-10 flex items-center justify-center font-bold text-white ${
                       theme === "dark" ? "bg-blue-600" : "bg-blue-500"
@@ -314,10 +338,10 @@ export default function HowItWorks() {
                 : "bg-gradient-to-r from-blue-500/10 to-gray-100/10 border border-blue-500/20"
             }`}
           >
-            <h3 className="text-2xl font-bold mb-4">💡 Tips for Hosts</h3>
+            <h3 className="text-2xl font-bold mb-4 flex items-center gap-2"><Lightbulb className="w-6 h-6" /> Tips for Hosts</h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="flex gap-3">
-                <span className="text-2xl flex-shrink-0">📷</span>
+                <Camera className="w-6 h-6 flex-shrink-0" />
                 <div>
                   <p className="font-semibold">Professional photos matter</p>
                   <p
@@ -330,7 +354,7 @@ export default function HowItWorks() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <span className="text-2xl flex-shrink-0">💬</span>
+                <MessageCircle className="w-6 h-6 flex-shrink-0" />
                 <div>
                   <p className="font-semibold">Respond quickly</p>
                   <p
@@ -343,7 +367,7 @@ export default function HowItWorks() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <span className="text-2xl flex-shrink-0">🏆</span>
+                <Trophy className="w-6 h-6 flex-shrink-0" />
                 <div>
                   <p className="font-semibold">Provide excellent service</p>
                   <p
@@ -356,7 +380,7 @@ export default function HowItWorks() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <span className="text-2xl flex-shrink-0">💵</span>
+                <Banknote className="w-6 h-6 flex-shrink-0" />
                 <div>
                   <p className="font-semibold">Price competitively</p>
                   <p

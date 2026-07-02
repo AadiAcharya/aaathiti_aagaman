@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Snowflake, Flame, WashingMachine, Tv, Bed, UtensilsCrossed,
+  Microwave, Refrigerator, Wind, Shirt, Briefcase, Coffee,
+} from "lucide-react";
 
 const ALL_FACILITIES = [
-  { id: "Air Conditioning", icon: "❄️" },
-  { id: "Heating",          icon: "🔥" },
-  { id: "Washing Machine",  icon: "🧺" },
-  { id: "Television",       icon: "📺" },
-  { id: "Bedding",          icon: "🛏️" },
-  { id: "Dining Area",      icon: "🍽️" },
-  { id: "Microwave",        icon: "📡" },
-  { id: "Refrigerator",     icon: "🧊" },
-  { id: "Hair Dryer",       icon: "💨" },
-  { id: "Iron",             icon: "👔" },
-  { id: "Work Desk",        icon: "💼" },
-  { id: "Coffee Maker",     icon: "☕" },
+  { id: "Air Conditioning", icon: Snowflake },
+  { id: "Heating",          icon: Flame },
+  { id: "Washing Machine",  icon: WashingMachine },
+  { id: "Television",       icon: Tv },
+  { id: "Bedding",          icon: Bed },
+  { id: "Dining Area",      icon: UtensilsCrossed },
+  { id: "Microwave",        icon: Microwave },
+  { id: "Refrigerator",     icon: Refrigerator },
+  { id: "Hair Dryer",       icon: Wind },
+  { id: "Iron",             icon: Shirt },
+  { id: "Work Desk",        icon: Briefcase },
+  { id: "Coffee Maker",     icon: Coffee },
 ];
 
 const steps = ["Type", "Amenities", "Description", "Facilities", "Safety", "Post"];
@@ -81,8 +85,8 @@ export default function Facilities() {
                 {isSelected && (
                   <div className="absolute top-3 right-3 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-xs font-bold">✓</div>
                 )}
-                <div className={`text-5xl mb-4 transition-transform duration-300 ${isSelected ? "scale-110" : "group-hover:scale-110"}`}>
-                  {item.icon}
+                <div className={`flex justify-center mb-4 transition-transform duration-300 ${isSelected ? "scale-110" : "group-hover:scale-110"}`}>
+                  <item.icon className="w-12 h-12 text-primary" />
                 </div>
                 <h3 className={`text-lg font-bold transition-colors ${isSelected ? "text-primary" : "text-text-primary"}`}>{item.id}</h3>
               </div>

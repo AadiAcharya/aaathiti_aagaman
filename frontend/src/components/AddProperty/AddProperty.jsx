@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Building2, Home, DoorClosed, Castle, Bed, Leaf } from "lucide-react";
 
 const propertyTypes = [
-  { id: "apartment", name: "Apartment", icon: "🏢", desc: "Modern urban living" },
-  { id: "flat",      name: "Flat",      icon: "🏠", desc: "Cozy home experience" },
-  { id: "room",      name: "Room",      icon: "🚪", desc: "Private rooms" },
-  { id: "villa",     name: "Villa",     icon: "🏰", desc: "Luxury retreat" },
-  { id: "hostel",    name: "Hostel",    icon: "🛏️", desc: "Budget friendly stays" },
-  { id: "cottage",   name: "Cottage",   icon: "🌿", desc: "Countryside getaway" },
+  { id: "apartment", name: "Apartment", icon: Building2,  desc: "Modern urban living" },
+  { id: "flat",      name: "Flat",      icon: Home,       desc: "Cozy home experience" },
+  { id: "room",      name: "Room",      icon: DoorClosed, desc: "Private rooms" },
+  { id: "villa",     name: "Villa",     icon: Castle,     desc: "Luxury retreat" },
+  { id: "hostel",    name: "Hostel",    icon: Bed,        desc: "Budget friendly stays" },
+  { id: "cottage",   name: "Cottage",   icon: Leaf,       desc: "Countryside getaway" },
 ];
 
 // ── Step indicator ─────────────────────────────────────────────────────────────
@@ -78,9 +79,7 @@ export default function AddProperty() {
               }`}
             >
               <div className="h-36 flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5">
-                <span className={`text-6xl transition-transform duration-300 ${selected === type.id ? "scale-125" : "group-hover:scale-110"}`}>
-                  {type.icon}
-                </span>
+                <type.icon className={`w-14 h-14 text-primary transition-transform duration-300 ${selected === type.id ? "scale-125" : "group-hover:scale-110"}`} />
               </div>
               <div className="p-6 text-center">
                 <p className={`text-xl font-bold mb-1 transition-colors ${selected === type.id ? "text-primary" : "text-text-primary group-hover:text-primary"}`}>

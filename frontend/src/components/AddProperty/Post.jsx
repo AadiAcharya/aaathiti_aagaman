@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { propertiesAPI } from "../../services/api";
+import { PartyPopper, Home, MapPin, Tag, Bed, ShowerHead, PawPrint, Rocket } from "lucide-react";
 
 const STORAGE_KEYS = [
   "addProperty_type",
@@ -104,7 +105,7 @@ export default function Post() {
   if (submitted) return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6">
       <div className="text-center max-w-md">
-        <div className="text-7xl mb-6">🎉</div>
+        <div className="flex items-center justify-center mb-6"><PartyPopper className="w-16 h-16 text-primary" /></div>
         <h2 className="text-3xl font-bold text-text-primary mb-4">Property Posted!</h2>
         <p className="text-text-secondary mb-8">
           Your property is now live. Guests can find and book it right away.
@@ -163,7 +164,7 @@ export default function Post() {
                 <img src={property.image} alt={property.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-6xl">🏠</span>
+                  <Home className="w-14 h-14 text-text-muted" />
                 </div>
               )}
             </div>
@@ -171,19 +172,19 @@ export default function Post() {
             {/* Title & Info */}
             <div className="bg-bg-secondary rounded-2xl p-6 border border-text-muted/20">
               <h1 className="text-2xl font-bold text-text-primary mb-2">{property.title}</h1>
-              <p className="text-text-secondary flex items-center gap-1 mb-4">
-                <span>📍</span> {property.location}
+              <p className="text-text-secondary flex items-center gap-1.5 mb-4">
+                <MapPin className="w-4 h-4" /> {property.location}
               </p>
               <p className="text-text-secondary text-sm leading-relaxed mb-6">{property.description}</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                  { icon: "🏷️", label: "Type",      value: property.type },
-                  { icon: "🛏️", label: "Bedrooms",  value: property.bedrooms },
-                  { icon: "🚿", label: "Bathrooms", value: property.bathrooms },
-                  { icon: "🐾", label: "Pets",      value: property.pets },
+                  { icon: Tag,        label: "Type",      value: property.type },
+                  { icon: Bed,        label: "Bedrooms",  value: property.bedrooms },
+                  { icon: ShowerHead, label: "Bathrooms", value: property.bathrooms },
+                  { icon: PawPrint,   label: "Pets",      value: property.pets },
                 ].map((item) => (
                   <div key={item.label} className="bg-background rounded-xl p-4 text-center border border-text-muted/10">
-                    <p className="text-2xl mb-1">{item.icon}</p>
+                    <item.icon className="w-6 h-6 mx-auto mb-1 text-primary" />
                     <p className="text-lg font-bold text-primary capitalize">{item.value}</p>
                     <p className="text-text-secondary text-xs">{item.label}</p>
                   </div>
@@ -251,7 +252,9 @@ export default function Post() {
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     Posting...
                   </>
-                ) : "🚀 Post My Property"}
+                ) : (
+                  <span className="inline-flex items-center gap-2"><Rocket className="w-4 h-4" /> Post My Property</span>
+                )}
               </button>
 
               <button onClick={() => navigate("/safety")}

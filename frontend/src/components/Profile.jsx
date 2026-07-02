@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import {
+  CheckCircle,
+  Home,
+  Crown,
+  Pencil,
+  User,
+  Settings,
+  Lock,
+} from "lucide-react";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -95,35 +104,35 @@ export default function Profile() {
                 <div className="flex flex-wrap gap-2">
                   {user.emailVerified && (
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
                         theme === "dark"
                           ? "bg-green-500/20 text-green-400"
                           : "bg-green-100 text-green-800"
                       }`}
                     >
-                      ✅ Email Verified
+                      <CheckCircle className="w-3.5 h-3.5" /> Email Verified
                     </span>
                   )}
                   {user.role === "host" && (
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
                         theme === "dark"
                           ? "bg-blue-500/20 text-blue-400"
                           : "bg-blue-100 text-blue-800"
                       }`}
                     >
-                      🏠 Host
+                      <Home className="w-3.5 h-3.5" /> Host
                     </span>
                   )}
                   {user.role === "admin" && (
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
                         theme === "dark"
                           ? "bg-red-500/20 text-red-400"
                           : "bg-red-100 text-red-800"
                       }`}
                     >
-                      👑 Admin
+                      <Crown className="w-3.5 h-3.5" /> Admin
                     </span>
                   )}
                 </div>
@@ -139,7 +148,9 @@ export default function Profile() {
                       : "bg-blue-500 hover:bg-blue-600"
                   }`}
                 >
-                  ✏️ Edit Profile
+                  <span className="inline-flex items-center gap-2">
+                    <Pencil className="w-4 h-4" /> Edit Profile
+                  </span>
                 </button>
               )}
             </div>
@@ -166,9 +177,21 @@ export default function Profile() {
                     : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
-              {tab === "personal" && "👤 Personal Info"}
-              {tab === "preferences" && "⚙️ Preferences"}
-              {tab === "security" && "🔒 Security"}
+              {tab === "personal" && (
+                <span className="inline-flex items-center gap-2">
+                  <User className="w-4 h-4" /> Personal Info
+                </span>
+              )}
+              {tab === "preferences" && (
+                <span className="inline-flex items-center gap-2">
+                  <Settings className="w-4 h-4" /> Preferences
+                </span>
+              )}
+              {tab === "security" && (
+                <span className="inline-flex items-center gap-2">
+                  <Lock className="w-4 h-4" /> Security
+                </span>
+              )}
             </button>
           ))}
         </div>

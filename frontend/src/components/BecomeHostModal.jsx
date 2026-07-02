@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Home, DollarSign, Star, House, PartyPopper } from "lucide-react";
 
 const STEPS = [
   {
-    icon: "🏠",
+    icon: Home,
     title: "List your space",
     desc: "Share your property with thousands of guests looking for their perfect stay.",
   },
   {
-    icon: "💰",
+    icon: DollarSign,
     title: "Set your price",
     desc: "You're in full control. Set your own rates and availability calendar.",
   },
   {
-    icon: "⭐",
+    icon: Star,
     title: "Earn & grow",
     desc: "Get paid securely and build your reputation with guest reviews.",
   },
@@ -84,7 +85,7 @@ export default function BecomeHostModal({ isOpen, onClose }) {
           <>
             {/* Header gradient */}
             <div className="bg-gradient-to-br from-primary/20 to-accent/10 px-8 pt-10 pb-8 text-center">
-              <div className="text-5xl mb-4">🏡</div>
+              <House className="w-12 h-12 mb-4 mx-auto text-primary" />
               <h2 className="text-2xl font-bold text-text-primary mb-2">
                 Become a Host
               </h2>
@@ -97,7 +98,7 @@ export default function BecomeHostModal({ isOpen, onClose }) {
             <div className="px-8 py-6 space-y-4">
               {STEPS.map((s, i) => (
                 <div key={i} className="flex items-start gap-4 p-4 bg-bg-secondary rounded-2xl border border-text-muted/10">
-                  <div className="text-3xl shrink-0">{s.icon}</div>
+                  <s.icon className="w-8 h-8 shrink-0 text-primary" />
                   <div>
                     <p className="font-bold text-text-primary text-sm">{s.title}</p>
                     <p className="text-text-secondary text-xs mt-0.5 leading-relaxed">{s.desc}</p>
@@ -138,8 +139,8 @@ export default function BecomeHostModal({ isOpen, onClose }) {
         ) : (
           /* ── Success screen ───────────────────────────────────────────── */
           <div className="px-8 py-12 text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
-              🎉
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <PartyPopper className="w-9 h-9 text-green-600" />
             </div>
             <h2 className="text-2xl font-bold text-text-primary mb-3">
               Request Submitted!

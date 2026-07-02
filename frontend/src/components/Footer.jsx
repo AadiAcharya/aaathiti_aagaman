@@ -6,7 +6,7 @@ export default function Footer() {
     <footer
       className={`w-full ${
         theme === "dark" ? "bg-bg-secondary" : "bg-gray-100"
-      } py-16 px-8 md:px-20 mt-16`}
+      } py-16 px-8 md:px-20`}
     >
       <div className="max-w-7xl mx-auto">
         {/* Main Footer Content */}

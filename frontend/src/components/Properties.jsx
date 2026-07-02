@@ -2,6 +2,16 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { propertiesAPI } from "../services/api";
+import {
+  Home,
+  Heart,
+  MapPin,
+  Bed,
+  ShowerHead,
+  Car,
+  PawPrint,
+  Search,
+} from "lucide-react";
 
 // ─── Property Card ────────────────────────────────────────────────────────────
 const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
@@ -25,7 +35,7 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
           />
         ) : (
           <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-            <span className="text-5xl">🏠</span>
+            <Home className="w-12 h-12 text-primary" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -34,9 +44,15 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
             e.stopPropagation();
             onToggleFavorite(property._id || property.id);
           }}
-          className="absolute top-3 left-3 text-2xl w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition"
+          className="absolute top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition"
         >
-          {isFavorite ? "❤️" : "🤍"}
+          <Heart
+            className={`w-5 h-5 ${
+              isFavorite
+                ? "fill-red-500 text-red-500"
+                : "fill-white/80 text-gray-700"
+            }`}
+          />
         </button>
         {property.isTopRated && (
           <div className="absolute top-3 right-3 bg-accent text-background px-3 py-1 rounded-full text-xs font-bold tracking-wide">
@@ -63,7 +79,7 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
             theme === "dark" ? "text-text-secondary" : "text-gray-600"
           } text-sm mb-3 flex items-center gap-1`}
         >
-          <span>📍</span> {property.location}
+          <MapPin className="w-4 h-4" /> {property.location}
         </p>
         <div
           className={`flex gap-3 ${
@@ -73,13 +89,17 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
           } pt-3`}
         >
           <span className="flex items-center gap-1">
-            🛏️ {property.bedrooms}
+            <Bed className="w-4 h-4" /> {property.bedrooms}
           </span>
           <span className="flex items-center gap-1">
-            🚿 {property.bathrooms}
+            <ShowerHead className="w-4 h-4" /> {property.bathrooms}
           </span>
-          <span className="flex items-center gap-1">🚗 {property.parking}</span>
-          <span className="flex items-center gap-1">🐾 {property.pets}</span>
+          <span className="flex items-center gap-1">
+            <Car className="w-4 h-4" /> {property.parking}
+          </span>
+          <span className="flex items-center gap-1">
+            <PawPrint className="w-4 h-4" /> {property.pets}
+          </span>
         </div>
       </div>
     </div>
@@ -459,7 +479,9 @@ export default function Properties() {
               theme === "dark" ? "bg-bg-secondary" : "bg-gray-100"
             }`}
           >
-            <p className="text-5xl mb-4">🔍</p>
+            <div className="flex justify-center mb-4">
+              <Search className="w-12 h-12" />
+            </div>
             <p
               className={`text-xl font-bold ${
                 theme === "dark" ? "text-text-primary" : "text-gray-900"

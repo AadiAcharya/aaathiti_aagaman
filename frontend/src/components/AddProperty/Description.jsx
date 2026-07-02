@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { PawPrint, Ban } from "lucide-react";
 
 const steps = ["Type", "Amenities", "Description", "Facilities", "Safety", "Post"];
 const StepBar = ({ current }) => (
@@ -176,7 +177,11 @@ export default function Description() {
                       : "border-text-muted/30 text-text-secondary hover:border-primary/50"
                   }`}
                 >
-                  {opt === "Yes" ? "🐾 Yes" : "🚫 No"}
+                  {opt === "Yes" ? (
+                    <span className="inline-flex items-center gap-1.5"><PawPrint className="w-4 h-4" /> Yes</span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5"><Ban className="w-4 h-4" /> No</span>
+                  )}
                 </button>
               ))}
             </div>

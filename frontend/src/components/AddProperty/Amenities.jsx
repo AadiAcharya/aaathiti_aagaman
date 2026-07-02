@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  ChefHat, Car, Trees, Flower2, Wifi, Waves,
+  Dumbbell, MoveVertical, Umbrella, Bath, Flame, UtensilsCrossed,
+} from "lucide-react";
 
 const ALL_AMENITIES = [
-  { id: "Kitchen",       icon: "🍳" },
-  { id: "Parking",       icon: "🚗" },
-  { id: "Balcony",       icon: "🌳" },
-  { id: "Garden",        icon: "🌺" },
-  { id: "Wi-Fi",         icon: "📶" },
-  { id: "Pool",          icon: "🏊" },
-  { id: "Gym",           icon: "💪" },
-  { id: "Elevator",      icon: "🛗" },
-  { id: "Beach Access",  icon: "🏖️" },
-  { id: "Hot Tub",       icon: "🛁" },
-  { id: "Fireplace",     icon: "🔥" },
-  { id: "BBQ Grill",     icon: "🍖" },
+  { id: "Kitchen",       icon: ChefHat },
+  { id: "Parking",       icon: Car },
+  { id: "Balcony",       icon: Trees },
+  { id: "Garden",        icon: Flower2 },
+  { id: "Wi-Fi",         icon: Wifi },
+  { id: "Pool",          icon: Waves },
+  { id: "Gym",           icon: Dumbbell },
+  { id: "Elevator",      icon: MoveVertical },
+  { id: "Beach Access",  icon: Umbrella },
+  { id: "Hot Tub",       icon: Bath },
+  { id: "Fireplace",     icon: Flame },
+  { id: "BBQ Grill",     icon: UtensilsCrossed },
 ];
 
 const steps = ["Type", "Amenities", "Description", "Facilities", "Safety", "Post"];
@@ -90,8 +94,8 @@ export default function Amenities() {
                     ✓
                   </div>
                 )}
-                <div className={`text-5xl mb-4 transition-transform duration-300 ${isSelected ? "scale-110" : "group-hover:scale-110"}`}>
-                  {item.icon}
+                <div className={`flex justify-center mb-4 transition-transform duration-300 ${isSelected ? "scale-110" : "group-hover:scale-110"}`}>
+                  <item.icon className="w-12 h-12 text-primary" />
                 </div>
                 <h3 className={`text-lg font-bold transition-colors ${isSelected ? "text-primary" : "text-text-primary"}`}>
                   {item.id}

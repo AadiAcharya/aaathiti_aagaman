@@ -1,4 +1,14 @@
 import { useTheme } from "../context/ThemeContext";
+import {
+  Home,
+  Calendar,
+  Building2,
+  KeyRound,
+  MessageCircle,
+  HelpCircle,
+  Mail,
+  Phone,
+} from "lucide-react";
 
 export default function Help() {
   const { theme } = useTheme();
@@ -70,7 +80,9 @@ export default function Help() {
                 theme === "dark" ? "text-text-primary" : "text-gray-900"
               } mb-4`}
             >
-              🏠 Finding Properties
+              <span className="inline-flex items-center gap-2">
+                <Home className="w-6 h-6" /> Finding Properties
+              </span>
             </h3>
             <ul
               className={`space-y-3 ${
@@ -128,7 +140,9 @@ export default function Help() {
                 theme === "dark" ? "text-text-primary" : "text-gray-900"
               } mb-4`}
             >
-              📅 Booking & Reservations
+              <span className="inline-flex items-center gap-2">
+                <Calendar className="w-6 h-6" /> Booking & Reservations
+              </span>
             </h3>
             <ul
               className={`space-y-3 ${
@@ -186,7 +200,9 @@ export default function Help() {
                 theme === "dark" ? "text-text-primary" : "text-gray-900"
               } mb-4`}
             >
-              🏢 Hosting Properties
+              <span className="inline-flex items-center gap-2">
+                <Building2 className="w-6 h-6" /> Hosting Properties
+              </span>
             </h3>
             <ul
               className={`space-y-3 ${
@@ -244,7 +260,9 @@ export default function Help() {
                 theme === "dark" ? "text-text-primary" : "text-gray-900"
               } mb-4`}
             >
-              🔐 Account & Security
+              <span className="inline-flex items-center gap-2">
+                <KeyRound className="w-6 h-6" /> Account & Security
+              </span>
             </h3>
             <ul
               className={`space-y-3 ${
@@ -302,7 +320,9 @@ export default function Help() {
                 theme === "dark" ? "text-text-primary" : "text-gray-900"
               } mb-4`}
             >
-              💬 Messages & Communication
+              <span className="inline-flex items-center gap-2">
+                <MessageCircle className="w-6 h-6" /> Messages & Communication
+              </span>
             </h3>
             <ul
               className={`space-y-3 ${
@@ -360,7 +380,9 @@ export default function Help() {
                 theme === "dark" ? "text-text-primary" : "text-gray-900"
               } mb-4`}
             >
-              ❓ General Questions
+              <span className="inline-flex items-center gap-2">
+                <HelpCircle className="w-6 h-6" /> General Questions
+              </span>
             </h3>
             <ul
               className={`space-y-3 ${
@@ -632,11 +654,17 @@ export default function Help() {
               theme === "dark" ? "text-text-secondary" : "text-gray-600"
             } text-sm mt-6`}
           >
-            📧 Email: aadityaacharya156@gmail.com
+            <span className="inline-flex items-center gap-2">
+              <Mail className="w-4 h-4" /> Email: aadityaacharya156@gmail.com
+            </span>
             <br />
-            📞 Phone: +977 9865004688
+            <span className="inline-flex items-center gap-2">
+              <Phone className="w-4 h-4" /> Phone: +977 9865004688
+            </span>
             <br />
-            💬 Live Chat: Available 24/7
+            <span className="inline-flex items-center gap-2">
+              <MessageCircle className="w-4 h-4" /> Live Chat: Available 24/7
+            </span>
           </p>
         </div>
       </main>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { hostAPI, roomsAPI } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import { BarChart3, Calendar, MessageCircle } from "lucide-react";
 
 export default function RoomStatus() {
   const navigate = useNavigate();
@@ -173,13 +174,15 @@ export default function RoomStatus() {
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { icon: "📊", title: "View Analytics",    desc: "Track your property performance",  action: () => navigate("/reservation"), label: "View Details →" },
-            { icon: "📅", title: "Manage Calendar",   desc: "Update availability dates",        action: () => navigate("/reservation"), label: "Open Calendar →" },
-            { icon: "💬", title: "Messages",          desc: "Respond to guest inquiries",       action: () => navigate("/message"),     label: "View Messages →" },
-          ].map((item) => (
+            { icon: BarChart3, title: "View Analytics",    desc: "Track your property performance",  action: () => navigate("/reservation"), label: "View Details →" },
+            { icon: Calendar, title: "Manage Calendar",   desc: "Update availability dates",        action: () => navigate("/reservation"), label: "Open Calendar →" },
+            { icon: MessageCircle, title: "Messages",          desc: "Respond to guest inquiries",       action: () => navigate("/message"),     label: "View Messages →" },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
             <div key={item.title} className="bg-bg-secondary rounded-lg p-8 border border-primary/10 text-center">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">{item.icon}</span>
+                <Icon className="w-8 h-8" />
               </div>
               <h3 className="font-bold text-text-primary text-lg mb-2">{item.title}</h3>
               <p className="text-text-secondary text-sm mb-4">{item.desc}</p>
@@ -187,7 +190,8 @@ export default function RoomStatus() {
                 {item.label}
               </button>
             </div>
-          ))}
+            );
+          })}
         </div>
       </main>
     </div>

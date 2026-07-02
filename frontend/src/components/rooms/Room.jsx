@@ -3,24 +3,47 @@ import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { roomsAPI, bookingsAPI } from "../../services/api";
 import Reviews from "../Reviews";
+import {
+  Wifi,
+  Tv,
+  Snowflake,
+  Wine,
+  Coffee,
+  Palmtree,
+  ChefHat,
+  WashingMachine,
+  Briefcase,
+  Flame,
+  Mountain,
+  Bath,
+  Building2,
+  Umbrella,
+  CheckCircle,
+  Bed,
+  Ruler,
+  Users,
+  Tag,
+  Shield,
+  Star,
+} from "lucide-react";
 
 const amenityIcons = {
-  WiFi: "📶",
-  TV: "📺",
-  AC: "❄️",
-  "Mini Bar": "🍹",
-  "Coffee Maker": "☕",
-  Balcony: "🌴",
-  Kitchen: "🍳",
-  Washer: "🧺",
-  "Work Desk": "💼",
-  Fireplace: "🔥",
-  "Mountain View": "⛰️",
-  "Hot Tub Access": "🛁",
-  "City View": "🏙️",
-  "Beach Access": "🏖️",
+  WiFi: Wifi,
+  TV: Tv,
+  AC: Snowflake,
+  "Mini Bar": Wine,
+  "Coffee Maker": Coffee,
+  Balcony: Palmtree,
+  Kitchen: ChefHat,
+  Washer: WashingMachine,
+  "Work Desk": Briefcase,
+  Fireplace: Flame,
+  "Mountain View": Mountain,
+  "Hot Tub Access": Bath,
+  "City View": Building2,
+  "Beach Access": Umbrella,
 };
-const getAmenityIcon = (a) => amenityIcons[a] || "✓";
+const getAmenityIcon = (a) => amenityIcons[a] || CheckCircle;
 
 export default function Room() {
   const { roomId } = useParams();
@@ -245,10 +268,10 @@ export default function Room() {
               </h2>
               <div className="grid grid-cols-4 gap-4">
                 {[
-                  { icon: "🛏️", label: room.bedType || "Bed" },
-                  { icon: "📐", label: room.size || "Size" },
-                  { icon: "👥", label: `${room.maxGuests} Guests` },
-                  { icon: "🏷️", label: room.type },
+                  { icon: Bed, label: room.bedType || "Bed" },
+                  { icon: Ruler, label: room.size || "Size" },
+                  { icon: Users, label: `${room.maxGuests} Guests` },
+                  { icon: Tag, label: room.type },
                 ].map((item, i) => (
                   <div
                     key={i}
@@ -258,7 +281,11 @@ export default function Room() {
                         : "bg-white border-gray-200 hover:border-gray-300 hover:shadow-md"
                     } p-6 rounded-lg text-center border transition-all duration-300`}
                   >
-                    <span className="text-4xl mb-2 block">{item.icon}</span>
+                    <item.icon
+                      className={`w-9 h-9 mb-2 mx-auto ${
+                        theme === "dark" ? "text-text-primary" : "text-gray-800"
+                      }`}
+                    />
                     <p
                       className={`font-semibold ${
                         theme === "dark" ? "text-text-primary" : "text-gray-800"
@@ -313,7 +340,18 @@ export default function Room() {
                             : "hover:bg-gray-100"
                         } transition-colors`}
                       >
-                        <span className="text-2xl">{getAmenityIcon(a)}</span>
+                        {(() => {
+                          const AmenityIcon = getAmenityIcon(a);
+                          return (
+                            <AmenityIcon
+                              className={`w-6 h-6 shrink-0 ${
+                                theme === "dark"
+                                  ? "text-text-primary"
+                                  : "text-gray-700"
+                              }`}
+                            />
+                          );
+                        })()}
                         <span
                           className={`${
                             theme === "dark"
@@ -338,7 +376,18 @@ export default function Room() {
                             : "hover:bg-gray-100"
                         } transition-colors`}
                       >
-                        <span className="text-2xl">{getAmenityIcon(a)}</span>
+                        {(() => {
+                          const AmenityIcon = getAmenityIcon(a);
+                          return (
+                            <AmenityIcon
+                              className={`w-6 h-6 shrink-0 ${
+                                theme === "dark"
+                                  ? "text-text-primary"
+                                  : "text-gray-700"
+                              }`}
+                            />
+                          );
+                        })()}
                         <span
                           className={`${
                             theme === "dark"
@@ -374,7 +423,11 @@ export default function Room() {
                           : "hover:bg-gray-100"
                       } transition-colors`}
                     >
-                      <span className="text-2xl">🛡️</span>
+                      <Shield
+                        className={`w-6 h-6 shrink-0 ${
+                          theme === "dark" ? "text-text-primary" : "text-gray-700"
+                        }`}
+                      />
                       <span
                         className={`${
                           theme === "dark"
@@ -445,8 +498,17 @@ export default function Room() {
                         >
                           {review.name}
                         </h3>
-                        <span className="text-accent">
-                          {"⭐".repeat(review.rating)}
+                        <span className="flex items-center gap-0.5">
+                          {Array.from({ length: 5 }).map((_, si) => (
+                            <Star
+                              key={si}
+                              className={`w-4 h-4 ${
+                                si < review.rating
+                                  ? "fill-yellow-400 text-yellow-400"
+                                  : "text-gray-300"
+                              }`}
+                            />
+                          ))}
                         </span>
                       </div>
                       <p

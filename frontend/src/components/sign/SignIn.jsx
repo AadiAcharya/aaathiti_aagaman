@@ -211,7 +211,10 @@ const SignIn = () => {
 
         {/* Social Logins */}
         <div className="space-y-3">
-          <button className="w-full flex items-center justify-center gap-3 border border-gray-700 rounded-lg px-3 py-2 hover:bg-gray-800 transition duration-300">
+          <button
+            type="button"
+            className="w-full flex items-center justify-center gap-3 border border-gray-700 rounded-lg px-3 py-2 hover:bg-gray-800 transition duration-300"
+          >
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
@@ -236,7 +239,7 @@ const SignIn = () => {
           >
             Don't have an account?{" "}
             <Link
-              to="/signup"
+              to="/sign-up"
               className={`font-medium ${
                 theme === "dark"
                   ? "text-primary hover:text-primary-hover"

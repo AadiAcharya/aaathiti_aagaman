@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { reviewsAPI } from "../services/api";
+import { HelpCircle } from "lucide-react";
 
 const StarRating = ({ rating, setRating, readOnly = false }) => {
   const { theme } = useTheme();
@@ -254,7 +255,7 @@ export default function Reviews({ propertyId }) {
                   theme === "dark" ? "bg-bg-secondary" : "bg-gray-100"
                 }`}
               >
-                <p className="text-2xl mb-3">🤔</p>
+                <HelpCircle className="w-6 h-6 mb-3 mx-auto" />
                 <p
                   className={`font-semibold ${
                     theme === "dark" ? "text-text-primary" : "text-gray-800"

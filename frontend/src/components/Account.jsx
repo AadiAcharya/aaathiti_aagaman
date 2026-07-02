@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { authAPI, bookingsAPI } from "../services/api";
+import { User, Calendar, Lock, Settings, DoorOpen, Luggage } from "lucide-react";
 
 const TAB_LIST = [
-  { id: "profile", label: "👤 Profile" },
-  { id: "bookings", label: "📅 Bookings" },
-  { id: "security", label: "🔒 Security" },
-  { id: "prefs", label: "⚙️ Preferences" },
+  { id: "profile", label: "Profile", icon: User },
+  { id: "bookings", label: "Bookings", icon: Calendar },
+  { id: "security", label: "Security", icon: Lock },
+  { id: "prefs", label: "Preferences", icon: Settings },
 ];
 
 export default function Account() {
@@ -187,7 +188,10 @@ export default function Account() {
                           : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
-                    {tab.label}
+                    <span className="inline-flex items-center gap-2">
+                      <tab.icon className="w-4 h-4" />
+                      {tab.label}
+                    </span>
                   </button>
                 ))}
                 <button
@@ -198,7 +202,10 @@ export default function Account() {
                       : "text-red-600 hover:bg-red-50"
                   }`}
                 >
-                  🚪 Logout
+                  <span className="inline-flex items-center gap-2">
+                    <DoorOpen className="w-4 h-4" />
+                    Logout
+                  </span>
                 </button>
               </nav>
             </div>
@@ -355,7 +362,7 @@ export default function Account() {
                           : "bg-blue-50 border-blue-100"
                       } border`}
                     >
-                      <p className="text-4xl mb-3">🧳</p>
+                      <Luggage className="w-9 h-9 mb-3 mx-auto" />
                       <p
                         className={`font-semibold ${
                           theme === "dark"
@@ -563,8 +570,8 @@ const BookingCard = ({ booking, theme }) => (
     } rounded-xl p-4 flex flex-col sm:flex-row gap-4`}
   >
     <img
-      src={booking.property.image || "/placeholder.svg"}
-      alt={booking.property.title}
+      src={booking.room?.image || "/placeholder.svg"}
+      alt={booking.room?.title || "Room"}
       className="w-full sm:w-32 h-32 sm:h-auto object-cover rounded-lg"
     />
     <div className="flex-1">
@@ -587,7 +594,7 @@ const BookingCard = ({ booking, theme }) => (
           theme === "dark" ? "text-text-primary" : "text-gray-900"
         } mb-1`}
       >
-        {booking.property.title}
+        {booking.room?.title || "Room unavailable"}
       </h3>
       <p
         className={`text-sm ${

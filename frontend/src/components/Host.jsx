@@ -4,6 +4,13 @@ import MessagesPage from "./host/MessagesPage";
 import NotificationsPage from "./host/NotificationsPage";
 import TransactionHistory from "./host/TransactionHistory";
 import { useTheme } from "../context/ThemeContext";
+import {
+  Home,
+  ClipboardList,
+  MessageCircle,
+  Bell,
+  CreditCard,
+} from "lucide-react";
 
 export default function Host() {
   const [activeTab, setActiveTab] = useState("reservation");
@@ -35,7 +42,12 @@ export default function Host() {
               ></div>
             </div>
             <div className="relative z-10">
-              <h1 className="font-bold text-6xl mb-3">🏠 Host Dashboard</h1>
+              <h1 className="font-bold text-6xl mb-3">
+                <span className="inline-flex items-center gap-3">
+                  <Home className="w-14 h-14" />
+                  Host Dashboard
+                </span>
+              </h1>
               <p
                 className={`text-xl mb-2 ${
                   theme === "dark" ? "text-slate-300" : "text-gray-700"
@@ -68,7 +80,7 @@ export default function Host() {
                   : "bg-white border border-gray-200 hover:border-blue-500/50"
               }`}
             >
-              <div className="text-3xl mb-2">📋</div>
+              <ClipboardList className="w-8 h-8 mb-2" />
               <p
                 className={`text-sm ${
                   theme === "dark" ? "text-slate-400" : "text-gray-600"
@@ -85,7 +97,7 @@ export default function Host() {
                   : "bg-white border border-gray-200 hover:border-blue-500/50"
               }`}
             >
-              <div className="text-3xl mb-2">💬</div>
+              <MessageCircle className="w-8 h-8 mb-2" />
               <p
                 className={`text-sm ${
                   theme === "dark" ? "text-slate-400" : "text-gray-600"
@@ -102,7 +114,7 @@ export default function Host() {
                   : "bg-white border border-gray-200 hover:border-blue-500/50"
               }`}
             >
-              <div className="text-3xl mb-2">🔔</div>
+              <Bell className="w-8 h-8 mb-2" />
               <p
                 className={`text-sm ${
                   theme === "dark" ? "text-slate-400" : "text-gray-600"
@@ -119,7 +131,7 @@ export default function Host() {
                   : "bg-white border border-gray-200 hover:border-blue-500/50"
               }`}
             >
-              <div className="text-3xl mb-2">💳</div>
+              <CreditCard className="w-8 h-8 mb-2" />
               <p
                 className={`text-sm ${
                   theme === "dark" ? "text-slate-400" : "text-gray-600"
@@ -149,10 +161,10 @@ export default function Host() {
             }`}
           >
             {[
-              { id: "reservation", label: "📋 Reservations", icon: "📋" },
-              { id: "messages", label: "💬 Messages", icon: "💬" },
-              { id: "notifications", label: "🔔 Notifications", icon: "🔔" },
-              { id: "transactions", label: "💳 Transactions", icon: "💳" },
+              { id: "reservation", label: "Reservations", icon: ClipboardList },
+              { id: "messages", label: "Messages", icon: MessageCircle },
+              { id: "notifications", label: "Notifications", icon: Bell },
+              { id: "transactions", label: "Transactions", icon: CreditCard },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -167,7 +179,10 @@ export default function Host() {
                       : "text-gray-500 hover:text-gray-900 hover:bg-gray-100/20"
                 }`}
               >
-                {tab.label}
+                <span className="inline-flex items-center gap-2">
+                  <tab.icon className="w-4 h-4" />
+                  {tab.label}
+                </span>
               </button>
             ))}
           </div>

@@ -1,5 +1,24 @@
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import {
+  Backpack,
+  ClipboardList,
+  Shield,
+  Sparkles,
+  Smile,
+  Flag,
+  CreditCard,
+  Plane,
+  CheckCircle,
+  XCircle,
+  BookOpen,
+  Map,
+  MessageCircle,
+  Siren,
+  Banknote,
+  Star,
+  Lightbulb,
+} from "lucide-react";
 
 export default function RentalGuide() {
   const navigate = useNavigate();
@@ -7,8 +26,8 @@ export default function RentalGuide() {
 
   const guides = [
     {
-      category: "🧳 Packing Tips",
-      icon: "🎒",
+      category: "Packing Tips",
+      icon: Backpack,
       tips: [
         "Check the weather forecast for your destination",
         "Pack versatile clothing that can be mixed and matched",
@@ -19,8 +38,8 @@ export default function RentalGuide() {
       ],
     },
     {
-      category: "🏡 Before Check-In",
-      icon: "📋",
+      category: "Before Check-In",
+      icon: ClipboardList,
       tips: [
         "Review the house rules and house manual provided by the host",
         "Check parking information and where to park",
@@ -31,8 +50,8 @@ export default function RentalGuide() {
       ],
     },
     {
-      category: "🔐 Safety & Security",
-      icon: "🛡️",
+      category: "Safety & Security",
+      icon: Shield,
       tips: [
         "Lock doors and windows when leaving",
         "Don't share your access code with others",
@@ -43,8 +62,8 @@ export default function RentalGuide() {
       ],
     },
     {
-      category: "🧹 Keeping It Clean",
-      icon: "✨",
+      category: "Keeping It Clean",
+      icon: Sparkles,
       tips: [
         "Follow the cleaning expectations in the listing description",
         "Wash dishes after meals",
@@ -55,8 +74,8 @@ export default function RentalGuide() {
       ],
     },
     {
-      category: "🎉 During Your Stay",
-      icon: "😊",
+      category: "During Your Stay",
+      icon: Smile,
       tips: [
         "Respect quiet hours (usually 10 PM - 8 AM)",
         "Keep noise levels reasonable, especially at night",
@@ -67,8 +86,8 @@ export default function RentalGuide() {
       ],
     },
     {
-      category: "🚪 Check-Out Process",
-      icon: "🏁",
+      category: "Check-Out Process",
+      icon: Flag,
       tips: [
         "Return keys or access codes as instructed",
         "Turn off lights and air conditioning",
@@ -79,8 +98,8 @@ export default function RentalGuide() {
       ],
     },
     {
-      category: "💰 Payment & Booking",
-      icon: "💳",
+      category: "Payment & Booking",
+      icon: CreditCard,
       tips: [
         "Read the cancellation policy before booking",
         "Book early for better rates and availability",
@@ -91,8 +110,8 @@ export default function RentalGuide() {
       ],
     },
     {
-      category: "🌍 First Time Travel",
-      icon: "✈️",
+      category: "First Time Travel",
+      icon: Plane,
       tips: [
         "Research the area and attractions beforehand",
         "Get local transportation information",
@@ -106,7 +125,8 @@ export default function RentalGuide() {
 
   const dosDonts = [
     {
-      title: "DO's ✅",
+      title: "DO's",
+      titleIcon: CheckCircle,
       color: "green",
       items: [
         "✓ Communicate with your host",
@@ -118,7 +138,8 @@ export default function RentalGuide() {
       ],
     },
     {
-      title: "DON'Ts ❌",
+      title: "DON'Ts",
+      titleIcon: XCircle,
       color: "red",
       items: [
         "✗ Smoke unless permitted",
@@ -186,7 +207,10 @@ export default function RentalGuide() {
                     : "bg-blue-500/10 border border-blue-500/30 text-blue-700 hover:bg-blue-500/20"
                 }`}
               >
-                {guide.icon} {guide.category.split(" ")[0]}
+                <span className="inline-flex items-center gap-1">
+                  <guide.icon className="w-4 h-4" />
+                  {guide.category.split(" ")[0]}
+                </span>
               </a>
             ))}
           </div>
@@ -209,13 +233,30 @@ export default function RentalGuide() {
                     : "bg-white border border-gray-200"
                 }`}
               >
-                <h3 className="text-2xl font-bold mb-6">{section.title}</h3>
+                <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                  <section.titleIcon
+                    className={`w-6 h-6 ${
+                      section.color === "green"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
+                  />
+                  {section.title}
+                </h3>
                 <div className="space-y-3">
-                  {section.items.map((item, itemIdx) => (
+                  {section.items.map((item, itemIdx) => {
+                    const ItemIcon = item.includes("✓")
+                      ? CheckCircle
+                      : XCircle;
+                    return (
                     <div key={itemIdx} className="flex items-start gap-3">
-                      <span className="text-xl flex-shrink-0">
-                        {item.includes("✓") ? "✅" : "❌"}
-                      </span>
+                      <ItemIcon
+                        className={`w-5 h-5 flex-shrink-0 ${
+                          item.includes("✓")
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }`}
+                      />
                       <p
                         className={`${
                           theme === "dark" ? "text-slate-400" : "text-gray-600"
@@ -224,7 +265,8 @@ export default function RentalGuide() {
                         {item.replace("✓ ", "").replace("✗ ", "")}
                       </p>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}
@@ -251,7 +293,7 @@ export default function RentalGuide() {
                 }`}
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="text-4xl">{guide.icon}</span>
+                  <guide.icon className="w-9 h-9" />
                   <h3 className="text-2xl font-bold">{guide.category}</h3>
                 </div>
 
@@ -284,41 +326,42 @@ export default function RentalGuide() {
       {/* Additional Resources */}
       <div className="py-16 px-4 md:px-8">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 text-center">
-            📚 Additional Resources
+          <h2 className="text-3xl font-bold mb-12 text-center flex items-center justify-center gap-3">
+            <BookOpen className="w-8 h-8" />
+            Additional Resources
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                icon: "🎒",
+                icon: Backpack,
                 title: "Travel Essentials",
                 description:
                   "A complete checklist of items to pack for your stay",
               },
               {
-                icon: "🗺️",
+                icon: Map,
                 title: "Local Guides",
                 description:
                   "Find attractions, restaurants, and activities near your rental",
               },
               {
-                icon: "💬",
+                icon: MessageCircle,
                 title: "Communication",
                 description: "How to contact your host and resolve any issues",
               },
               {
-                icon: "🚨",
+                icon: Siren,
                 title: "Emergency Contact",
                 description: "24/7 emergency support number and procedures",
               },
               {
-                icon: "💵",
+                icon: Banknote,
                 title: "Pricing Policy",
                 description:
                   "Understand fees, deposits, and cancellation policies",
               },
               {
-                icon: "⭐",
+                icon: Star,
                 title: "Reviews",
                 description: "Read guest reviews and ratings for properties",
               },
@@ -331,7 +374,7 @@ export default function RentalGuide() {
                     : "bg-gradient-to-br from-blue-500/5 to-gray-100/5 border border-blue-500/20 hover:border-blue-500/50"
                 }`}
               >
-                <div className="text-4xl mb-3">{resource.icon}</div>
+                <resource.icon className="w-9 h-9 mb-3" />
                 <h4 className="text-lg font-bold mb-2">{resource.title}</h4>
                 <p
                   className={`text-sm ${
@@ -355,8 +398,9 @@ export default function RentalGuide() {
         }`}
       >
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 text-center">
-            💡 Pro Tips for Best Stays
+          <h2 className="text-3xl font-bold mb-12 text-center flex items-center justify-center gap-3">
+            <Lightbulb className="w-8 h-8" />
+            Pro Tips for Best Stays
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[

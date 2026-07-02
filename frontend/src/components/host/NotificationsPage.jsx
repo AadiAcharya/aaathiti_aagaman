@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { hostAPI } from "../../services/api";
+import { Bell, BellOff, CreditCard, MessageCircle, Star, Settings, Calendar } from "lucide-react";
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState([]);
@@ -38,8 +39,8 @@ export default function NotificationsPage() {
   };
 
   const typeIcon = (type) => {
-    const icons = { booking: "🔔", payment: "💳", message: "💬", review: "⭐", system: "⚙️" };
-    return icons[type] || "🔔";
+    const icons = { booking: Bell, payment: CreditCard, message: MessageCircle, review: Star, system: Settings };
+    return icons[type] || Bell;
   };
 
   const formatDate = (date) =>
@@ -80,7 +81,7 @@ export default function NotificationsPage() {
         {/* Empty */}
         {!loading && !error && notifications.length === 0 && (
           <div className="text-center py-16 text-text-secondary">
-            <p className="text-4xl mb-4">🔕</p>
+            <BellOff className="w-9 h-9 mx-auto mb-4" />
             <p className="text-xl">No notifications yet</p>
           </div>
         )}
@@ -90,7 +91,9 @@ export default function NotificationsPage() {
           <div className="bg-bg-secondary rounded-xl border border-text-muted/20 overflow-hidden">
             {/* Header */}
             <div className="p-6 bg-gradient-to-r from-bg-secondary to-bg-secondary/70 border-b border-text-muted/20">
-              <h2 className="text-xl font-bold text-text-primary">🔔 All Notifications</h2>
+              <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
+                <Bell className="w-5 h-5" /> All Notifications
+              </h2>
             </div>
 
             <div className="divide-y divide-text-muted/10">
@@ -102,7 +105,10 @@ export default function NotificationsPage() {
                   }`}
                 >
                   <div className="flex gap-4 flex-1">
-                    <span className="text-2xl mt-0.5">{typeIcon(notification.type)}</span>
+                    {(() => {
+                      const Icon = typeIcon(notification.type);
+                      return <Icon className="w-6 h-6 mt-0.5 flex-shrink-0" />;
+                    })()}
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-sm font-bold text-text-primary">{notification.title}</h3>
@@ -111,7 +117,9 @@ export default function NotificationsPage() {
                         )}
                       </div>
                       <p className="text-sm text-text-secondary mb-1">{notification.message}</p>
-                      <p className="text-xs text-text-muted">📅 {formatDate(notification.createdAt)}</p>
+                      <p className="text-xs text-text-muted inline-flex items-center gap-1.5">
+                        <Calendar className="w-4 h-4" /> {formatDate(notification.createdAt)}
+                      </p>
                     </div>
                   </div>
                   <button
