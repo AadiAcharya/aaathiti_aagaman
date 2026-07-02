@@ -1,7 +1,7 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import RoleRoute from "./RoleRoute";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -20,7 +20,6 @@ import Description from "./components/AddProperty/Description.jsx";
 import Facilities from "./components/AddProperty/Facilities.jsx";
 import Post from "./components/AddProperty/Post.jsx";
 import Saftey from "./components/AddProperty/Saftey.jsx";
-import RoomStatus from "./components/rooms/RoomStatus.jsx";
 import HostReservation from "./components/host/HostReservation.jsx";
 import TransactionHistory from "./components/host/TransactionHistory.jsx";
 import NotificationsPage from "./components/host/NotificationsPage.jsx";
@@ -33,6 +32,15 @@ import Help from "./components/Help.jsx";
 import HowItWorks from "./components/HowItWorks.jsx";
 import RentalGuide from "./components/RentalGuide.jsx";
 import Profile from "./components/Profile.jsx";
+
+// Hosts/admins land on their dashboard instead of the guest homepage
+function HomeGate() {
+  const { role } = useAuth();
+  if (role === "host" || role === "admin") {
+    return <Navigate to="/host" replace />;
+  }
+  return <Home />;
+}
 
 function AppContent() {
   const { theme } = useTheme();
@@ -49,7 +57,7 @@ function AppContent() {
 
         <main className="flex-1">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<HomeGate />} />
             {/* <Route element={<MainLayout />} /> */}
             <Route path="/properties" element={<Properties />} />
             <Route path="/account" element={<Account />} />
@@ -109,14 +117,7 @@ function AppContent() {
                 </RoleRoute>
               }
             />
-            <Route
-              path="/room-status"
-              element={
-                <RoleRoute allow={["host", "admin"]}>
-                  <RoomStatus />
-                </RoleRoute>
-              }
-            />
+            <Route path="/room-status" element={<Navigate to="/host" replace />} />
             <Route
               path="/reservation"
               element={

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { hostAPI } from "../../services/api";
+import { useTheme } from "../../context/ThemeContext";
 import { Home, Calendar, Moon, Users, User, Banknote, Inbox } from "lucide-react";
 
 export default function HostReservation() {
+  const { theme } = useTheme();
   const [activeTab, setActiveTab]         = useState("upcoming");
   const [reservations, setReservations]   = useState([]);
   const [loading, setLoading]             = useState(true);
@@ -49,21 +51,40 @@ export default function HostReservation() {
     new Date(date).toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 
   return (
-    <div className="min-h-screen">
-      <main className="max-w-7xl mx-auto px-6 py-20">
+    <div>
         <div className="mb-12">
-          <h1 className="text-5xl font-bold text-text-primary mb-4">Reservations</h1>
-          <p className="text-text-secondary text-lg">Manage your incoming and past bookings</p>
+          <h1
+            className={`text-2xl font-bold mb-4 ${
+              theme === "dark" ? "text-text-primary" : "text-gray-900"
+            }`}
+          >
+            Reservations
+          </h1>
+          <p
+            className={`text-lg ${
+              theme === "dark" ? "text-text-secondary" : "text-gray-600"
+            }`}
+          >
+            Manage your incoming and past bookings
+          </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-6 border-b border-text-muted/20 mb-8">
+        <div
+          className={`flex gap-6 border-b mb-8 ${
+            theme === "dark" ? "border-text-muted/20" : "border-gray-200"
+          }`}
+        >
           {["upcoming", "past", "rejected"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`pb-3 px-1 text-[15px] font-medium relative transition ${
-                activeTab === tab ? "text-primary" : "text-text-secondary hover:text-text-primary"
+                activeTab === tab
+                  ? "text-primary"
+                  : theme === "dark"
+                    ? "text-text-secondary hover:text-text-primary"
+                    : "text-gray-600 hover:text-gray-900"
               }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -88,7 +109,11 @@ export default function HostReservation() {
 
         {/* Empty */}
         {!loading && !error && reservations.length === 0 && (
-          <div className="text-center py-16 text-text-secondary">
+          <div
+            className={`text-center py-16 ${
+              theme === "dark" ? "text-text-secondary" : "text-gray-600"
+            }`}
+          >
             <Inbox className="w-9 h-9 mx-auto mb-4" />
             <p className="text-xl">No {activeTab} reservations</p>
           </div>
@@ -100,7 +125,11 @@ export default function HostReservation() {
             {reservations.map((reservation) => (
               <div
                 key={reservation._id}
-                className="flex items-center gap-4 p-6 bg-bg-secondary border border-text-muted/20 rounded-xl hover:border-primary/50 hover:shadow-lg transition-all"
+                className={`flex items-center gap-4 p-6 border rounded-xl hover:border-primary/50 hover:shadow-lg transition-all ${
+                  theme === "dark"
+                    ? "bg-bg-secondary border-text-muted/20"
+                    : "bg-gray-50 border-gray-200"
+                }`}
               >
                 {/* Property Image */}
                 <div className="w-24 h-24 rounded-lg flex-shrink-0 overflow-hidden border border-primary/20">
@@ -115,18 +144,30 @@ export default function HostReservation() {
 
                 {/* Details */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-bold text-text-primary mb-2">
+                  <h3
+                    className={`text-lg font-bold mb-2 ${
+                      theme === "dark" ? "text-text-primary" : "text-gray-900"
+                    }`}
+                  >
                     {reservation.room?.title || "Room"}
                   </h3>
-                  <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-text-secondary mb-2">
+                  <div
+                    className={`flex flex-wrap gap-x-6 gap-y-1 text-sm mb-2 ${
+                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                    }`}
+                  >
                     <span className="inline-flex items-center gap-1.5"><Calendar className="w-4 h-4" /> <span className="font-medium">Check In:</span> {formatDate(reservation.checkIn)}</span>
                     <span className="inline-flex items-center gap-1.5"><Calendar className="w-4 h-4" /> <span className="font-medium">Check Out:</span> {formatDate(reservation.checkOut)}</span>
                     <span className="inline-flex items-center gap-1.5"><Moon className="w-4 h-4" /> <span className="font-medium">Nights:</span> {reservation.nights}</span>
                     <span className="inline-flex items-center gap-1.5"><Users className="w-4 h-4" /> <span className="font-medium">Guests:</span> {reservation.guests}</span>
                   </div>
-                  <div className="flex gap-4 text-sm text-text-muted">
+                  <div
+                    className={`flex gap-4 text-sm ${
+                      theme === "dark" ? "text-text-muted" : "text-gray-500"
+                    }`}
+                  >
                     <span className="inline-flex items-center gap-1.5"><User className="w-4 h-4" /> By: {reservation.user?.name || reservation.guestName}</span>
-                    <span className="font-bold text-accent inline-flex items-center gap-1.5"><Banknote className="w-4 h-4" /> ${reservation.grandTotal}</span>
+                    <span className="font-bold text-primary inline-flex items-center gap-1.5"><Banknote className="w-4 h-4" /> ${reservation.grandTotal}</span>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
                       reservation.paymentStatus === "paid" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
                     }`}>
@@ -148,7 +189,11 @@ export default function HostReservation() {
                     <button
                       onClick={() => handleAction(reservation._id, "cancelled")}
                       disabled={updating === reservation._id}
-                      className="px-6 py-2 bg-bg-secondary border-2 border-text-muted/30 text-text-primary hover:border-primary text-sm font-bold rounded-full transition-all disabled:opacity-50"
+                      className={`px-6 py-2 border-2 text-sm font-bold rounded-full transition-all disabled:opacity-50 hover:border-primary ${
+                        theme === "dark"
+                          ? "bg-bg-secondary border-text-muted/30 text-text-primary"
+                          : "bg-gray-50 border-gray-200 text-gray-900"
+                      }`}
                     >
                       ✕ Reject
                     </button>
@@ -158,7 +203,6 @@ export default function HostReservation() {
             ))}
           </div>
         )}
-      </main>
     </div>
   );
 }

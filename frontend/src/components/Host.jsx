@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { hostAPI, roomsAPI } from "../services/api";
 import HostReservation from "./host/HostReservation";
 import MessagesPage from "./host/MessagesPage";
 import NotificationsPage from "./host/NotificationsPage";
@@ -6,15 +8,89 @@ import TransactionHistory from "./host/TransactionHistory";
 import { useTheme } from "../context/ThemeContext";
 import {
   Home,
+  Building2,
   ClipboardList,
   MessageCircle,
   Bell,
   CreditCard,
+  Plus,
 } from "lucide-react";
 
 export default function Host() {
-  const [activeTab, setActiveTab] = useState("reservation");
+  const navigate = useNavigate();
   const { theme } = useTheme();
+  const [activeTab, setActiveTab] = useState("listings");
+
+  const [stats, setStats] = useState({
+    totalListings: 0,
+    activeBookings: 0,
+    totalRevenue: "0.00",
+    avgRating: 0,
+  });
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [deleting, setDeleting] = useState(null);
+
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        setLoading(true);
+        const [dashRes, listRes] = await Promise.all([
+          hostAPI.getDashboard(),
+          hostAPI.getListings(),
+        ]);
+        setStats(dashRes.stats);
+        setListings(listRes.listings);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAll();
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this listing?")) return;
+    try {
+      setDeleting(id);
+      await roomsAPI.delete(id);
+      setListings((prev) => prev.filter((l) => l._id !== id));
+      setStats((prev) => ({ ...prev, totalListings: prev.totalListings - 1 }));
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const handleToggleStatus = async (room) => {
+    try {
+      await roomsAPI.update(room._id, { isAvailable: !room.isAvailable });
+      setListings((prev) =>
+        prev.map((l) =>
+          l._id === room._id
+            ? {
+                ...l,
+                isAvailable: !l.isAvailable,
+                status: !l.isAvailable ? "Active" : "Inactive",
+              }
+            : l,
+        ),
+      );
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const tabs = [
+    { id: "listings", label: "Listings", icon: Building2 },
+    { id: "reservation", label: "Reservations", icon: ClipboardList },
+    { id: "messages", label: "Messages", icon: MessageCircle },
+    { id: "notifications", label: "Notifications", icon: Bell },
+    { id: "transactions", label: "Transactions", icon: CreditCard },
+  ];
 
   return (
     <div
@@ -41,112 +117,86 @@ export default function Host() {
                 }`}
               ></div>
             </div>
-            <div className="relative z-10">
-              <h1 className="font-bold text-6xl mb-3">
-                <span className="inline-flex items-center gap-3">
-                  <Home className="w-14 h-14" />
-                  Host Dashboard
-                </span>
-              </h1>
-              <p
-                className={`text-xl mb-2 ${
-                  theme === "dark" ? "text-slate-300" : "text-gray-700"
-                }`}
+            <div className="relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+              <div>
+                <h1 className="font-bold text-5xl md:text-6xl mb-3">
+                  <span className="inline-flex items-center gap-3">
+                    <Home className="w-12 h-12 md:w-14 md:h-14" />
+                    Host Dashboard
+                  </span>
+                </h1>
+                <p
+                  className={`text-xl mb-2 ${
+                    theme === "dark" ? "text-slate-300" : "text-gray-700"
+                  }`}
+                >
+                  Manage your listings, reservations, messages, and
+                  transactions
+                </p>
+                <p
+                  className={`text-sm ${
+                    theme === "dark" ? "text-slate-400" : "text-gray-500"
+                  }`}
+                >
+                  Welcome back! Everything you need to manage your hosting is
+                  right here
+                </p>
+              </div>
+              <button
+                onClick={() => navigate("/add-property")}
+                className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold px-6 py-3 rounded-full transition shrink-0"
               >
-                Manage your reservations, messages, notifications, and
-                transactions
-              </p>
-              <p
-                className={`text-sm ${
-                  theme === "dark" ? "text-slate-400" : "text-gray-500"
-                }`}
-              >
-                Welcome back! Everything you need to manage your hosting is
-                right here
-              </p>
+                <Plus className="w-5 h-5" /> Add New Property
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Overview (Optional) */}
+      {error && (
+        <section className="px-6 md:px-12">
+          <div className="max-w-7xl mx-auto">
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+              {error}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Stats Overview - real data */}
       <section className="py-8 px-6 md:px-12">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div
-              className={`rounded-xl p-6 transition ${
-                theme === "dark"
-                  ? "bg-slate-800 border border-slate-700 hover:border-blue-500/50"
-                  : "bg-white border border-gray-200 hover:border-blue-500/50"
-              }`}
-            >
-              <ClipboardList className="w-8 h-8 mb-2" />
-              <p
-                className={`text-sm ${
-                  theme === "dark" ? "text-slate-400" : "text-gray-600"
+            {[
+              { label: "Total Listings", value: stats.totalListings },
+              { label: "Active Bookings", value: stats.activeBookings },
+              { label: "Total Revenue", value: `$${stats.totalRevenue}` },
+              { label: "Avg. Rating", value: stats.avgRating },
+            ].map((card) => (
+              <div
+                key={card.label}
+                className={`rounded-xl p-6 transition ${
+                  theme === "dark"
+                    ? "bg-slate-800 border border-slate-700 hover:border-blue-500/50"
+                    : "bg-white border border-gray-200 hover:border-blue-500/50"
                 }`}
               >
-                Reservations
-              </p>
-              <p className="text-2xl font-bold">12</p>
-            </div>
-            <div
-              className={`rounded-xl p-6 transition ${
-                theme === "dark"
-                  ? "bg-slate-800 border border-slate-700 hover:border-blue-500/50"
-                  : "bg-white border border-gray-200 hover:border-blue-500/50"
-              }`}
-            >
-              <MessageCircle className="w-8 h-8 mb-2" />
-              <p
-                className={`text-sm ${
-                  theme === "dark" ? "text-slate-400" : "text-gray-600"
-                }`}
-              >
-                Messages
-              </p>
-              <p className="text-2xl font-bold">5</p>
-            </div>
-            <div
-              className={`rounded-xl p-6 transition ${
-                theme === "dark"
-                  ? "bg-slate-800 border border-slate-700 hover:border-blue-500/50"
-                  : "bg-white border border-gray-200 hover:border-blue-500/50"
-              }`}
-            >
-              <Bell className="w-8 h-8 mb-2" />
-              <p
-                className={`text-sm ${
-                  theme === "dark" ? "text-slate-400" : "text-gray-600"
-                }`}
-              >
-                Notifications
-              </p>
-              <p className="text-2xl font-bold">3</p>
-            </div>
-            <div
-              className={`rounded-xl p-6 transition ${
-                theme === "dark"
-                  ? "bg-slate-800 border border-slate-700 hover:border-blue-500/50"
-                  : "bg-white border border-gray-200 hover:border-blue-500/50"
-              }`}
-            >
-              <CreditCard className="w-8 h-8 mb-2" />
-              <p
-                className={`text-sm ${
-                  theme === "dark" ? "text-slate-400" : "text-gray-600"
-                }`}
-              >
-                Total Earnings
-              </p>
-              <p
-                className={`text-2xl font-bold ${
-                  theme === "dark" ? "text-blue-400" : "text-blue-600"
-                }`}
-              >
-                $4,250
-              </p>
-            </div>
+                <p
+                  className={`text-sm mb-2 ${
+                    theme === "dark" ? "text-slate-400" : "text-gray-600"
+                  }`}
+                >
+                  {loading ? "..." : card.label}
+                </p>
+                <p
+                  className={`text-2xl font-bold ${
+                    theme === "dark" ? "text-blue-400" : "text-blue-600"
+                  }`}
+                >
+                  {loading ? "…" : card.value}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -160,12 +210,7 @@ export default function Host() {
               theme === "dark" ? "border-b border-slate-700" : "border-b"
             }`}
           >
-            {[
-              { id: "reservation", label: "Reservations", icon: ClipboardList },
-              { id: "messages", label: "Messages", icon: MessageCircle },
-              { id: "notifications", label: "Notifications", icon: Bell },
-              { id: "transactions", label: "Transactions", icon: CreditCard },
-            ].map((tab) => (
+            {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -196,6 +241,137 @@ export default function Host() {
             }`}
           >
             <div className="animate-fadeIn">
+              {activeTab === "listings" &&
+                (loading ? (
+                  <div className="flex justify-center py-16">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
+                  </div>
+                ) : listings.length === 0 ? (
+                  <div
+                    className={`text-center py-16 ${
+                      theme === "dark" ? "text-slate-400" : "text-gray-500"
+                    }`}
+                  >
+                    <p className="text-xl mb-2">No listings yet</p>
+                    <button
+                      onClick={() => navigate("/add-property")}
+                      className="text-primary underline"
+                    >
+                      Add your first property
+                    </button>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead
+                        className={`border-b ${
+                          theme === "dark"
+                            ? "border-slate-700"
+                            : "border-gray-200"
+                        }`}
+                      >
+                        <tr>
+                          {[
+                            "Property",
+                            "Type",
+                            "Status",
+                            "Price",
+                            "Bookings",
+                            "Actions",
+                          ].map((h) => (
+                            <th
+                              key={h}
+                              className="text-left px-4 py-3 font-bold"
+                            >
+                              {h}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {listings.map((listing) => (
+                          <tr
+                            key={listing._id}
+                            className={`border-b transition ${
+                              theme === "dark"
+                                ? "border-slate-700 hover:bg-slate-800/50"
+                                : "border-gray-200 hover:bg-gray-50"
+                            }`}
+                          >
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-3">
+                                {listing.image && (
+                                  <img
+                                    src={listing.image}
+                                    alt=""
+                                    className="w-12 h-12 rounded-lg object-cover"
+                                  />
+                                )}
+                                <p className="font-semibold">
+                                  {listing.title}
+                                </p>
+                              </div>
+                            </td>
+                            <td
+                              className={`px-4 py-3 capitalize ${
+                                theme === "dark"
+                                  ? "text-slate-400"
+                                  : "text-gray-600"
+                              }`}
+                            >
+                              {listing.type}
+                            </td>
+                            <td className="px-4 py-3">
+                              <button
+                                onClick={() => handleToggleStatus(listing)}
+                                className={`px-3 py-1 rounded-full text-sm font-semibold transition ${
+                                  listing.isAvailable
+                                    ? "bg-green-100 text-green-700 hover:bg-green-200"
+                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                }`}
+                              >
+                                {listing.isAvailable ? "Active" : "Inactive"}
+                              </button>
+                            </td>
+                            <td className="px-4 py-3 font-semibold">
+                              {listing.priceDisplay}
+                            </td>
+                            <td
+                              className={`px-4 py-3 ${
+                                theme === "dark"
+                                  ? "text-slate-400"
+                                  : "text-gray-600"
+                              }`}
+                            >
+                              {listing.bookingsCount}
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex gap-3">
+                                <button
+                                  onClick={() =>
+                                    navigate(`/room/${listing._id}`)
+                                  }
+                                  className="text-primary hover:text-primary-hover font-semibold text-sm"
+                                >
+                                  View
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(listing._id)}
+                                  disabled={deleting === listing._id}
+                                  className="text-red-500 hover:text-red-700 font-semibold text-sm disabled:opacity-50"
+                                >
+                                  {deleting === listing._id
+                                    ? "..."
+                                    : "Delete"}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ))}
               {activeTab === "reservation" && <HostReservation />}
               {activeTab === "messages" && <MessagesPage />}
               {activeTab === "notifications" && <NotificationsPage />}

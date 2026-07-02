@@ -60,7 +60,7 @@ const SignUp = () => {
         role: form.role,
       });
       login(user, token);
-      if (user.role === "host") navigate("/room-status");
+      if (user.role === "host") navigate("/host");
       else navigate("/");
     } catch (err) {
       setApiError(err.message || "Registration failed. Please try again.");
@@ -76,7 +76,7 @@ const SignUp = () => {
         credentialResponse.credential,
       );
       login(user, token);
-      if (user.role === "host") navigate("/room-status");
+      if (user.role === "host") navigate("/host");
       else navigate("/");
     } catch (err) {
       setApiError(err.message || "Google sign-up failed");

@@ -36,7 +36,7 @@ const SignIn = () => {
 
     // Redirect based on role
     if (user.role === "admin") navigate("/admin");
-    else if (user.role === "host") navigate("/room-status");
+    else if (user.role === "host") navigate("/host");
     else navigate("/");
   };
 

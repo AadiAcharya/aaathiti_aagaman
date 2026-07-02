@@ -1,8 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { hostAPI } from "../../services/api";
+import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
 import { MessageCircle, Inbox } from "lucide-react";
 
 export default function MessagesPage() {
+  const { theme } = useTheme();
+  const { user: currentUser } = useAuth();
   const [messages, setMessages]           = useState([]);
   const [threads, setThreads]             = useState([]);
   const [selectedThread, setSelectedThread] = useState(null);
@@ -83,11 +87,19 @@ export default function MessagesPage() {
   const currentThread = selectedThread !== null ? threads[selectedThread] : null;
 
   return (
-    <div className="min-h-screen">
-      <main className="max-w-7xl mx-auto px-6 py-20">
+    <div>
+      <div>
         <div className="mb-8">
-          <h1 className="text-5xl font-bold text-text-primary mb-2">Messages</h1>
-          <p className="text-text-secondary">Communicate with your guests</p>
+          <h1
+            className={`text-2xl font-bold mb-2 ${
+              theme === "dark" ? "text-text-primary" : "text-gray-900"
+            }`}
+          >
+            Messages
+          </h1>
+          <p className={theme === "dark" ? "text-text-secondary" : "text-gray-600"}>
+            Communicate with your guests
+          </p>
         </div>
 
         {loading && (
@@ -102,15 +114,35 @@ export default function MessagesPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
 
             {/* Left: Thread List */}
-            <div className="lg:col-span-1 bg-bg-secondary rounded-xl border border-text-muted/20 overflow-hidden flex flex-col">
-              <div className="p-6 border-b border-text-muted/20 bg-gradient-to-r from-bg-secondary to-bg-secondary/70">
-                <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
+            <div
+              className={`lg:col-span-1 rounded-xl border overflow-hidden flex flex-col ${
+                theme === "dark"
+                  ? "bg-bg-secondary border-text-muted/20"
+                  : "bg-white border-gray-200"
+              }`}
+            >
+              <div
+                className={`p-6 border-b ${
+                  theme === "dark"
+                    ? "border-text-muted/20 bg-gradient-to-r from-bg-secondary to-bg-secondary/70"
+                    : "border-gray-200 bg-gray-50"
+                }`}
+              >
+                <h2
+                  className={`text-xl font-bold flex items-center gap-2 ${
+                    theme === "dark" ? "text-text-primary" : "text-gray-900"
+                  }`}
+                >
                   <MessageCircle className="w-5 h-5" /> All Messages
                 </h2>
               </div>
 
               {threads.length === 0 ? (
-                <div className="flex-1 flex items-center justify-center text-text-secondary">
+                <div
+                  className={`flex-1 flex items-center justify-center ${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                  }`}
+                >
                   <div className="text-center">
                     <Inbox className="w-8 h-8 mx-auto mb-2" />
                     <p>No messages yet</p>
@@ -125,10 +157,14 @@ export default function MessagesPage() {
                       <div
                         key={thread.senderId}
                         onClick={() => setSelectedThread(idx)}
-                        className={`flex items-center gap-3 p-4 cursor-pointer border-b border-text-muted/10 transition ${
+                        className={`flex items-center gap-3 p-4 cursor-pointer border-b transition ${
+                          theme === "dark" ? "border-text-muted/10" : "border-gray-100"
+                        } ${
                           selectedThread === idx
                             ? "bg-primary/20 border-l-2 border-l-primary"
-                            : "hover:bg-bg-secondary/50"
+                            : theme === "dark"
+                              ? "hover:bg-bg-secondary/50"
+                              : "hover:bg-gray-50"
                         }`}
                       >
                         <div className="w-12 h-12 rounded-full bg-primary/30 flex-shrink-0 flex items-center justify-center border border-primary/20 font-bold text-primary">
@@ -136,7 +172,11 @@ export default function MessagesPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-center">
-                            <h3 className="text-sm font-bold text-text-primary truncate">
+                            <h3
+                              className={`text-sm font-bold truncate ${
+                                theme === "dark" ? "text-text-primary" : "text-gray-900"
+                              }`}
+                            >
                               {thread.sender?.name || "Guest"}
                             </h3>
                             {unread > 0 && (
@@ -145,8 +185,16 @@ export default function MessagesPage() {
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-text-muted truncate">{last?.content}</p>
-                          <p className="text-xs text-text-muted">{formatTime(last?.createdAt)}</p>
+                          <p
+                            className={`text-xs truncate ${
+                              theme === "dark" ? "text-text-muted" : "text-gray-500"
+                            }`}
+                          >
+                            {last?.content}
+                          </p>
+                          <p className={`text-xs ${theme === "dark" ? "text-text-muted" : "text-gray-500"}`}>
+                            {formatTime(last?.createdAt)}
+                          </p>
                         </div>
                       </div>
                     );
@@ -156,29 +204,53 @@ export default function MessagesPage() {
             </div>
 
             {/* Right: Chat Window */}
-            <div className="lg:col-span-2 bg-bg-secondary rounded-xl border border-text-muted/20 flex flex-col">
+            <div
+              className={`lg:col-span-2 rounded-xl border flex flex-col ${
+                theme === "dark"
+                  ? "bg-bg-secondary border-text-muted/20"
+                  : "bg-white border-gray-200"
+              }`}
+            >
 
               {/* Chat Header */}
               {currentThread ? (
-                <div className="p-4 border-b border-text-muted/20 flex items-center gap-3">
+                <div
+                  className={`p-4 border-b flex items-center gap-3 ${
+                    theme === "dark" ? "border-text-muted/20" : "border-gray-200"
+                  }`}
+                >
                   <div className="w-10 h-10 rounded-full bg-primary/30 flex items-center justify-center font-bold text-primary">
                     {currentThread.sender?.name?.[0]?.toUpperCase() || "?"}
                   </div>
                   <div>
-                    <h3 className="font-bold text-text-primary">{currentThread.sender?.name || "Guest"}</h3>
-                    <p className="text-xs text-text-muted">{currentThread.sender?.email}</p>
+                    <h3 className={`font-bold ${theme === "dark" ? "text-text-primary" : "text-gray-900"}`}>
+                      {currentThread.sender?.name || "Guest"}
+                    </h3>
+                    <p className={`text-xs ${theme === "dark" ? "text-text-muted" : "text-gray-500"}`}>
+                      {currentThread.sender?.email}
+                    </p>
                   </div>
                 </div>
               ) : (
-                <div className="p-4 border-b border-text-muted/20">
-                  <h3 className="font-bold text-text-primary">Select a conversation</h3>
+                <div
+                  className={`p-4 border-b ${
+                    theme === "dark" ? "border-text-muted/20" : "border-gray-200"
+                  }`}
+                >
+                  <h3 className={`font-bold ${theme === "dark" ? "text-text-primary" : "text-gray-900"}`}>
+                    Select a conversation
+                  </h3>
                 </div>
               )}
 
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {!currentThread ? (
-                  <div className="h-full flex items-center justify-center text-center text-text-secondary">
+                  <div
+                    className={`h-full flex items-center justify-center text-center ${
+                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                    }`}
+                  >
                     <div>
                       <MessageCircle className="w-12 h-12 mx-auto mb-4" />
                       <p className="text-xl">Select a message to view</p>
@@ -186,18 +258,22 @@ export default function MessagesPage() {
                   </div>
                 ) : (
                   currentThread.messages.map((msg, i) => {
-                    const me = localStorage.getItem("user")
-                      ? JSON.parse(localStorage.getItem("user"))._id === (msg.sender?._id || msg.sender)
-                      : false;
+                    const me = currentUser?._id === (msg.sender?._id || msg.sender);
                     return (
                       <div key={i} className={`flex ${me ? "justify-end" : "justify-start"}`}>
                         <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl text-sm ${
                           me
                             ? "bg-primary text-white rounded-br-none"
-                            : "bg-background text-text-primary border border-primary/10 rounded-bl-none"
+                            : theme === "dark"
+                              ? "bg-background text-text-primary border border-primary/10 rounded-bl-none"
+                              : "bg-white text-gray-900 border border-primary/10 rounded-bl-none"
                         }`}>
                           <p>{msg.content}</p>
-                          <p className={`text-xs mt-1 ${me ? "text-white/70" : "text-text-muted"}`}>
+                          <p
+                            className={`text-xs mt-1 ${
+                              me ? "text-white/70" : theme === "dark" ? "text-text-muted" : "text-gray-500"
+                            }`}
+                          >
                             {formatTime(msg.createdAt)}
                           </p>
                         </div>
@@ -209,7 +285,11 @@ export default function MessagesPage() {
               </div>
 
               {/* Input */}
-              <div className="p-4 border-t border-text-muted/20">
+              <div
+                className={`p-4 border-t ${
+                  theme === "dark" ? "border-text-muted/20" : "border-gray-200"
+                }`}
+              >
                 <div className="flex items-center gap-3">
                   <input
                     type="text"
@@ -218,7 +298,11 @@ export default function MessagesPage() {
                     onKeyDown={handleKeyDown}
                     disabled={!currentThread || sending}
                     placeholder={currentThread ? "Type your message... (Enter to send)" : "Select a conversation first"}
-                    className="flex-1 px-4 py-3 bg-background border border-text-muted/30 rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+                    className={`flex-1 px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 ${
+                      theme === "dark"
+                        ? "bg-background border-text-muted/30 text-text-primary placeholder-text-muted"
+                        : "bg-gray-100 border-gray-200 text-gray-900 placeholder-gray-500"
+                    }`}
                   />
                   <button
                     onClick={handleSend}
@@ -238,7 +322,7 @@ export default function MessagesPage() {
             </div>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

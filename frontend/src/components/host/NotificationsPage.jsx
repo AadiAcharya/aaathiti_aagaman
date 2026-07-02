@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { hostAPI } from "../../services/api";
+import { useTheme } from "../../context/ThemeContext";
 import { Bell, BellOff, CreditCard, MessageCircle, Star, Settings, Calendar } from "lucide-react";
 
 export default function NotificationsPage() {
+  const { theme } = useTheme();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount]     = useState(0);
   const [loading, setLoading]             = useState(true);
@@ -47,13 +49,19 @@ export default function NotificationsPage() {
     new Date(date).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
 
   return (
-    <div className="min-h-screen">
-      <main className="max-w-7xl mx-auto px-6 py-20">
+    <div>
+      <div>
         <div className="mb-8 flex justify-between items-center">
           <div>
-            <h1 className="text-5xl font-bold text-text-primary mb-2">Notifications</h1>
+            <h1
+              className={`text-2xl font-bold mb-2 ${
+                theme === "dark" ? "text-text-primary" : "text-gray-900"
+              }`}
+            >
+              Notifications
+            </h1>
             {unreadCount > 0 && (
-              <p className="text-text-secondary">
+              <p className={theme === "dark" ? "text-text-secondary" : "text-gray-600"}>
                 You have <span className="font-bold text-primary">{unreadCount}</span> unread notifications
               </p>
             )}
@@ -80,7 +88,7 @@ export default function NotificationsPage() {
 
         {/* Empty */}
         {!loading && !error && notifications.length === 0 && (
-          <div className="text-center py-16 text-text-secondary">
+          <div className={`text-center py-16 ${theme === "dark" ? "text-text-secondary" : "text-gray-600"}`}>
             <BellOff className="w-9 h-9 mx-auto mb-4" />
             <p className="text-xl">No notifications yet</p>
           </div>
@@ -88,19 +96,35 @@ export default function NotificationsPage() {
 
         {/* Notifications List */}
         {!loading && !error && notifications.length > 0 && (
-          <div className="bg-bg-secondary rounded-xl border border-text-muted/20 overflow-hidden">
+          <div
+            className={`rounded-xl border overflow-hidden ${
+              theme === "dark" ? "bg-bg-secondary border-text-muted/20" : "bg-white border-gray-200"
+            }`}
+          >
             {/* Header */}
-            <div className="p-6 bg-gradient-to-r from-bg-secondary to-bg-secondary/70 border-b border-text-muted/20">
-              <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
+            <div
+              className={`p-6 border-b ${
+                theme === "dark"
+                  ? "bg-gradient-to-r from-bg-secondary to-bg-secondary/70 border-text-muted/20"
+                  : "bg-gray-50 border-gray-200"
+              }`}
+            >
+              <h2
+                className={`text-xl font-bold flex items-center gap-2 ${
+                  theme === "dark" ? "text-text-primary" : "text-gray-900"
+                }`}
+              >
                 <Bell className="w-5 h-5" /> All Notifications
               </h2>
             </div>
 
-            <div className="divide-y divide-text-muted/10">
+            <div className={`divide-y ${theme === "dark" ? "divide-text-muted/10" : "divide-gray-200"}`}>
               {notifications.map((notification) => (
                 <div
                   key={notification._id}
-                  className={`flex items-start justify-between p-6 transition border-b border-text-muted/10 last:border-b-0 ${
+                  className={`flex items-start justify-between p-6 transition border-b last:border-b-0 ${
+                    theme === "dark" ? "border-text-muted/10" : "border-gray-200"
+                  } ${
                     !notification.isRead ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-primary/5"
                   }`}
                 >
@@ -111,20 +135,34 @@ export default function NotificationsPage() {
                     })()}
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-sm font-bold text-text-primary">{notification.title}</h3>
+                        <h3
+                          className={`text-sm font-bold ${
+                            theme === "dark" ? "text-text-primary" : "text-gray-900"
+                          }`}
+                        >
+                          {notification.title}
+                        </h3>
                         {!notification.isRead && (
                           <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
                         )}
                       </div>
-                      <p className="text-sm text-text-secondary mb-1">{notification.message}</p>
-                      <p className="text-xs text-text-muted inline-flex items-center gap-1.5">
+                      <p className={`text-sm mb-1 ${theme === "dark" ? "text-text-secondary" : "text-gray-600"}`}>
+                        {notification.message}
+                      </p>
+                      <p
+                        className={`text-xs inline-flex items-center gap-1.5 ${
+                          theme === "dark" ? "text-text-muted" : "text-gray-500"
+                        }`}
+                      >
                         <Calendar className="w-4 h-4" /> {formatDate(notification.createdAt)}
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => handleDismiss(notification._id)}
-                    className="text-text-muted hover:text-primary hover:bg-primary/20 p-2 rounded-lg transition ml-4 flex-shrink-0"
+                    className={`hover:text-primary hover:bg-primary/20 p-2 rounded-lg transition ml-4 flex-shrink-0 ${
+                      theme === "dark" ? "text-text-muted" : "text-gray-500"
+                    }`}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -135,7 +173,7 @@ export default function NotificationsPage() {
             </div>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

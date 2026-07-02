@@ -34,6 +34,7 @@ export default function Account() {
     bio: user?.bio || "",
     location: user?.location || "",
     work: user?.work || "",
+    avatar: user?.avatar || "",
   });
 
   // Redirect if not logged in
@@ -130,11 +131,23 @@ export default function Account() {
       >
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
           <div className="flex items-center gap-4">
-            <img
-              src={user.avatar || `https://i.pravatar.cc/150?u=${user._id}`}
-              alt={user.name}
-              className="w-20 h-20 rounded-full border-4 border-primary"
-            />
+            {user.avatar ? (
+              <img
+                src={user.avatar}
+                alt={user.name}
+                className="w-20 h-20 rounded-full border-4 border-primary object-cover"
+              />
+            ) : (
+              <div
+                className={`w-20 h-20 rounded-full border-4 border-primary flex items-center justify-center text-2xl font-bold ${
+                  theme === "dark"
+                    ? "bg-primary/20 text-primary"
+                    : "bg-primary/10 text-primary"
+                }`}
+              >
+                {user.name?.charAt(0).toUpperCase() || "U"}
+              </div>
+            )}
             <div>
               <h1
                 className={`text-3xl font-bold ${
@@ -269,6 +282,13 @@ export default function Account() {
                       onChange={(v) => set("work", v)}
                       disabled={!editMode}
                       placeholder="e.g. Software Engineer"
+                    />
+                    <InputField
+                      label="Profile Picture URL"
+                      value={formData.avatar}
+                      onChange={(v) => set("avatar", v)}
+                      disabled={!editMode}
+                      placeholder="Paste an image link, or leave blank to use your initials"
                     />
                     <div className="sm:col-span-2">
                       <label

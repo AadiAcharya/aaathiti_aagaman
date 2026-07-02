@@ -24,13 +24,18 @@ export default function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hostModalOpen, setHostModalOpen] = useState(false);
 
-  // Navigation links data
-  const navLinks = [
-    { label: "Browse Property", path: "/properties" },
-    { label: "Browse Rooms", path: "/rooms" },
-    { label: "How It Works", path: "/how-it-works" },
-    { label: "Rental Guides", path: "/rental-guide" },
-  ];
+  // Navigation links data - differs for hosts/admins vs guests
+  const navLinks = isHost
+    ? [
+        { label: "Dashboard", path: "/host" },
+        { label: "Add Property", path: "/add-property" },
+      ]
+    : [
+        { label: "Browse Property", path: "/properties" },
+        { label: "Browse Rooms", path: "/rooms" },
+        { label: "How It Works", path: "/how-it-works" },
+        { label: "Rental Guides", path: "/rental-guide" },
+      ];
 
   const logoColor = theme === "dark" ? "#FF6B6B" : "#2563EB";
   const logoStroke = theme === "dark" ? "#64748B" : "#2563EB";
@@ -268,36 +273,40 @@ export default function Header() {
                   <Settings className="w-4 h-4" /> Account
                 </span>
               </button>
-              <button
-                onClick={() => {
-                  navigate("/messages");
-                  setDropdownOpen(false);
-                }}
-                className={`block w-full text-left px-4 py-2 transition ${
-                  theme === "dark"
-                    ? "text-slate-300 hover:bg-slate-700"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                <span className="inline-flex items-center gap-2">
-                  <MessageCircle className="w-4 h-4" /> Messages
-                </span>
-              </button>
-              <button
-                onClick={() => {
-                  navigate("/wishlist");
-                  setDropdownOpen(false);
-                }}
-                className={`block w-full text-left px-4 py-2 transition ${
-                  theme === "dark"
-                    ? "text-slate-300 hover:bg-slate-700"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                <span className="inline-flex items-center gap-2">
-                  <Heart className="w-4 h-4" /> Wishlist
-                </span>
-              </button>
+              {!isHost && (
+                <>
+                  <button
+                    onClick={() => {
+                      navigate("/messages");
+                      setDropdownOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-2 transition ${
+                      theme === "dark"
+                        ? "text-slate-300 hover:bg-slate-700"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    <span className="inline-flex items-center gap-2">
+                      <MessageCircle className="w-4 h-4" /> Messages
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate("/wishlist");
+                      setDropdownOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-2 transition ${
+                      theme === "dark"
+                        ? "text-slate-300 hover:bg-slate-700"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    <span className="inline-flex items-center gap-2">
+                      <Heart className="w-4 h-4" /> Wishlist
+                    </span>
+                  </button>
+                </>
+              )}
               {isHost && (
                 <>
                   <div
@@ -476,36 +485,40 @@ export default function Header() {
               <Settings className="w-4 h-4" /> Account
             </span>
           </button>
-          <button
-            onClick={() => {
-              navigate("/messages");
-              setMenuOpen(false);
-            }}
-            className={`block w-full text-left py-2 transition ${
-              theme === "dark"
-                ? "text-slate-300 hover:text-blue-400"
-                : "text-gray-700 hover:text-blue-600"
-            }`}
-          >
-            <span className="inline-flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" /> Messages
-            </span>
-          </button>
-          <button
-            onClick={() => {
-              navigate("/wishlist");
-              setMenuOpen(false);
-            }}
-            className={`block w-full text-left py-2 transition ${
-              theme === "dark"
-                ? "text-slate-300 hover:text-blue-400"
-                : "text-gray-700 hover:text-blue-600"
-            }`}
-          >
-            <span className="inline-flex items-center gap-2">
-              <Heart className="w-4 h-4" /> Wishlist
-            </span>
-          </button>
+          {!isHost && (
+            <>
+              <button
+                onClick={() => {
+                  navigate("/messages");
+                  setMenuOpen(false);
+                }}
+                className={`block w-full text-left py-2 transition ${
+                  theme === "dark"
+                    ? "text-slate-300 hover:text-blue-400"
+                    : "text-gray-700 hover:text-blue-600"
+                }`}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <MessageCircle className="w-4 h-4" /> Messages
+                </span>
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/wishlist");
+                  setMenuOpen(false);
+                }}
+                className={`block w-full text-left py-2 transition ${
+                  theme === "dark"
+                    ? "text-slate-300 hover:text-blue-400"
+                    : "text-gray-700 hover:text-blue-600"
+                }`}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <Heart className="w-4 h-4" /> Wishlist
+                </span>
+              </button>
+            </>
+          )}
 
           <div
             className={`border-t my-3 ${
