@@ -1,4 +1,21 @@
-<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
-  <rect width="400" height="300" fill="#95E1D3"/>
-  <text x="200" y="150" font-size="28" font-weight="bold" text-anchor="middle" fill="#fff" font-family="Arial">Start Hosting</text>
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#EFF6FF"/>
+
+  <!-- ground line -->
+  <line x1="60" y1="235" x2="340" y2="235" stroke="#BFDBFE" stroke-width="2"/>
+
+  <!-- house -->
+  <polygon points="150,90 235,90 275,140 110,140" fill="#3B82F6"/>
+  <rect x="120" y="140" width="145" height="95" rx="4" fill="#FFFFFF" stroke="#93C5FD" stroke-width="2"/>
+  <rect x="145" y="170" width="35" height="35" rx="4" fill="#DBEAFE"/>
+  <rect x="205" y="170" width="35" height="35" rx="4" fill="#DBEAFE"/>
+  <rect x="172" y="205" width="20" height="30" rx="2" fill="#3B82F6"/>
+
+  <!-- growth arrow -->
+  <polyline points="290,200 315,175 335,190 360,150" fill="none" stroke="#2563EB" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="340,150 360,150 360,170" fill="none" stroke="#2563EB" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- coin -->
+  <circle cx="295" cy="215" r="16" fill="#FFFFFF" stroke="#3B82F6" stroke-width="3"/>
+  <text x="295" y="221" font-size="16" font-weight="bold" text-anchor="middle" fill="#3B82F6" font-family="Arial">$</text>
 </svg>

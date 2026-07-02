@@ -1,4 +1,18 @@
-<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
-  <rect width="400" height="300" fill="#F38181"/>
-  <text x="200" y="150" font-size="28" font-weight="bold" text-anchor="middle" fill="#fff" font-family="Arial">Browse Properties</text>
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#EFF6FF"/>
+
+  <!-- stacked listing cards -->
+  <rect x="90" y="150" width="180" height="90" rx="10" fill="#FFFFFF" stroke="#BFDBFE" stroke-width="2"/>
+  <rect x="115" y="120" width="180" height="90" rx="10" fill="#FFFFFF" stroke="#93C5FD" stroke-width="2"/>
+  <rect x="140" y="90" width="180" height="90" rx="10" fill="#FFFFFF" stroke="#3B82F6" stroke-width="2"/>
+
+  <!-- card contents (top card) -->
+  <rect x="152" y="102" width="60" height="42" rx="6" fill="#DBEAFE"/>
+  <rect x="222" y="106" width="86" height="8" rx="4" fill="#93C5FD"/>
+  <rect x="222" y="122" width="60" height="7" rx="3.5" fill="#BFDBFE"/>
+  <rect x="222" y="136" width="40" height="7" rx="3.5" fill="#3B82F6"/>
+
+  <!-- magnifying glass -->
+  <circle cx="300" cy="70" r="30" fill="#FFFFFF" stroke="#3B82F6" stroke-width="8"/>
+  <line x1="322" y1="92" x2="345" y2="115" stroke="#3B82F6" stroke-width="10" stroke-linecap="round"/>
 </svg>

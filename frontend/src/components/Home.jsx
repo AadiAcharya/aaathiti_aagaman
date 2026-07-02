@@ -16,8 +16,6 @@ import {
   Users,
   Building2,
   Star,
-  Smartphone,
-  Apple,
 } from "lucide-react";
 
 // ─── Property Card ────────────────────────────────────────────────────────────
@@ -978,73 +976,6 @@ export default function Home() {
             >
               Find A Property
             </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Download App ──────────────────────────────────────────────────── */}
-      <div
-        className={`${
-          theme === "dark" ? "bg-bg-secondary/50" : "bg-gray-100"
-        } py-16`}
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-3xl p-8 md:p-12 border border-primary/10">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-              <div>
-                <p className="text-primary font-semibold text-sm tracking-widest uppercase mb-3">
-                  Mobile App
-                </p>
-                <h2
-                  className={`text-3xl md:text-4xl font-bold ${
-                    theme === "dark" ? "text-text-primary" : "text-gray-900"
-                  } mb-4`}
-                >
-                  Book On The Go
-                </h2>
-                <p
-                  className={`${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                  } mb-8 leading-relaxed`}
-                >
-                  Download our mobile app and manage your bookings, get
-                  notifications, and explore properties anywhere, anytime.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    className={`${
-                      theme === "dark"
-                        ? "bg-background text-text-primary border-text-muted/20"
-                        : "bg-white text-gray-900 border-gray-200"
-                    } hover:bg-primary hover:text-white px-6 py-3 rounded-xl font-semibold transition border flex items-center gap-2`}
-                  >
-                    <Smartphone className="w-5 h-5" /> Play Store
-                  </button>
-                  <button
-                    className={`${
-                      theme === "dark"
-                        ? "bg-background text-text-primary border-text-muted/20"
-                        : "bg-white text-gray-900 border-gray-200"
-                    } hover:bg-primary hover:text-white px-6 py-3 rounded-xl font-semibold transition border flex items-center gap-2`}
-                  >
-                    <Apple className="w-5 h-5" /> App Store
-                  </button>
-                </div>
-              </div>
-              <div
-                className={`h-64 ${
-                  theme === "dark"
-                    ? "bg-background border-text-muted/10"
-                    : "bg-white border-gray-200"
-                } rounded-2xl border flex items-center justify-center`}
-              >
-                <Smartphone
-                  className={`w-14 h-14 ${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-400"
-                  }`}
-                />
-              </div>
-            </div>
           </div>
         </div>
       </div>
