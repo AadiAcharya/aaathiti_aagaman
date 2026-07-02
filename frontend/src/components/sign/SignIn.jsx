@@ -1,25 +1,43 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { GoogleLogin } from "@react-oauth/google";
 import { authAPI } from "../../services/api";
 import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
 
 const SignIn = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const { isAuthenticated, login } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   // Redirect if already logged in
   useEffect(() => {
-    if (localStorage.getItem("token") && localStorage.getItem("user")) {
-      navigate("/");
-    }
-  }, [navigate]);
+    if (isAuthenticated) navigate("/");
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     if (error) setError("");
+  };
+
+  const completeLogin = (user, token) => {
+    // Add verification fields for BecomeHostModal
+    const userWithVerification = {
+      ...user,
+      emailVerified: true,
+      phoneVerified: true,
+      idVerified: true,
+      age: user.age || 25, // default age if not provided
+    };
+    login(userWithVerification, token);
+
+    // Redirect based on role
+    if (user.role === "admin") navigate("/admin");
+    else if (user.role === "host") navigate("/room-status");
+    else navigate("/");
   };
 
   const handleSubmit = async (e) => {
@@ -32,26 +50,23 @@ const SignIn = () => {
       setLoading(true);
       setError("");
       const { token, user } = await authAPI.login(form);
-      localStorage.setItem("token", token);
-
-      // Add verification fields for BecomeHostModal
-      const userWithVerification = {
-        ...user,
-        emailVerified: true,
-        phoneVerified: true,
-        idVerified: true,
-        age: user.age || 25, // default age if not provided
-      };
-      localStorage.setItem("user", JSON.stringify(userWithVerification));
-
-      // Redirect based on role
-      if (user.role === "admin") navigate("/admin");
-      else if (user.role === "host") navigate("/room-status");
-      else navigate("/");
+      completeLogin(user, token);
     } catch (err) {
       setError(err.message || "Invalid email or password");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      setError("");
+      const { token, user } = await authAPI.googleLogin(
+        credentialResponse.credential,
+      );
+      completeLogin(user, token);
+    } catch (err) {
+      setError(err.message || "Google sign-in failed");
     }
   };
 
@@ -210,24 +225,13 @@ const SignIn = () => {
         </div>
 
         {/* Social Logins */}
-        <div className="space-y-3">
-          <button
-            type="button"
-            className="w-full flex items-center justify-center gap-3 border border-gray-700 rounded-lg px-3 py-2 hover:bg-gray-800 transition duration-300"
-          >
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google"
-              className="w-6 h-6"
-            />
-            <span
-              className={`${
-                theme === "dark" ? "text-text-primary" : "text-gray-900"
-              }`}
-            >
-              Sign in with Google
-            </span>
-          </button>
+        <div className="flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setError("Google sign-in failed")}
+            theme={theme === "dark" ? "filled_black" : "outline"}
+            width="336"
+          />
         </div>
 
         {/* Sign Up Link */}

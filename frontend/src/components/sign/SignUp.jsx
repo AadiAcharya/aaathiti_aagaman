@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 import { authAPI } from "../../services/api";
 import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
 
 const SignUp = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [form, setForm] = useState({
     name: "",
@@ -56,14 +59,27 @@ const SignUp = () => {
         password: form.password,
         role: form.role,
       });
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      login(user, token);
       if (user.role === "host") navigate("/room-status");
       else navigate("/");
     } catch (err) {
       setApiError(err.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      setApiError("");
+      const { token, user } = await authAPI.googleLogin(
+        credentialResponse.credential,
+      );
+      login(user, token);
+      if (user.role === "host") navigate("/room-status");
+      else navigate("/");
+    } catch (err) {
+      setApiError(err.message || "Google sign-up failed");
     }
   };
 
@@ -303,6 +319,37 @@ const SignUp = () => {
             </button>
           </div>
         </form>
+
+        {/* Divider */}
+        <div className="flex items-center justify-center">
+          <div
+            className={`w-full h-px ${
+              theme === "dark" ? "bg-gray-700" : "bg-gray-200"
+            }`}
+          ></div>
+          <p
+            className={`mx-4 text-sm ${
+              theme === "dark" ? "text-text-secondary" : "text-gray-500"
+            }`}
+          >
+            OR
+          </p>
+          <div
+            className={`w-full h-px ${
+              theme === "dark" ? "bg-gray-700" : "bg-gray-200"
+            }`}
+          ></div>
+        </div>
+
+        {/* Social Signup */}
+        <div className="flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setApiError("Google sign-up failed")}
+            theme={theme === "dark" ? "filled_black" : "outline"}
+            width="336"
+          />
+        </div>
 
         {/* Sign In Link */}
         <div className="text-center">
