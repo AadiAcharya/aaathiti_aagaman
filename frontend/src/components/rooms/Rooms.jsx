@@ -1,18 +1,23 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
-import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import { roomsAPI, authAPI } from "../../services/api";
 import { formatNPR } from "../../utils/currency";
 import { isTopRated } from "../../utils/rating";
 import StarRating from "../common/StarRating";
 import TopRatedBadge from "../common/TopRatedBadge";
-import { Heart, ImageOff, LayoutGrid, Map } from "lucide-react";
+import Select from "../ui/Select";
+import Button from "../ui/Button";
+import Badge from "../ui/Badge";
+import Card from "../ui/Card";
+import Pagination from "../ui/Pagination";
+import EmptyState from "../ui/EmptyState";
+import Skeleton from "../ui/Skeleton";
+import { Heart, ImageOff, LayoutGrid, Map, SearchX } from "lucide-react";
 import RoomMap from "../common/RoomMap";
 
 export default function Rooms() {
   const navigate = useNavigate();
-  const { theme } = useTheme();
   const { role } = useAuth();
   const isHost = role === "host" || role === "admin";
 
@@ -101,7 +106,6 @@ export default function Rooms() {
         const { wishlist: updated } = await authAPI.toggleWishlist(roomId);
         setWishlist(updated.map((id) => id.toString()));
       } catch {
-        // fallback to local
         toggleLocal(roomId);
       }
     } else {
@@ -122,158 +126,93 @@ export default function Rooms() {
   const isWishlisted = (roomId) =>
     wishlist.includes(roomId) || wishlist.includes(roomId.toString());
 
-  const hasMore = page * LIMIT < total;
+  const totalPages = Math.max(1, Math.ceil(total / LIMIT));
   const filtersActive =
     roomType !== "all" || priceRange !== "all" || sortBy !== "default";
 
   return (
-    <div
-      className={`min-h-screen transition-colors duration-300 ${
-        theme === "dark"
-          ? "bg-background text-text-primary"
-          : "bg-gray-50 text-gray-900"
-      }`}
-    >
-      <main className="max-w-7xl mx-auto px-6 py-20">
-        <div className="mb-12">
-          <h1
-            className={`text-5xl font-bold ${
-              theme === "dark" ? "text-text-primary" : "text-gray-900"
-            } mb-4`}
-          >
+    <div className="min-h-screen bg-background">
+      <main className="max-w-7xl mx-auto px-6 py-16">
+        <div className="mb-10">
+          <h1 className="text-4xl md:text-5xl font-display font-bold text-text-primary mb-3">
             Available Rooms
           </h1>
-          <p
-            className={`${
-              theme === "dark" ? "text-text-secondary" : "text-gray-600"
-            } text-lg`}
-          >
+          <p className="text-text-secondary text-lg">
             Browse our selection of comfortable accommodations
           </p>
         </div>
 
-        {/* Filters */}
-        <div className="mb-12 flex flex-wrap gap-4">
-          <select
-            value={roomType}
-            onChange={(e) => setRoomType(e.target.value)}
-            className={`px-6 py-3 ${
-              theme === "dark"
-                ? "bg-bg-secondary border-primary/10 text-text-primary"
-                : "bg-white border-gray-300 text-gray-900"
-            } border rounded-lg focus:outline-none focus:border-primary`}
-          >
-            <option value="all">All Room Types</option>
-            <option value="single">Single</option>
-            <option value="double">Double</option>
-            <option value="suite">Suite</option>
-          </select>
+        {/* Filter / sort / view control bar */}
+        <Card padding="p-4" className="mb-10">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="w-44">
+              <Select value={roomType} onChange={(e) => setRoomType(e.target.value)}>
+                <option value="all">All Room Types</option>
+                <option value="single">Single</option>
+                <option value="double">Double</option>
+                <option value="suite">Suite</option>
+              </Select>
+            </div>
+            <div className="w-48">
+              <Select value={priceRange} onChange={(e) => setPriceRange(e.target.value)}>
+                <option value="all">Price Range</option>
+                <option value="under-15000">Under Rs 15,000</option>
+                <option value="15000-30000">Rs 15,000 - Rs 30,000</option>
+                <option value="over-30000">Over Rs 30,000</option>
+              </Select>
+            </div>
+            <div className="w-44">
+              <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                <option value="default">Sort By</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Rating</option>
+              </Select>
+            </div>
 
-          <select
-            value={priceRange}
-            onChange={(e) => setPriceRange(e.target.value)}
-            className={`px-6 py-3 ${
-              theme === "dark"
-                ? "bg-bg-secondary border-primary/10 text-text-primary"
-                : "bg-white border-gray-300 text-gray-900"
-            } border rounded-lg focus:outline-none focus:border-primary`}
-          >
-            <option value="all">Price Range</option>
-            <option value="under-15000">Under Rs 15,000</option>
-            <option value="15000-30000">Rs 15,000 - Rs 30,000</option>
-            <option value="over-30000">Over Rs 30,000</option>
-          </select>
+            {filtersActive && (
+              <Button variant="ghost" size="sm" onClick={resetFilters}>
+                Clear Filters
+              </Button>
+            )}
 
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className={`px-6 py-3 ${
-              theme === "dark"
-                ? "bg-bg-secondary border-primary/10 text-text-primary"
-                : "bg-white border-gray-300 text-gray-900"
-            } border rounded-lg focus:outline-none focus:border-primary`}
-          >
-            <option value="default">Sort By</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="rating">Rating</option>
-          </select>
+            <div className="text-text-secondary text-sm font-medium">
+              {loading ? "Loading…" : `${total} rooms found`}
+            </div>
 
-          {filtersActive && (
-            <button
-              onClick={resetFilters}
-              className={`px-6 py-3 rounded-lg font-semibold transition ${
-                theme === "dark"
-                  ? "bg-primary/10 text-primary hover:bg-primary hover:text-white"
-                  : "bg-blue-100 text-blue-800 hover:bg-blue-200"
-              }`}
-            >
-              Clear Filters
-            </button>
-          )}
-
-          <div
-            className={`px-6 py-3 ${
-              theme === "dark" ? "text-text-secondary" : "text-gray-500"
-            } font-semibold`}
-          >
-            {loading ? "Loading..." : `${total} rooms found`}
+            <div className="ml-auto inline-flex items-center gap-1 rounded-full bg-bg-secondary p-1">
+              {[
+                { id: "grid", label: "Grid", icon: LayoutGrid },
+                { id: "map", label: "Map", icon: Map },
+              ].map((v) => (
+                <button
+                  key={v.id}
+                  onClick={() => setViewMode(v.id)}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-[var(--duration-fast)] ${
+                    viewMode === v.id
+                      ? "bg-primary text-white"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  <v.icon className="w-3.5 h-3.5" /> {v.label}
+                </button>
+              ))}
+            </div>
           </div>
+        </Card>
 
-          <div
-            className={`ml-auto flex rounded-lg border overflow-hidden ${
-              theme === "dark" ? "border-primary/10" : "border-gray-300"
-            }`}
-          >
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`px-4 py-3 flex items-center gap-2 text-sm font-semibold transition ${
-                viewMode === "grid"
-                  ? "bg-primary text-white"
-                  : theme === "dark"
-                    ? "bg-bg-secondary text-text-secondary hover:text-text-primary"
-                    : "bg-white text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              <LayoutGrid className="w-4 h-4" /> Grid
-            </button>
-            <button
-              onClick={() => setViewMode("map")}
-              className={`px-4 py-3 flex items-center gap-2 text-sm font-semibold transition ${
-                viewMode === "map"
-                  ? "bg-primary text-white"
-                  : theme === "dark"
-                    ? "bg-bg-secondary text-text-secondary hover:text-text-primary"
-                    : "bg-white text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              <Map className="w-4 h-4" /> Map
-            </button>
-          </div>
-        </div>
-
-        {/* Map View */}
         {viewMode === "map" && (
           <div className="mb-12">
             {mapLoading ? (
-              <div
-                className={`h-[500px] rounded-xl border flex items-center justify-center ${
-                  theme === "dark"
-                    ? "border-primary/10 text-text-secondary"
-                    : "border-gray-200 text-gray-500"
-                }`}
-              >
-                Loading map...
-              </div>
+              <Skeleton className="h-[500px] w-full" />
             ) : (
               <RoomMap rooms={mapRooms} height="500px" />
             )}
           </div>
         )}
 
-        {/* Error */}
         {error && (
-          <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600">
+          <div className="mb-8 p-4 rounded-[var(--radius-control)] bg-danger-subtle border border-danger/30 text-danger">
             {error} —{" "}
             <button onClick={fetchRooms} className="underline font-semibold">
               retry
@@ -282,233 +221,135 @@ export default function Rooms() {
         )}
 
         {viewMode === "grid" && (
-        <>
-        {/* Loading skeletons */}
-        {loading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {Array.from({ length: LIMIT }).map((_, i) => (
-              <div
-                key={i}
-                className={`${
-                  theme === "dark"
-                    ? "bg-bg-secondary border-primary/10"
-                    : "bg-white border-gray-200"
-                } rounded-lg overflow-hidden border animate-pulse`}
-              >
-                <div
-                  className={`h-56 ${
-                    theme === "dark" ? "bg-primary/10" : "bg-gray-300"
-                  }`}
-                />
-                <div className="p-6 space-y-3">
-                  <div
-                    className={`h-4 ${
-                      theme === "dark" ? "bg-primary/10" : "bg-gray-300"
-                    } rounded w-3/4`}
-                  />
-                  <div
-                    className={`h-3 ${
-                      theme === "dark" ? "bg-primary/10" : "bg-gray-300"
-                    } rounded w-1/2`}
-                  />
-                  <div
-                    className={`h-3 ${
-                      theme === "dark" ? "bg-primary/10" : "bg-gray-300"
-                    } rounded w-full`}
-                  />
-                </div>
+          <>
+            {loading && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {Array.from({ length: LIMIT }).map((_, i) => (
+                  <Card key={i} padding="p-0" className="overflow-hidden">
+                    <Skeleton className="h-56 w-full rounded-none" />
+                    <div className="p-6 space-y-3">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-1/2" />
+                      <Skeleton className="h-3 w-full" />
+                    </div>
+                  </Card>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            )}
 
-        {/* Rooms Grid */}
-        {!loading && rooms.length === 0 && !error && (
-          <div
-            className={`text-center py-20 ${
-              theme === "dark" ? "text-text-secondary" : "text-gray-500"
-            }`}
-          >
-            <p className="text-2xl mb-2">No rooms found</p>
-            <p>Try adjusting your filters</p>
-          </div>
-        )}
+            {!loading && rooms.length === 0 && !error && (
+              <EmptyState
+                icon={SearchX}
+                title="No rooms found"
+                description="Try adjusting your filters."
+                action={
+                  filtersActive && (
+                    <Button variant="secondary" size="sm" onClick={resetFilters}>
+                      Clear Filters
+                    </Button>
+                  )
+                }
+              />
+            )}
 
-        {!loading && rooms.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {rooms.map((room) => (
-              <div
-                key={room._id}
-                onClick={() => navigate(`/room/${room._id}`)}
-                className={`${
-                  theme === "dark"
-                    ? "bg-bg-secondary border-primary/10 hover:shadow-2xl"
-                    : "bg-white border-gray-200 hover:shadow-xl"
-                } rounded-xl overflow-hidden border shadow-sm transition-shadow duration-300 group cursor-pointer flex flex-col`}
-              >
-                {/* Room Image */}
-                <div
-                  className={`relative h-56 overflow-hidden shrink-0 ${
-                    theme === "dark" ? "bg-bg-secondary" : "bg-gray-100"
-                  }`}
-                >
-                  {room.image ? (
-                    <img
-                      src={room.image}
-                      alt={room.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                        e.target.nextElementSibling.style.display = "flex";
-                      }}
-                    />
-                  ) : null}
-                  <div
-                    className={`${room.image ? "hidden" : "flex"} absolute inset-0 items-center justify-center ${
-                      theme === "dark" ? "text-text-muted" : "text-gray-400"
-                    }`}
+            {!loading && rooms.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {rooms.map((room) => (
+                  <Card
+                    key={room._id}
+                    hoverable
+                    padding="p-0"
+                    onClick={() => navigate(`/room/${room._id}`)}
+                    className="overflow-hidden cursor-pointer flex flex-col group"
                   >
-                    <ImageOff className="w-10 h-10" />
-                  </div>
-                  {isTopRated(room.rating, room.reviews) && (
-                    <TopRatedBadge className="absolute top-4 left-4" />
-                  )}
-                  <div
-                    className={`absolute top-4 right-4 ${
-                      theme === "dark"
-                        ? "bg-white/90"
-                        : "bg-white/80 backdrop-blur-sm"
-                    } px-3 py-1 rounded-full`}
-                  >
-                    <p
-                      className={`font-bold ${
-                        theme === "dark" ? "text-primary" : "text-blue-600"
-                      }`}
-                    >
-                      {formatNPR(room.price)}
-                      <span
-                        className={`text-sm font-normal ${
-                          theme === "dark"
-                            ? "text-text-secondary"
-                            : "text-gray-600"
-                        }`}
-                      >
-                        /night
-                      </span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Room Info */}
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="flex justify-between items-start gap-2 mb-3">
-                    <h3
-                      className={`font-bold ${
-                        theme === "dark" ? "text-text-primary" : "text-gray-900"
-                      } text-xl line-clamp-1`}
-                    >
-                      {room.title}
-                    </h3>
-                    <StarRating rating={room.rating} reviews={room.reviews} showValue />
-                  </div>
-
-                  <p
-                    className={`${
-                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                    } text-sm mb-4 line-clamp-2`}
-                  >
-                    {room.description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {room.amenities?.slice(0, 4).map((amenity, index) => (
-                      <span
-                        key={index}
-                        className={`px-3 py-1 ${
-                          theme === "dark"
-                            ? "bg-primary/10 text-primary"
-                            : "bg-blue-100 text-blue-800"
-                        } text-xs rounded-full font-medium`}
-                      >
-                        {amenity}
-                      </span>
-                    ))}
-                    {(room.amenities?.length || 0) > 4 && (
-                      <span
-                        className={`px-3 py-1 ${
-                          theme === "dark"
-                            ? "bg-bg-secondary text-text-muted border border-primary/10"
-                            : "bg-gray-100 text-gray-500"
-                        } text-xs rounded-full font-medium`}
-                      >
-                        +{room.amenities.length - 4} more
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex gap-3 mt-auto">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/room/${room._id}`);
-                      }}
-                      className="flex-1 bg-primary hover:bg-primary-hover text-white font-semibold py-3 rounded-lg transition"
-                    >
-                      Book Now
-                    </button>
-                    {!isHost && (
-                      <button
-                        onClick={(e) => toggleWishlist(e, room._id)}
-                        className={`px-4 border-2 ${
-                          theme === "dark"
-                            ? "border-primary text-primary hover:bg-primary hover:text-white"
-                            : "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                        } font-semibold rounded-lg transition`}
-                      >
-                        <Heart
-                          className={`w-6 h-6 mx-auto ${
-                            isWishlisted(room._id)
-                              ? "fill-red-500 text-red-500"
-                              : "fill-none text-current"
-                          }`}
+                    <div className="relative h-56 overflow-hidden shrink-0 bg-bg-secondary">
+                      {room.image ? (
+                        <img
+                          src={room.image}
+                          alt={room.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[var(--duration-slow)]"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                            e.target.nextElementSibling.style.display = "flex";
+                          }}
                         />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+                      ) : null}
+                      <div
+                        className={`${room.image ? "hidden" : "flex"} absolute inset-0 items-center justify-center text-text-muted`}
+                      >
+                        <ImageOff className="w-10 h-10" />
+                      </div>
+                      {isTopRated(room.rating, room.reviews) && (
+                        <TopRatedBadge className="absolute top-4 left-4" />
+                      )}
+                      <div className="absolute top-4 right-4 bg-bg-elevated/90 backdrop-blur-sm px-3 py-1 rounded-full">
+                        <p className="font-bold text-primary">
+                          {formatNPR(room.price)}
+                          <span className="text-sm font-normal text-text-secondary"> /night</span>
+                        </p>
+                      </div>
+                    </div>
 
-        {/* Pagination */}
-        <div className="mt-12 flex justify-center gap-4">
-          {page > 1 && (
-            <button
-              onClick={() => setPage((p) => p - 1)}
-              className={`${
-                theme === "dark"
-                  ? "bg-bg-secondary hover:bg-primary/10 text-text-primary border-primary/10"
-                  : "bg-white hover:bg-gray-100 text-gray-800 border-gray-300"
-              } font-semibold px-8 py-4 rounded-full border transition`}
-            >
-              ← Previous
-            </button>
-          )}
-          {hasMore && (
-            <button
-              onClick={() => setPage((p) => p + 1)}
-              className={`${
-                theme === "dark"
-                  ? "bg-bg-secondary hover:bg-primary/10 text-text-primary border-primary/10"
-                  : "bg-white hover:bg-gray-100 text-gray-800 border-gray-300"
-              } font-semibold px-8 py-4 rounded-full border transition`}
-            >
-              Next →
-            </button>
-          )}
-        </div>
-        </>
+                    <div className="p-6 flex flex-col flex-1">
+                      <div className="flex justify-between items-start gap-2 mb-3">
+                        <h3 className="font-semibold text-text-primary text-xl line-clamp-1">
+                          {room.title}
+                        </h3>
+                        <StarRating rating={room.rating} reviews={room.reviews} showValue />
+                      </div>
+
+                      <p className="text-text-secondary text-sm mb-4 line-clamp-2">
+                        {room.description}
+                      </p>
+
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {room.amenities?.slice(0, 4).map((amenity, index) => (
+                          <Badge key={index} tone="primary">
+                            {amenity}
+                          </Badge>
+                        ))}
+                        {(room.amenities?.length || 0) > 4 && (
+                          <Badge tone="default">+{room.amenities.length - 4} more</Badge>
+                        )}
+                      </div>
+
+                      <div className="flex gap-3 mt-auto">
+                        <Button
+                          fullWidth
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/room/${room._id}`);
+                          }}
+                        >
+                          Book Now
+                        </Button>
+                        {!isHost && (
+                          <button
+                            onClick={(e) => toggleWishlist(e, room._id)}
+                            className="px-4 rounded-[var(--radius-control)] border-2 border-primary text-primary hover:bg-primary hover:text-white transition-colors duration-[var(--duration-fast)]"
+                          >
+                            <Heart
+                              className={`w-5 h-5 mx-auto ${
+                                isWishlisted(room._id)
+                                  ? "fill-danger text-danger"
+                                  : "fill-none text-current"
+                              }`}
+                            />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {!loading && rooms.length > 0 && (
+              <div className="mt-12">
+                <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>

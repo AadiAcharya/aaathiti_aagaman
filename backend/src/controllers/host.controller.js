@@ -11,7 +11,8 @@ exports.getDashboard = async (req, res) => {
 
     const [rooms, bookings, transactions] = await Promise.all([
       Room.find({ host: hostId }, 'title rating'),
-      Booking.find({ host: hostId }, 'room status grandTotal createdAt'),
+      Booking.find({ host: hostId }, 'room status grandTotal createdAt checkIn checkOut guests user')
+        .populate('user', 'name avatar'),
       Transaction.find({ user: hostId, type: 'charge', status: 'completed' }, 'amount createdAt'),
     ]);
 
@@ -51,6 +52,31 @@ exports.getDashboard = async (req, res) => {
       });
     }
 
+    const bookingStatusBreakdown = {
+      pending: bookings.filter((b) => b.status === 'pending').length,
+      confirmed: bookings.filter((b) => b.status === 'confirmed').length,
+      completed: bookings.filter((b) => b.status === 'completed').length,
+      cancelled: bookings.filter((b) => b.status === 'cancelled').length,
+    };
+
+    // Confirmed stays checking in within the next 7 days — a quick "what's
+    // coming up" glance for the host, sorted soonest first.
+    const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const roomById = Object.fromEntries(rooms.map((r) => [r._id.toString(), r]));
+    const upcomingCheckIns = bookings
+      .filter((b) => b.status === 'confirmed' && b.checkIn >= now && b.checkIn <= weekFromNow)
+      .sort((a, b) => new Date(a.checkIn) - new Date(b.checkIn))
+      .slice(0, 5)
+      .map((b) => ({
+        bookingId: b._id,
+        guestName: b.user?.name || 'Guest',
+        guestAvatar: b.user?.avatar || '',
+        roomTitle: roomById[b.room.toString()]?.title || 'Room',
+        checkIn: b.checkIn,
+        checkOut: b.checkOut,
+        guests: b.guests,
+      }));
+
     res.json({
       success: true,
       stats: {
@@ -61,6 +87,8 @@ exports.getDashboard = async (req, res) => {
       },
       listingBreakdown,
       monthlyRevenue,
+      bookingStatusBreakdown,
+      upcomingCheckIns,
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

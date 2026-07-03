@@ -1,30 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PawPrint, Ban, Upload, Loader2, X } from "lucide-react";
+import { PawPrint, Ban, Upload, Loader2, X, Link2 } from "lucide-react";
 import { uploadAPI } from "../../services/api";
+import StepBar from "./StepBar";
+import Button from "../ui/Button";
+import Select from "../ui/Select";
 
 const MAX_ADDITIONAL_PHOTOS = 5; // + 1 cover photo = 6 total
-
-const steps = ["Type", "Amenities", "Description", "Facilities", "Safety", "Post"];
-const StepBar = ({ current }) => (
-  <div className="max-w-6xl mx-auto px-6 pt-8 pb-2">
-    <div className="flex items-center gap-2">
-      {steps.map((s, i) => (
-        <div key={s} className="flex items-center gap-2 flex-1">
-          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-            i < current ? "bg-primary text-white" :
-            i === current ? "bg-primary text-white ring-4 ring-primary/20" :
-            "bg-bg-secondary text-text-muted border border-text-muted/20"
-          }`}>
-            {i < current ? "✓" : i + 1}
-          </div>
-          <span className={`text-xs font-semibold hidden sm:block ${i === current ? "text-primary" : "text-text-muted"}`}>{s}</span>
-          {i < steps.length - 1 && <div className={`h-0.5 flex-1 rounded ${i < current ? "bg-primary" : "bg-text-muted/20"}`} />}
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 export default function Description() {
   const navigate = useNavigate();
@@ -49,6 +31,7 @@ export default function Description() {
   const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
   const [galleryUploading, setGalleryUploading] = useState(false);
+  const [coverMode, setCoverMode] = useState("upload");
 
   const set = (key, val) => {
     setForm((prev) => ({ ...prev, [key]: val }));
@@ -190,18 +173,16 @@ export default function Description() {
               { key: "bathrooms", label: "Bathrooms", max: 10 },
               { key: "parking",   label: "Parking Spots", max: 10 },
             ].map(({ key, label, max }) => (
-              <div key={key}>
-                <label className="text-text-primary font-semibold text-sm block mb-2">{label}</label>
-                <select
-                  value={form[key]}
-                  onChange={(e) => set(key, e.target.value)}
-                  className="w-full bg-bg-secondary border-2 border-text-muted/30 focus:border-primary rounded-xl px-4 py-3 text-text-primary focus:outline-none text-sm"
-                >
-                  {Array.from({ length: max + 1 }, (_, i) => (
-                    <option key={i} value={String(i)}>{i}</option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                key={key}
+                label={label}
+                value={form[key]}
+                onChange={(e) => set(key, e.target.value)}
+              >
+                {Array.from({ length: max + 1 }, (_, i) => (
+                  <option key={i} value={String(i)}>{i}</option>
+                ))}
+              </Select>
             ))}
           </div>
 
@@ -233,23 +214,52 @@ export default function Description() {
           {/* Cover Photo */}
           <div>
             <label className="text-text-primary font-semibold text-sm block mb-2">Cover Photo</label>
-            <div className="flex items-center gap-3">
-              <label className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed cursor-pointer transition text-sm font-semibold ${
-                uploading ? "opacity-60 pointer-events-none" : "hover:border-primary"
-              } border-text-muted/30 text-text-secondary`}>
-                {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                {uploading ? "Uploading..." : "Upload from device"}
-                <input type="file" accept="image/png,image/jpeg,image/webp,image/gif"
-                  onChange={handleFileUpload} disabled={uploading} className="hidden" />
-              </label>
+
+            <div className="inline-flex items-center gap-1 rounded-full bg-bg-secondary p-1 mb-3">
+              {[
+                { id: "upload", label: "Upload file", icon: Upload },
+                { id: "url", label: "Image URL", icon: Link2 },
+              ].map((mode) => (
+                <button
+                  key={mode.id}
+                  type="button"
+                  onClick={() => setCoverMode(mode.id)}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                    coverMode === mode.id
+                      ? "bg-primary text-white"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  <mode.icon className="w-3.5 h-3.5" />
+                  {mode.label}
+                </button>
+              ))}
             </div>
-            <p className="text-text-muted text-xs mt-2 mb-2">Or paste an image URL instead:</p>
-            <input
-              value={form.image}
-              onChange={(e) => set("image", e.target.value)}
-              placeholder="https://images.unsplash.com/..."
-              className={inputClass("image")}
-            />
+
+            {coverMode === "upload" ? (
+              <label
+                className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed cursor-pointer transition text-sm font-semibold w-fit ${
+                  uploading ? "opacity-60 pointer-events-none" : "hover:border-primary"
+                } border-text-muted/30 text-text-secondary`}
+              >
+                {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                {uploading ? "Uploading..." : form.image ? "Replace photo" : "Choose a file"}
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  onChange={handleFileUpload}
+                  disabled={uploading}
+                  className="hidden"
+                />
+              </label>
+            ) : (
+              <input
+                value={form.image}
+                onChange={(e) => set("image", e.target.value)}
+                placeholder="https://images.unsplash.com/..."
+                className={inputClass("image")}
+              />
+            )}
             {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
             {form.image && (
               <div className="mt-3 h-40 rounded-xl overflow-hidden border border-text-muted/20">
@@ -296,14 +306,12 @@ export default function Description() {
         </div>
 
         <div className="flex gap-4 mt-10">
-          <button onClick={() => navigate("/amenities")}
-            className="px-6 py-3 text-text-primary bg-bg-secondary hover:bg-bg-secondary/80 rounded-xl font-bold border-2 border-text-muted/30 transition-all">
+          <Button variant="secondary" size="lg" onClick={() => navigate("/amenities")}>
             ← Back
-          </button>
-          <button onClick={handleNext}
-            className="px-8 py-3 text-white bg-primary hover:bg-primary-hover rounded-xl font-bold transition-all shadow-lg">
+          </Button>
+          <Button size="lg" onClick={handleNext}>
             Next: Add Facilities →
-          </button>
+          </Button>
         </div>
       </main>
     </div>
