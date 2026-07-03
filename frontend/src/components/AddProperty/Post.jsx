@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { propertiesAPI } from "../../services/api";
+import { roomsAPI } from "../../services/api";
 import { PartyPopper, Home, MapPin, Tag, Bed, ShowerHead, PawPrint, Rocket } from "lucide-react";
 
 const STORAGE_KEYS = [
@@ -75,21 +75,24 @@ export default function Post() {
       setSubmitting(true);
       setError("");
 
-      await propertiesAPI.create({
-        title:       property.title,
-        location:    property.location || "Not specified",
-        description: property.description || "",
-        category:    property.category || "rooms",
-        bedrooms:    String(property.bedrooms || "1"),
-        bathrooms:   String(property.bathrooms || "1"),
-        parking:     String(property.parking || "0"),
-        pets:        property.pets || "No",
-        price:       `$${property.price} USD`,
-        priceMin:    Number(property.price) || 0,
-        priceMax:    Number(property.price) || 0,
-        amenities:   [...(property.amenities || []), ...(property.facilities || [])],
-        safety:      property.safety || [],
-        image:       property.image || "",
+      const bedroomCount = Number(property.bedrooms) || 1;
+
+      await roomsAPI.create({
+        title:        property.title,
+        description:  property.description || "No description provided yet.",
+        location:     property.location || "Not specified",
+        image:        property.image || "",
+        price:        Number(property.price) || 0,
+        priceDisplay: `$${property.price || 0}`,
+        type:         bedroomCount >= 3 ? "suite" : bedroomCount === 2 ? "double" : "single",
+        bedType:      property.type || "",
+        bedrooms:     String(property.bedrooms || "1"),
+        bathrooms:    String(property.bathrooms || "1"),
+        maxGuests:    Math.max(1, bedroomCount * 2),
+        parking:      String(property.parking || "0"),
+        pets:         property.pets || "No",
+        amenities:    [...(property.amenities || []), ...(property.facilities || [])],
+        safety:       property.safety || [],
       });
 
       clearStorage();
@@ -111,7 +114,7 @@ export default function Post() {
           Your property is now live. Guests can find and book it right away.
         </p>
         <div className="flex gap-4 justify-center">
-          <button onClick={() => navigate("/properties")}
+          <button onClick={() => navigate("/rooms")}
             className="bg-primary hover:bg-primary-hover text-white font-bold px-8 py-3 rounded-xl transition shadow-lg">
             Browse Listings
           </button>

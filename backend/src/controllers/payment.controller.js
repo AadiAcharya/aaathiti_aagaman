@@ -48,6 +48,9 @@ exports.createPaymentIntent = async (req, res) => {
         .json({ success: false, message: "Not authorized" });
     }
 
+    // NOTE: booking.grandTotal is now in NRS, but this charges Stripe in USD cents.
+    // Stripe is not configured with real keys in this project - eSewa (below) is the
+    // real Nepal payment path. Fix this currency mismatch before ever enabling Stripe.
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(booking.grandTotal * 100), // Stripe uses cents
       currency: "usd",

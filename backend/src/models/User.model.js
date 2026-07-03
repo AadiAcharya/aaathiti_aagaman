@@ -45,6 +45,16 @@ const userSchema = new mongoose.Schema(
     isVerified: { type: Boolean, default: false },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
+
+    // Host application info, collected when a user applies to become a host
+    hostProfile: {
+      phone: { type: String, default: '' },
+      address: { type: String, default: '' },
+      governmentId: { type: String, default: '' },
+      propertyType: { type: String, default: '' },
+      bio: { type: String, default: '' },
+      submittedAt: { type: Date },
+    },
   },
   { timestamps: true }
 );

@@ -19,7 +19,7 @@ const roomSchema = new mongoose.Schema(
 
     // Pricing
     price:        { type: Number, required: [true, 'Price is required'] },
-    priceDisplay: { type: String },   // e.g. "$180"
+    priceDisplay: { type: String },   // e.g. "Rs 24,000"
     shortPeriodPrice:  { type: Number },
     mediumPeriodPrice: { type: Number },
     longPeriodPrice:   { type: Number },
@@ -29,6 +29,11 @@ const roomSchema = new mongoose.Schema(
     bedType:   { type: String, default: '' },
     size:      { type: String, default: '' },
     maxGuests: { type: Number, default: 1 },
+    location:  { type: String, default: '' },
+    bedrooms:  { type: String, default: '1' },
+    bathrooms: { type: String, default: '1' },
+    parking:   { type: String, default: '0' },
+    pets:      { type: String, default: 'No' },
 
     // Amenities & Safety
     amenities: [{ type: String }],

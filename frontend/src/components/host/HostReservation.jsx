@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { hostAPI } from "../../services/api";
 import { useTheme } from "../../context/ThemeContext";
+import { formatNPR } from "../../utils/currency";
 import { Home, Calendar, Moon, Users, User, Banknote, Inbox } from "lucide-react";
 
 export default function HostReservation() {
@@ -167,7 +168,7 @@ export default function HostReservation() {
                     }`}
                   >
                     <span className="inline-flex items-center gap-1.5"><User className="w-4 h-4" /> By: {reservation.user?.name || reservation.guestName}</span>
-                    <span className="font-bold text-primary inline-flex items-center gap-1.5"><Banknote className="w-4 h-4" /> ${reservation.grandTotal}</span>
+                    <span className="font-bold text-primary inline-flex items-center gap-1.5"><Banknote className="w-4 h-4" /> {formatNPR(reservation.grandTotal)}</span>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
                       reservation.paymentStatus === "paid" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
                     }`}>

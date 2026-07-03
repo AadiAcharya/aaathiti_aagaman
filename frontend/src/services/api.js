@@ -46,7 +46,8 @@ export const authAPI = {
       method: "PUT",
       body: JSON.stringify(body),
     }),
-  becomeHost: () => request("/auth/become-host", { method: "PUT" }),
+  becomeHost: (body) =>
+    request("/auth/become-host", { method: "PUT", body: JSON.stringify(body) }),
   toggleWishlist: (roomId) =>
     request(`/auth/wishlist/${roomId}`, { method: "POST" }),
 };
@@ -69,18 +70,6 @@ export const roomsAPI = {
       method: "POST",
       body: JSON.stringify(body),
     }),
-};
-
-// ─── PROPERTIES ───────────────────────────────────────────────────────────────
-export const propertiesAPI = {
-  getAll: (params = {}) =>
-    request("/properties?" + new URLSearchParams(params)),
-  getById: (id) => request(`/properties/${id}`),
-  create: (body) =>
-    request("/properties", { method: "POST", body: JSON.stringify(body) }),
-  update: (id, body) =>
-    request(`/properties/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  delete: (id) => request(`/properties/${id}`, { method: "DELETE" }),
 };
 
 // ─── BOOKINGS ─────────────────────────────────────────────────────────────────
@@ -148,13 +137,6 @@ export const adminAPI = {
   deleteUser: (id) => request(`/admin/users/${id}`, { method: "DELETE" }),
   getBookings: (params = {}) =>
     request("/admin/bookings?" + new URLSearchParams(params)),
-};
-
-// ─── REVIEWS ──────────────────────────────────────────────────────────────────
-export const reviewsAPI = {
-  getForProperty: (propertyId) => request(`/reviews/property/${propertyId}`),
-  create: (body) =>
-    request("/reviews", { method: "POST", body: JSON.stringify(body) }),
 };
 
 // ─── BOOKINGS ─────────────────────────────────────────────────────────────────

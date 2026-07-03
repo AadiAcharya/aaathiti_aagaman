@@ -6,7 +6,6 @@ import RoleRoute from "./RoleRoute";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
-import Properties from "./components/Properties";
 import Account from "./components/Account";
 import Hosting from "./components/Hosting";
 import Messages from "./components/Messages";
@@ -59,7 +58,6 @@ function AppContent() {
           <Routes>
             <Route path="/" element={<HomeGate />} />
             {/* <Route element={<MainLayout />} /> */}
-            <Route path="/properties" element={<Properties />} />
             <Route path="/account" element={<Account />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/hosting" element={<Hosting />} />

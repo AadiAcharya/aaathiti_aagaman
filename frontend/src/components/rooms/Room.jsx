@@ -1,8 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
 import { roomsAPI, bookingsAPI } from "../../services/api";
-import Reviews from "../Reviews";
+import { formatNPR } from "../../utils/currency";
 import {
   Wifi,
   Tv,
@@ -49,6 +50,8 @@ export default function Room() {
   const { roomId } = useParams();
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { isAuthenticated, user, role } = useAuth();
+  const isHost = role === "host" || role === "admin";
 
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -57,7 +60,19 @@ export default function Room() {
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
   const [booking, setBooking] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewError, setReviewError] = useState("");
   const [bookingMsg, setBookingMsg] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [editForm, setEditForm] = useState(null);
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState("");
+  const [statusUpdating, setStatusUpdating] = useState(false);
+
+  const roomHostId = room?.host?._id || room?.host;
+  const isOwner = !!(user && roomHostId && roomHostId === user._id);
 
   useEffect(() => {
     const fetchRoom = async () => {
@@ -99,12 +114,94 @@ export default function Room() {
       });
       setBookingMsg({
         type: "success",
-        text: `Booking confirmed! Total: $${b.grandTotal}`,
+        text: `Booking confirmed! Total: ${formatNPR(b.grandTotal)}`,
       });
     } catch (err) {
       setBookingMsg({ type: "error", text: err.message });
     } finally {
       setBooking(false);
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!isAuthenticated) {
+      navigate("/sign-in");
+      return;
+    }
+    if (!reviewComment.trim()) {
+      setReviewError("Please write a comment");
+      return;
+    }
+    try {
+      setReviewSubmitting(true);
+      setReviewError("");
+      const { reviews, rating } = await roomsAPI.addReview(roomId, {
+        rating: reviewRating,
+        comment: reviewComment.trim(),
+      });
+      setRoom((prev) => ({ ...prev, reviewsArray: reviews, rating }));
+      setReviewComment("");
+      setReviewRating(5);
+    } catch (err) {
+      setReviewError(err.message || "Failed to submit review");
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
+
+  const startEdit = () => {
+    setEditForm({
+      title: room.title || "",
+      description: room.description || "",
+      price: room.price || 0,
+      image: room.image || "",
+      location: room.location || "",
+      bedrooms: room.bedrooms || "1",
+      bathrooms: room.bathrooms || "1",
+      maxGuests: room.maxGuests || 1,
+      parking: room.parking || "0",
+      pets: room.pets || "No",
+    });
+    setEditError("");
+    setEditMode(true);
+  };
+
+  const setEditField = (k, v) => setEditForm((p) => ({ ...p, [k]: v }));
+
+  const handleSaveEdit = async () => {
+    if (!editForm.title.trim()) {
+      setEditError("Title is required");
+      return;
+    }
+    try {
+      setEditSaving(true);
+      setEditError("");
+      const { room: updated } = await roomsAPI.update(roomId, {
+        ...editForm,
+        price: Number(editForm.price) || 0,
+        maxGuests: Number(editForm.maxGuests) || 1,
+        priceDisplay: formatNPR(Number(editForm.price) || 0),
+      });
+      setRoom((prev) => ({ ...prev, ...updated }));
+      setEditMode(false);
+    } catch (err) {
+      setEditError(err.message || "Failed to save changes");
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
+  const handleToggleAvailability = async () => {
+    try {
+      setStatusUpdating(true);
+      const { room: updated } = await roomsAPI.update(roomId, {
+        isAvailable: !room.isAvailable,
+      });
+      setRoom((prev) => ({ ...prev, isAvailable: updated.isAvailable }));
+    } catch (err) {
+      alert(err.message || "Failed to update status");
+    } finally {
+      setStatusUpdating(false);
     }
   };
 
@@ -453,7 +550,7 @@ export default function Room() {
                 Reviews{" "}
                 <span
                   className={`ml-4 text-2xl font-bold ${
-                    theme === "dark" ? "text-accent" : "text-blue-600"
+                    theme === "dark" ? "text-primary" : "text-blue-600"
                   }`}
                 >
                   {room.rating}
@@ -540,6 +637,73 @@ export default function Room() {
                   </div>
                 ))}
               </div>
+
+              {/* Write a review - host accounts don't book/review, they'd use a guest account for that */}
+              {!isHost && (
+                <div
+                  className={`p-6 rounded-xl border ${
+                    theme === "dark"
+                      ? "bg-bg-secondary border-primary/20"
+                      : "bg-white border-gray-200"
+                  }`}
+                >
+                  <h3
+                    className={`font-bold mb-4 ${
+                      theme === "dark" ? "text-text-primary" : "text-gray-900"
+                    }`}
+                  >
+                    Write a Review
+                  </h3>
+                  <div className="flex items-center gap-1 mb-3">
+                    {Array.from({ length: 5 }).map((_, si) => (
+                      <button
+                        key={si}
+                        type="button"
+                        onClick={() => setReviewRating(si + 1)}
+                        aria-label={`Rate ${si + 1} star`}
+                      >
+                        <Star
+                          className={`w-6 h-6 ${
+                            si < reviewRating
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    value={reviewComment}
+                    onChange={(e) => setReviewComment(e.target.value)}
+                    rows={3}
+                    placeholder={
+                      isAuthenticated
+                        ? "Share your experience..."
+                        : "Sign in to leave a review"
+                    }
+                    disabled={!isAuthenticated || reviewSubmitting}
+                    className={`w-full px-3 py-2 mb-3 ${
+                      theme === "dark"
+                        ? "bg-background border-primary/20 text-text-primary"
+                        : "bg-gray-50 border-gray-300 text-gray-900"
+                    } border rounded-lg focus:outline-none focus:border-primary disabled:opacity-60`}
+                  />
+                  {reviewError && (
+                    <p className="text-red-500 text-sm mb-3">{reviewError}</p>
+                  )}
+                  <button
+                    onClick={handleSubmitReview}
+                    disabled={reviewSubmitting}
+                    className="bg-primary hover:bg-primary-hover text-white font-semibold px-6 py-2 rounded-lg transition disabled:opacity-50"
+                  >
+                    {reviewSubmitting
+                      ? "Submitting..."
+                      : isAuthenticated
+                        ? "Submit Review"
+                        : "Sign In to Review"}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -552,10 +716,10 @@ export default function Room() {
           >
             <p
               className={`text-2xl font-bold ${
-                theme === "dark" ? "text-accent" : "text-blue-600"
+                theme === "dark" ? "text-primary" : "text-blue-600"
               } mb-2`}
             >
-              ${room.price}
+              {formatNPR(room.price)}
               <span
                 className={`text-sm font-normal ${
                   theme === "dark" ? "text-text-secondary" : "text-gray-500"
@@ -566,136 +730,461 @@ export default function Room() {
               </span>
             </p>
 
-            {/* Date pickers */}
-            <div className="space-y-3 mb-4">
-              <div>
-                <label
-                  className={`text-xs ${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-500"
-                  } font-semibold uppercase tracking-wide`}
-                >
-                  Check-in
-                </label>
-                <input
-                  type="date"
-                  value={checkIn}
-                  min={new Date().toISOString().split("T")[0]}
-                  onChange={(e) => setCheckIn(e.target.value)}
-                  className={`w-full mt-1 px-3 py-2 ${
-                    theme === "dark"
-                      ? "bg-background border-primary/20 text-text-primary"
-                      : "bg-gray-50 border-gray-300 text-gray-900"
-                  } border rounded-lg focus:outline-none focus:border-primary`}
-                />
-              </div>
-              <div>
-                <label
-                  className={`text-xs ${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-500"
-                  } font-semibold uppercase tracking-wide`}
-                >
-                  Check-out
-                </label>
-                <input
-                  type="date"
-                  value={checkOut}
-                  min={checkIn || new Date().toISOString().split("T")[0]}
-                  onChange={(e) => setCheckOut(e.target.value)}
-                  className={`w-full mt-1 px-3 py-2 ${
-                    theme === "dark"
-                      ? "bg-background border-primary/20 text-text-primary"
-                      : "bg-gray-50 border-gray-300 text-gray-900"
-                  } border rounded-lg focus:outline-none focus:border-primary`}
-                />
-              </div>
-              <div>
-                <label
-                  className={`text-xs ${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-500"
-                  } font-semibold uppercase tracking-wide`}
-                >
-                  Guests
-                </label>
-                <input
-                  type="number"
-                  value={guests}
-                  min={1}
-                  max={room.maxGuests}
-                  onChange={(e) => setGuests(e.target.value)}
-                  className={`w-full mt-1 px-3 py-2 ${
-                    theme === "dark"
-                      ? "bg-background border-primary/20 text-text-primary"
-                      : "bg-gray-50 border-gray-300 text-gray-900"
-                  } border rounded-lg focus:outline-none focus:border-primary`}
-                />
-              </div>
-            </div>
+            {isOwner ? (
+              /* ── Owner view: manage listing instead of booking it ──────── */
+              <>
+                <div className="flex items-center justify-between mb-6">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      room.isAvailable
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {room.isAvailable ? "Active" : "Inactive"}
+                  </span>
+                  <button
+                    onClick={handleToggleAvailability}
+                    disabled={statusUpdating}
+                    className={`text-xs font-semibold underline disabled:opacity-50 ${
+                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                    }`}
+                  >
+                    {statusUpdating
+                      ? "Updating..."
+                      : room.isAvailable
+                        ? "Deactivate"
+                        : "Activate"}
+                  </button>
+                </div>
 
-            {/* Pricing */}
-            {nights > 0 && (
-              <div className="border-t border-b border-primary/10 py-3 my-3 space-y-2">
-                <div className="flex justify-between">
-                  <p
-                    className={`${
-                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                    }`}
+                {!editMode ? (
+                  <button
+                    onClick={startEdit}
+                    className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-hover transition"
                   >
-                    ${room.price} x {nights} nights
-                  </p>
-                  <p
-                    className={`${
-                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                    }`}
-                  >
-                    ${subtotal}
-                  </p>
-                </div>
-                <div className="flex justify-between">
-                  <p
-                    className={`${
-                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                    }`}
-                  >
-                    Taxes & fees
-                  </p>
-                  <p
-                    className={`${
-                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                    }`}
-                  >
-                    ${taxes}
-                  </p>
-                </div>
-                <div className="flex justify-between font-bold text-text-primary pt-2">
-                  <p>Grand Total</p>
-                  <p>${grandTotal}</p>
-                </div>
-              </div>
-            )}
+                    Edit Listing
+                  </button>
+                ) : (
+                  <div className="space-y-3">
+                    <div>
+                      <label
+                        className={`text-xs ${
+                          theme === "dark"
+                            ? "text-text-secondary"
+                            : "text-gray-500"
+                        } font-semibold uppercase tracking-wide`}
+                      >
+                        Title
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.title}
+                        onChange={(e) => setEditField("title", e.target.value)}
+                        className={`w-full mt-1 px-3 py-2 ${
+                          theme === "dark"
+                            ? "bg-background border-primary/20 text-text-primary"
+                            : "bg-gray-50 border-gray-300 text-gray-900"
+                        } border rounded-lg focus:outline-none focus:border-primary`}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className={`text-xs ${
+                          theme === "dark"
+                            ? "text-text-secondary"
+                            : "text-gray-500"
+                        } font-semibold uppercase tracking-wide`}
+                      >
+                        Description
+                      </label>
+                      <textarea
+                        value={editForm.description}
+                        onChange={(e) =>
+                          setEditField("description", e.target.value)
+                        }
+                        rows={3}
+                        className={`w-full mt-1 px-3 py-2 ${
+                          theme === "dark"
+                            ? "bg-background border-primary/20 text-text-primary"
+                            : "bg-gray-50 border-gray-300 text-gray-900"
+                        } border rounded-lg focus:outline-none focus:border-primary`}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className={`text-xs ${
+                          theme === "dark"
+                            ? "text-text-secondary"
+                            : "text-gray-500"
+                        } font-semibold uppercase tracking-wide`}
+                      >
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.location}
+                        onChange={(e) =>
+                          setEditField("location", e.target.value)
+                        }
+                        className={`w-full mt-1 px-3 py-2 ${
+                          theme === "dark"
+                            ? "bg-background border-primary/20 text-text-primary"
+                            : "bg-gray-50 border-gray-300 text-gray-900"
+                        } border rounded-lg focus:outline-none focus:border-primary`}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className={`text-xs ${
+                          theme === "dark"
+                            ? "text-text-secondary"
+                            : "text-gray-500"
+                        } font-semibold uppercase tracking-wide`}
+                      >
+                        Image URL
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.image}
+                        onChange={(e) => setEditField("image", e.target.value)}
+                        className={`w-full mt-1 px-3 py-2 ${
+                          theme === "dark"
+                            ? "bg-background border-primary/20 text-text-primary"
+                            : "bg-gray-50 border-gray-300 text-gray-900"
+                        } border rounded-lg focus:outline-none focus:border-primary`}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label
+                          className={`text-xs ${
+                            theme === "dark"
+                              ? "text-text-secondary"
+                              : "text-gray-500"
+                          } font-semibold uppercase tracking-wide`}
+                        >
+                          Price (NRs) / night
+                        </label>
+                        <input
+                          type="number"
+                          value={editForm.price}
+                          min={0}
+                          onChange={(e) =>
+                            setEditField("price", e.target.value)
+                          }
+                          className={`w-full mt-1 px-3 py-2 ${
+                            theme === "dark"
+                              ? "bg-background border-primary/20 text-text-primary"
+                              : "bg-gray-50 border-gray-300 text-gray-900"
+                          } border rounded-lg focus:outline-none focus:border-primary`}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          className={`text-xs ${
+                            theme === "dark"
+                              ? "text-text-secondary"
+                              : "text-gray-500"
+                          } font-semibold uppercase tracking-wide`}
+                        >
+                          Max Guests
+                        </label>
+                        <input
+                          type="number"
+                          value={editForm.maxGuests}
+                          min={1}
+                          onChange={(e) =>
+                            setEditField("maxGuests", e.target.value)
+                          }
+                          className={`w-full mt-1 px-3 py-2 ${
+                            theme === "dark"
+                              ? "bg-background border-primary/20 text-text-primary"
+                              : "bg-gray-50 border-gray-300 text-gray-900"
+                          } border rounded-lg focus:outline-none focus:border-primary`}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          className={`text-xs ${
+                            theme === "dark"
+                              ? "text-text-secondary"
+                              : "text-gray-500"
+                          } font-semibold uppercase tracking-wide`}
+                        >
+                          Bedrooms
+                        </label>
+                        <input
+                          type="text"
+                          value={editForm.bedrooms}
+                          onChange={(e) =>
+                            setEditField("bedrooms", e.target.value)
+                          }
+                          className={`w-full mt-1 px-3 py-2 ${
+                            theme === "dark"
+                              ? "bg-background border-primary/20 text-text-primary"
+                              : "bg-gray-50 border-gray-300 text-gray-900"
+                          } border rounded-lg focus:outline-none focus:border-primary`}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          className={`text-xs ${
+                            theme === "dark"
+                              ? "text-text-secondary"
+                              : "text-gray-500"
+                          } font-semibold uppercase tracking-wide`}
+                        >
+                          Bathrooms
+                        </label>
+                        <input
+                          type="text"
+                          value={editForm.bathrooms}
+                          onChange={(e) =>
+                            setEditField("bathrooms", e.target.value)
+                          }
+                          className={`w-full mt-1 px-3 py-2 ${
+                            theme === "dark"
+                              ? "bg-background border-primary/20 text-text-primary"
+                              : "bg-gray-50 border-gray-300 text-gray-900"
+                          } border rounded-lg focus:outline-none focus:border-primary`}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          className={`text-xs ${
+                            theme === "dark"
+                              ? "text-text-secondary"
+                              : "text-gray-500"
+                          } font-semibold uppercase tracking-wide`}
+                        >
+                          Parking
+                        </label>
+                        <input
+                          type="text"
+                          value={editForm.parking}
+                          onChange={(e) =>
+                            setEditField("parking", e.target.value)
+                          }
+                          className={`w-full mt-1 px-3 py-2 ${
+                            theme === "dark"
+                              ? "bg-background border-primary/20 text-text-primary"
+                              : "bg-gray-50 border-gray-300 text-gray-900"
+                          } border rounded-lg focus:outline-none focus:border-primary`}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          className={`text-xs ${
+                            theme === "dark"
+                              ? "text-text-secondary"
+                              : "text-gray-500"
+                          } font-semibold uppercase tracking-wide`}
+                        >
+                          Pets
+                        </label>
+                        <input
+                          type="text"
+                          value={editForm.pets}
+                          onChange={(e) =>
+                            setEditField("pets", e.target.value)
+                          }
+                          className={`w-full mt-1 px-3 py-2 ${
+                            theme === "dark"
+                              ? "bg-background border-primary/20 text-text-primary"
+                              : "bg-gray-50 border-gray-300 text-gray-900"
+                          } border rounded-lg focus:outline-none focus:border-primary`}
+                        />
+                      </div>
+                    </div>
 
-            {/* Booking Message */}
-            {bookingMsg && (
+                    {editError && (
+                      <p className="text-red-500 text-sm">{editError}</p>
+                    )}
+
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        onClick={handleSaveEdit}
+                        disabled={editSaving}
+                        className="flex-1 bg-primary text-white font-bold py-2.5 px-4 rounded-lg hover:bg-primary-hover disabled:opacity-50 transition"
+                      >
+                        {editSaving ? "Saving..." : "Save Changes"}
+                      </button>
+                      <button
+                        onClick={() => setEditMode(false)}
+                        disabled={editSaving}
+                        className={`px-4 py-2.5 rounded-lg font-semibold border-2 transition ${
+                          theme === "dark"
+                            ? "border-primary/20 text-text-secondary hover:border-primary"
+                            : "border-gray-300 text-gray-700 hover:border-gray-400"
+                        }`}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : isHost ? (
+              /* ── Host viewing another host's room: no booking/reviewing from a host account ── */
               <div
-                className={`p-3 rounded-lg my-3 text-sm ${
-                  bookingMsg.type === "error"
-                    ? "bg-red-500/10 text-red-500"
-                    : "bg-green-500/10 text-green-500"
+                className={`p-4 rounded-lg text-sm text-center ${
+                  theme === "dark"
+                    ? "bg-background text-text-secondary"
+                    : "bg-gray-50 text-gray-600"
                 }`}
               >
-                {bookingMsg.text}
+                Host accounts can't book or review rooms. Sign in with a guest
+                account to reserve this room.
               </div>
-            )}
+            ) : (
+              /* ── Guest view: booking widget ─────────────────────────────── */
+              <>
+                {/* Date pickers */}
+                <div className="space-y-3 mb-4">
+                  <div>
+                    <label
+                      className={`text-xs ${
+                        theme === "dark"
+                          ? "text-text-secondary"
+                          : "text-gray-500"
+                      } font-semibold uppercase tracking-wide`}
+                    >
+                      Check-in
+                    </label>
+                    <input
+                      type="date"
+                      value={checkIn}
+                      min={new Date().toISOString().split("T")[0]}
+                      onChange={(e) => setCheckIn(e.target.value)}
+                      className={`w-full mt-1 px-3 py-2 ${
+                        theme === "dark"
+                          ? "bg-background border-primary/20 text-text-primary"
+                          : "bg-gray-50 border-gray-300 text-gray-900"
+                      } border rounded-lg focus:outline-none focus:border-primary`}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      className={`text-xs ${
+                        theme === "dark"
+                          ? "text-text-secondary"
+                          : "text-gray-500"
+                      } font-semibold uppercase tracking-wide`}
+                    >
+                      Check-out
+                    </label>
+                    <input
+                      type="date"
+                      value={checkOut}
+                      min={checkIn || new Date().toISOString().split("T")[0]}
+                      onChange={(e) => setCheckOut(e.target.value)}
+                      className={`w-full mt-1 px-3 py-2 ${
+                        theme === "dark"
+                          ? "bg-background border-primary/20 text-text-primary"
+                          : "bg-gray-50 border-gray-300 text-gray-900"
+                      } border rounded-lg focus:outline-none focus:border-primary`}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      className={`text-xs ${
+                        theme === "dark"
+                          ? "text-text-secondary"
+                          : "text-gray-500"
+                      } font-semibold uppercase tracking-wide`}
+                    >
+                      Guests
+                    </label>
+                    <input
+                      type="number"
+                      value={guests}
+                      min={1}
+                      max={room.maxGuests}
+                      onChange={(e) => setGuests(e.target.value)}
+                      className={`w-full mt-1 px-3 py-2 ${
+                        theme === "dark"
+                          ? "bg-background border-primary/20 text-text-primary"
+                          : "bg-gray-50 border-gray-300 text-gray-900"
+                      } border rounded-lg focus:outline-none focus:border-primary`}
+                    />
+                  </div>
+                </div>
 
-            <button
-              onClick={handleReserve}
-              disabled={booking}
-              className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-hover disabled:opacity-50 transition"
-            >
-              {booking ? "Reserving..." : "Reserve"}
-            </button>
+                {/* Pricing */}
+                {nights > 0 && (
+                  <div className="border-t border-b border-primary/10 py-3 my-3 space-y-2">
+                    <div className="flex justify-between">
+                      <p
+                        className={`${
+                          theme === "dark"
+                            ? "text-text-secondary"
+                            : "text-gray-600"
+                        }`}
+                      >
+                        {formatNPR(room.price)} x {nights} nights
+                      </p>
+                      <p
+                        className={`${
+                          theme === "dark"
+                            ? "text-text-secondary"
+                            : "text-gray-600"
+                        }`}
+                      >
+                        {formatNPR(subtotal)}
+                      </p>
+                    </div>
+                    <div className="flex justify-between">
+                      <p
+                        className={`${
+                          theme === "dark"
+                            ? "text-text-secondary"
+                            : "text-gray-600"
+                        }`}
+                      >
+                        Taxes & fees
+                      </p>
+                      <p
+                        className={`${
+                          theme === "dark"
+                            ? "text-text-secondary"
+                            : "text-gray-600"
+                        }`}
+                      >
+                        {formatNPR(taxes)}
+                      </p>
+                    </div>
+                    <div className="flex justify-between font-bold text-text-primary pt-2">
+                      <p>Grand Total</p>
+                      <p>{formatNPR(grandTotal)}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Booking Message */}
+                {bookingMsg && (
+                  <div
+                    className={`p-3 rounded-lg my-3 text-sm ${
+                      bookingMsg.type === "error"
+                        ? "bg-red-500/10 text-red-500"
+                        : "bg-green-500/10 text-green-500"
+                    }`}
+                  >
+                    {bookingMsg.text}
+                  </div>
+                )}
+
+                <button
+                  onClick={handleReserve}
+                  disabled={booking}
+                  className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-hover disabled:opacity-50 transition"
+                >
+                  {booking ? "Reserving..." : "Reserve"}
+                </button>
+              </>
+            )}
           </div>
         </div>
-        <Reviews propertyId={roomId} />
       </div>
     </div>
   );

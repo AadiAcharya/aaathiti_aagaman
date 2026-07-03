@@ -5,6 +5,13 @@ const { Notification } = require('../models/extras.model');
 // ─── POST /api/bookings ───────────────────────────────────────────────────────
 exports.createBooking = async (req, res) => {
   try {
+    if (req.user.role === 'host' || req.user.role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Host accounts cannot make bookings. Please use a guest account.',
+      });
+    }
+
     const {
       roomId, checkIn, checkOut, guests,
       guestName, guestEmail, guestPhone, specialRequests,

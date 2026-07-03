@@ -38,9 +38,7 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.use('/api/auth',          require('./routes/auth.routes'));
 app.use('/api/rooms',         require('./routes/room.routes'));
-app.use('/api/properties',    require('./routes/property.routes'));
 app.use('/api/bookings',      require('./routes/booking.routes'));
-app.use('/api/reviews',       require('./routes/review.routes'));
 app.use('/api/payments',      require('./routes/payment.routes'));
 app.use('/api/messages',      require('./routes/message.routes'));
 app.use('/api/notifications', require('./routes/notification.routes'));

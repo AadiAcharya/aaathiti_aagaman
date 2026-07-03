@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
@@ -11,6 +11,14 @@ export default function Hosting() {
   const { user } = useAuth();
   const isHost = user?.role === "host" || user?.role === "admin";
   const [hostModalOpen, setHostModalOpen] = useState(false);
+
+  // This page only exists to pitch becoming a host - existing hosts don't need it
+  useEffect(() => {
+    if (isHost) navigate("/host", { replace: true });
+  }, [isHost, navigate]);
+
+  if (isHost) return null;
+
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${

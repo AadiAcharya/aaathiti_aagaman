@@ -6,6 +6,7 @@ import MessagesPage from "./host/MessagesPage";
 import NotificationsPage from "./host/NotificationsPage";
 import TransactionHistory from "./host/TransactionHistory";
 import { useTheme } from "../context/ThemeContext";
+import { formatNPR } from "../utils/currency";
 import {
   Home,
   Building2,
@@ -170,7 +171,7 @@ export default function Host() {
             {[
               { label: "Total Listings", value: stats.totalListings },
               { label: "Active Bookings", value: stats.activeBookings },
-              { label: "Total Revenue", value: `$${stats.totalRevenue}` },
+              { label: "Total Revenue", value: formatNPR(stats.totalRevenue) },
               { label: "Avg. Rating", value: stats.avgRating },
             ].map((card) => (
               <div

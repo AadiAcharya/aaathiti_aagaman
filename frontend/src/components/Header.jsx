@@ -7,7 +7,6 @@ import {
   Settings,
   MessageCircle,
   Heart,
-  Home,
   HelpCircle,
   DoorOpen,
   Moon,
@@ -31,7 +30,6 @@ export default function Header() {
         { label: "Add Property", path: "/add-property" },
       ]
     : [
-        { label: "Browse Property", path: "/properties" },
         { label: "Browse Rooms", path: "/rooms" },
         { label: "How It Works", path: "/how-it-works" },
         { label: "Rental Guides", path: "/rental-guide" },
@@ -307,30 +305,6 @@ export default function Header() {
                   </button>
                 </>
               )}
-              {isHost && (
-                <>
-                  <div
-                    className={`border-t ${
-                      theme === "dark" ? "border-slate-700" : "border-gray-200"
-                    }`}
-                  ></div>
-                  <button
-                    onClick={() => {
-                      navigate("/host");
-                      setDropdownOpen(false);
-                    }}
-                    className={`block w-full text-left px-4 py-2 font-semibold transition ${
-                      theme === "dark"
-                        ? "text-blue-400 hover:bg-slate-700"
-                        : "text-blue-600 hover:bg-gray-100"
-                    }`}
-                  >
-                    <span className="inline-flex items-center gap-2">
-                      <Home className="w-4 h-4" /> Host Dashboard
-                    </span>
-                  </button>
-                </>
-              )}
               <button
                 onClick={() => {
                   navigate("/help");
@@ -526,24 +500,7 @@ export default function Header() {
             }`}
           ></div>
 
-          {/* Host & Help for Mobile */}
-          {isHost && (
-            <button
-              onClick={() => {
-                navigate("/host");
-                setMenuOpen(false);
-              }}
-              className={`block w-full text-left font-semibold py-2 transition ${
-                theme === "dark"
-                  ? "text-blue-400 hover:text-blue-300"
-                  : "text-blue-600 hover:text-blue-700"
-              }`}
-            >
-              <span className="inline-flex items-center gap-2">
-                <Home className="w-4 h-4" /> Host Dashboard
-              </span>
-            </button>
-          )}
+          {/* Help for Mobile */}
           <button
             onClick={() => {
               navigate("/help");

@@ -12,10 +12,6 @@ const bookingSchema = new mongoose.Schema(
       ref: "Room",
       required: true,
     },
-    property: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Property",
-    },
 
     // Stay details
     checkIn: { type: Date, required: true },

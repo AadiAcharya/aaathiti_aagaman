@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { hostAPI } from "../../services/api";
 import { useTheme } from "../../context/ThemeContext";
+import { formatNPR } from "../../utils/currency";
 import { CreditCard, Download, DollarSign, Calendar } from "lucide-react";
 
 export default function TransactionHistory() {
@@ -46,7 +47,7 @@ export default function TransactionHistory() {
     const rows = [
       ["ID", "Description", "Amount", "Type", "Status", "Date"],
       ...transactions.map((t) => [
-        t._id, t.description || "-", `$${t.amount}`, t.type, t.status,
+        t._id, t.description || "-", formatNPR(t.amount), t.type, t.status,
         formatDate(t.createdAt),
       ]),
     ];
@@ -113,7 +114,7 @@ export default function TransactionHistory() {
         {[
           { label: "Total Transactions", value: total },
           { label: "Shown",              value: transactions.length },
-          { label: "Total Amount",       value: `$${transactions.reduce((s, t) => s + t.amount, 0).toFixed(2)}` },
+          { label: "Total Amount",       value: formatNPR(transactions.reduce((s, t) => s + t.amount, 0)) },
         ].map((s) => (
           <div
             key={s.label}
@@ -209,7 +210,7 @@ export default function TransactionHistory() {
                 )}
               </div>
               <div className={`text-2xl font-bold ${typeColor(tx.type)}`}>
-                {tx.type === "refund" ? "-" : "+"}${tx.amount.toFixed(2)}
+                {tx.type === "refund" ? "-" : "+"}{formatNPR(tx.amount)}
               </div>
             </div>
           ))}

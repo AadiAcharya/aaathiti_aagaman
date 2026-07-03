@@ -1,16 +1,14 @@
 const User = require('../models/User.model');
 const Room = require('../models/Room.model');
-const Property = require('../models/Property.model');
 const Booking = require('../models/Booking.model');
 const { Transaction } = require('../models/extras.model');
 
 // ─── GET /api/admin/stats ─────────────────────────────────────────────────────
 exports.getStats = async (req, res) => {
   try {
-    const [users, rooms, properties, bookings, revenue] = await Promise.all([
+    const [users, rooms, bookings, revenue] = await Promise.all([
       User.countDocuments(),
       Room.countDocuments(),
-      Property.countDocuments(),
       Booking.countDocuments(),
       Transaction.aggregate([
         { $match: { status: 'completed', type: 'charge' } },
@@ -23,7 +21,6 @@ exports.getStats = async (req, res) => {
       stats: {
         totalUsers: users,
         totalRooms: rooms,
-        totalProperties: properties,
         totalBookings: bookings,
         totalRevenue: revenue[0]?.total || 0,
       },

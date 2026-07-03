@@ -1,63 +1,52 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
-import { propertiesAPI } from "../services/api";
-import {
-  Home as HomeIcon,
-  Heart,
-  HeartCrack,
-  MapPin,
-  Bed,
-  ShowerHead,
-  Car,
-  PawPrint,
-  Search,
-} from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { authAPI } from "../services/api";
+import { Home as HomeIcon, Heart, HeartCrack, Search } from "lucide-react";
 
 export default function Wishlist() {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { isAuthenticated, role } = useAuth();
+  const isHost = role === "host" || role === "admin";
 
-  const [favorites, setFavorites] = useState(() => {
-    try {
-      const saved = localStorage.getItem("favorites");
-      const parsed = saved ? JSON.parse(saved) : [];
-      return parsed.filter(
-        (id) => typeof id === "string" && /^[a-f\d]{24}$/i.test(id),
-      );
-    } catch {
-      return [];
-    }
-  });
-  const [properties, setProperties] = useState([]);
+  const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Redirect if not logged in, or if this is a host account (hosts don't have wishlists)
   useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [favorites]);
+    if (!isAuthenticated) navigate("/sign-in");
+    else if (isHost) navigate("/host");
+  }, [isAuthenticated, isHost, navigate]);
 
   useEffect(() => {
-    const fetchProperties = async () => {
+    if (!isAuthenticated || isHost) return;
+    const fetchWishlist = async () => {
       try {
         setLoading(true);
-        const res = await propertiesAPI.getAll({ limit: 100 });
-        setProperties(res.properties || []);
+        const res = await authAPI.getMe();
+        setRooms(res.user?.wishlist || []);
       } catch (err) {
-        console.error("Failed to fetch properties:", err);
+        console.error("Failed to fetch wishlist:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchProperties();
-  }, []);
+    fetchWishlist();
+  }, [isAuthenticated, isHost]);
 
-  const removeFavorite = (id) => {
-    setFavorites((prev) => prev.filter((f) => f !== id));
+  const removeFromWishlist = async (e, roomId) => {
+    e.stopPropagation();
+    try {
+      await authAPI.toggleWishlist(roomId);
+      setRooms((prev) => prev.filter((r) => (r._id || r.id) !== roomId));
+    } catch (err) {
+      console.error("Failed to remove from wishlist:", err);
+    }
   };
 
-  const wishlistedProperties = properties.filter((p) =>
-    favorites.includes(p._id || p.id),
-  );
+  if (!isAuthenticated || isHost) return null;
 
   return (
     <div
@@ -80,9 +69,7 @@ export default function Wishlist() {
         >
           {loading
             ? "Loading..."
-            : `${wishlistedProperties.length} saved ${
-                wishlistedProperties.length === 1 ? "property" : "properties"
-              }`}
+            : `${rooms.length} saved ${rooms.length === 1 ? "room" : "rooms"}`}
         </p>
 
         {loading ? (
@@ -116,7 +103,7 @@ export default function Wishlist() {
               </div>
             ))}
           </div>
-        ) : wishlistedProperties.length === 0 ? (
+        ) : rooms.length === 0 ? (
           <div
             className={`text-center py-20 rounded-2xl border ${
               theme === "dark"
@@ -143,23 +130,23 @@ export default function Wishlist() {
                 theme === "dark" ? "text-text-secondary" : "text-gray-600"
               }`}
             >
-              Tap the heart icon on any property to save it here.
+              Tap the heart icon on any room to save it here.
             </p>
             <button
-              onClick={() => navigate("/properties")}
+              onClick={() => navigate("/rooms")}
               className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-full font-semibold transition"
             >
-              <Search className="w-4 h-4" /> Browse Properties
+              <Search className="w-4 h-4" /> Browse Rooms
             </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {wishlistedProperties.map((property) => {
-              const id = property._id || property.id;
+            {rooms.map((room) => {
+              const id = room._id || room.id;
               return (
                 <div
                   key={id}
-                  onClick={() => navigate("/properties")}
+                  onClick={() => navigate(`/room/${id}`)}
                   className={`${
                     theme === "dark"
                       ? "bg-bg-secondary border-text-muted/10 hover:shadow-2xl hover:shadow-primary/10"
@@ -167,10 +154,10 @@ export default function Wishlist() {
                   } rounded-2xl overflow-hidden border transition-all duration-300 group cursor-pointer hover:-translate-y-1`}
                 >
                   <div className="h-52 relative overflow-hidden">
-                    {property.image ? (
+                    {room.image ? (
                       <img
-                        src={property.image}
-                        alt={property.title}
+                        src={room.image}
+                        alt={room.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                     ) : (
@@ -179,10 +166,7 @@ export default function Wishlist() {
                       </div>
                     )}
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeFavorite(id);
-                      }}
+                      onClick={(e) => removeFromWishlist(e, id)}
                       title="Remove from wishlist"
                       className="absolute top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition"
                     >
@@ -190,48 +174,21 @@ export default function Wishlist() {
                     </button>
                     <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <p className="text-white font-bold text-lg truncate">
-                        {property.title}
+                        {room.title}
                       </p>
                     </div>
                   </div>
                   <div className="p-5">
                     <p className="text-primary text-sm font-bold mb-1">
-                      {property.price}
+                      {room.priceDisplay || `$${room.price}`}
                     </p>
                     <h3
                       className={`${
                         theme === "dark" ? "text-text-primary" : "text-gray-900"
-                      } font-bold text-base mb-1 truncate`}
+                      } font-bold text-base truncate`}
                     >
-                      {property.title}
+                      {room.title}
                     </h3>
-                    <p
-                      className={`${
-                        theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                      } text-sm mb-3 flex items-center gap-1`}
-                    >
-                      <MapPin className="w-4 h-4" /> {property.location}
-                    </p>
-                    <div
-                      className={`flex gap-3 ${
-                        theme === "dark" ? "text-text-secondary" : "text-gray-500"
-                      } text-xs border-t ${
-                        theme === "dark" ? "border-text-muted/10" : "border-gray-200"
-                      } pt-3`}
-                    >
-                      <span className="flex items-center gap-1">
-                        <Bed className="w-4 h-4" /> {property.bedrooms}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <ShowerHead className="w-4 h-4" /> {property.bathrooms}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Car className="w-4 h-4" /> {property.parking}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <PawPrint className="w-4 h-4" /> {property.pets}
-                      </span>
-                    </div>
                   </div>
                 </div>
               );

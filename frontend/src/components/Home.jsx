@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
-import { propertiesAPI } from "../services/api";
+import { roomsAPI, authAPI } from "../services/api";
 import { blogs } from "../data/propertyData";
 import BecomeHostModal from "./BecomeHostModal";
 import {
@@ -20,13 +20,16 @@ import {
   Star,
 } from "lucide-react";
 
-// ─── Property Card ────────────────────────────────────────────────────────────
-const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
+// ─── Room Card ────────────────────────────────────────────────────────────────
+const RoomCard = ({ room, isFavorite, onToggleFavorite }) => {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { role } = useAuth();
+  const isHost = role === "host" || role === "admin";
+  const priceLabel = room.priceDisplay || `$${room.price}`;
   return (
     <div
-      onClick={() => navigate(`/properties`)}
+      onClick={() => navigate(`/room/${room._id}`)}
       className={`${
         theme === "dark"
           ? "bg-bg-secondary border-text-muted/10 hover:shadow-2xl hover:shadow-primary/10"
@@ -34,10 +37,10 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
       } rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer hover:-translate-y-1`}
     >
       <div className="h-52 relative overflow-hidden">
-        {property.image ? (
+        {room.image ? (
           <img
-            src={property.image}
-            alt={property.title}
+            src={room.image}
+            alt={room.title}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           />
         ) : (
@@ -46,47 +49,48 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleFavorite(property._id || property.id);
-          }}
-          className="absolute top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition"
-        >
-          <Heart
-            className={`w-5 h-5 ${
-              isFavorite
-                ? "fill-red-500 text-red-500"
-                : "fill-white/80 text-gray-700"
-            }`}
-          />
-        </button>
-        {property.isTopRated && (
+        {!isHost && (
+          <button
+            onClick={(e) => onToggleFavorite(e, room._id)}
+            className="absolute top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition"
+          >
+            <Heart
+              className={`w-5 h-5 ${
+                isFavorite
+                  ? "fill-red-500 text-red-500"
+                  : "fill-white/80 text-gray-700"
+              }`}
+            />
+          </button>
+        )}
+        {room.rating >= 4.5 && (
           <div className="absolute top-3 right-3 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold tracking-wide">
             ★ TOP RATED
           </div>
         )}
         <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <p className="text-white font-bold text-lg truncate">
-            {property.title}
+            {room.title}
           </p>
         </div>
       </div>
       <div className="p-5">
-        <p className="text-primary text-sm font-bold mb-1">{property.price}</p>
+        <p className="text-primary text-sm font-bold mb-1">
+          {priceLabel}/night
+        </p>
         <h3
           className={`${
             theme === "dark" ? "text-text-primary" : "text-gray-900"
           } font-bold text-base mb-1 truncate`}
         >
-          {property.title}
+          {room.title}
         </h3>
         <p
           className={`${
             theme === "dark" ? "text-text-secondary" : "text-gray-600"
           } text-sm mb-3 flex items-center gap-1`}
         >
-          <MapPin className="w-4 h-4" /> {property.location}
+          <MapPin className="w-4 h-4" /> {room.location}
         </p>
         <div
           className={`flex gap-3 ${
@@ -96,16 +100,16 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite }) => {
           } pt-3`}
         >
           <span className="flex items-center gap-1">
-            <Bed className="w-4 h-4" /> {property.bedrooms}
+            <Bed className="w-4 h-4" /> {room.bedrooms}
           </span>
           <span className="flex items-center gap-1">
-            <ShowerHead className="w-4 h-4" /> {property.bathrooms}
+            <ShowerHead className="w-4 h-4" /> {room.bathrooms}
           </span>
           <span className="flex items-center gap-1">
-            <Car className="w-4 h-4" /> {property.parking}
+            <Car className="w-4 h-4" /> {room.parking}
           </span>
           <span className="flex items-center gap-1">
-            <PawPrint className="w-4 h-4" /> {property.pets}
+            <PawPrint className="w-4 h-4" /> {room.pets}
           </span>
         </div>
       </div>
@@ -273,59 +277,85 @@ export default function Home() {
   const isHost = user?.role === "host" || user?.role === "admin";
 
   const [hostModalOpen, setHostModalOpen] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("rooms");
+  const [selectedTab, setSelectedTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [guests, setGuests] = useState("");
   const [sortBy, setSortBy] = useState("default");
   const [maxPrice, setMaxPrice] = useState(20000);
   const [email, setEmail] = useState("");
 
-  const [properties, setProperties] = useState([]);
+  const [rooms, setRooms] = useState([]);
   const [topRated, setTopRated] = useState([]);
   const [featured, setFeatured] = useState([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [visibleCount, setVisibleCount] = useState(4);
 
-  // ── Favorites: keyed by MongoDB _id, cleared of stale string IDs ──────────
-  const [favorites, setFavorites] = useState(() => {
+  // ── Wishlist: synced from backend if logged in, else localStorage ─────────
+  const [wishlist, setWishlist] = useState(() => {
     try {
-      const saved = localStorage.getItem("favorites");
-      const parsed = saved ? JSON.parse(saved) : [];
-      // Only keep valid MongoDB ObjectId strings (24 hex chars)
-      return parsed.filter(
-        (id) => typeof id === "string" && /^[a-f\d]{24}$/i.test(id),
-      );
+      const saved = localStorage.getItem("roomFavorites");
+      return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
     }
   });
 
-  useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [favorites]);
-
-  const toggleFavorite = (id) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id],
-    );
+  const toggleLocal = (roomId) => {
+    setWishlist((prev) => {
+      const next = prev.includes(roomId)
+        ? prev.filter((id) => id !== roomId)
+        : [...prev, roomId];
+      localStorage.setItem("roomFavorites", JSON.stringify(next));
+      return next;
+    });
   };
 
-  const fetchProperties = useCallback(
+  const toggleWishlist = async (e, roomId) => {
+    e.stopPropagation();
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const { wishlist: updated } = await authAPI.toggleWishlist(roomId);
+        setWishlist(updated.map((id) => id.toString()));
+      } catch {
+        toggleLocal(roomId);
+      }
+    } else {
+      toggleLocal(roomId);
+    }
+  };
+
+  const isWishlisted = (roomId) =>
+    wishlist.includes(roomId) || wishlist.includes(roomId?.toString());
+
+  const fetchRooms = useCallback(
     async (params = {}) => {
       try {
         setLoading(true);
         const [mainRes, topRes, featRes] = await Promise.all([
-          propertiesAPI.getAll({ category: selectedTab, limit: 20, ...params }),
-          propertiesAPI.getAll({ isTopRated: true, limit: 4 }),
-          propertiesAPI.getAll({ isFeatured: true, limit: 3 }),
+          roomsAPI.getAll({
+            limit: 20,
+            ...(selectedTab !== "all" ? { type: selectedTab } : {}),
+            ...params,
+          }),
+          roomsAPI.getAll({ limit: 20 }),
+          roomsAPI.getAll({ limit: 20 }),
         ]);
-        setProperties(mainRes.properties || []);
+        setRooms(mainRes.rooms || []);
         setTotal(mainRes.total || 0);
-        setTopRated(topRes.properties || []);
-        setFeatured(featRes.properties || []);
+        setTopRated(
+          [...(topRes.rooms || [])]
+            .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+            .slice(0, 4),
+        );
+        setFeatured(
+          [...(featRes.rooms || [])]
+            .sort((a, b) => (b.reviews || 0) - (a.reviews || 0))
+            .slice(0, 3),
+        );
       } catch (err) {
-        console.error("Failed to fetch properties:", err);
+        console.error("Failed to fetch rooms:", err);
       } finally {
         setLoading(false);
       }
@@ -334,37 +364,36 @@ export default function Home() {
   );
 
   useEffect(() => {
-    fetchProperties();
+    fetchRooms();
     setVisibleCount(4);
-  }, [selectedTab, fetchProperties]);
+  }, [selectedTab, fetchRooms]);
 
   const handleSearch = () => {
     const params = {};
     if (searchTerm) params.search = searchTerm;
-    fetchProperties(params);
+    fetchRooms(params);
     setVisibleCount(4);
   };
 
   const resetFilters = () => {
     setSearchTerm("");
-    
     setGuests("");
     setSortBy("default");
     setMaxPrice(20000);
-    setSelectedTab("rooms");
-    fetchProperties({});
+    setSelectedTab("all");
+    fetchRooms({});
     setVisibleCount(4);
   };
 
-  const sortedProperties = [...properties]
+  const sortedRooms = [...rooms]
     .sort((a, b) => {
-      const getNum = (p) => p.priceMin || 0;
+      const getNum = (r) => r.price || 0;
       if (sortBy === "price-low") return getNum(a) - getNum(b);
       if (sortBy === "price-high") return getNum(b) - getNum(a);
       if (sortBy === "name") return a.title.localeCompare(b.title);
       return 0;
     })
-    .filter((p) => !p.priceMax || p.priceMax <= maxPrice);
+    .filter((r) => !r.price || r.price <= maxPrice);
 
   const handleNewsletterSubmit = () => {
     if (!email) {
@@ -375,24 +404,25 @@ export default function Home() {
     setEmail("");
   };
 
-  // All loaded properties deduplicated (for favorites lookup)
-  const allLoadedProperties = [...properties, ...topRated, ...featured].filter(
-    (p, idx, arr) => {
-      const id = p._id || p.id;
-      return arr.findIndex((x) => (x._id || x.id) === id) === idx;
-    },
+  // All loaded rooms deduplicated (for wishlist lookup)
+  const allLoadedRooms = [...rooms, ...topRated, ...featured].filter(
+    (r, idx, arr) => arr.findIndex((x) => x._id === r._id) === idx,
   );
 
-  const favoriteProperties = allLoadedProperties.filter((p) =>
-    favorites.includes(p._id || p.id),
-  );
+  const favoriteRooms = allLoadedRooms.filter((r) => isWishlisted(r._id));
 
   const filtersActive =
     searchTerm ||
     sortBy !== "default" ||
     maxPrice !== 20000 ||
-    selectedTab !== "rooms";
-  const tabs = ["rooms", "flats", "hostels", "villas"];
+    selectedTab !== "all";
+
+  const tabs = [
+    { value: "all", label: "All" },
+    { value: "single", label: "Single" },
+    { value: "double", label: "Double" },
+    { value: "suite", label: "Suite" },
+  ];
 
   return (
     <div
@@ -444,10 +474,10 @@ export default function Home() {
             <div className="flex gap-2 sm:gap-6 mb-6 overflow-x-auto pb-1">
               {tabs.map((tab) => (
                 <button
-                  key={tab}
-                  onClick={() => setSelectedTab(tab)}
+                  key={tab.value}
+                  onClick={() => setSelectedTab(tab.value)}
                   className={`capitalize font-semibold pb-2 px-1 text-sm sm:text-base whitespace-nowrap transition border-b-2 ${
-                    selectedTab === tab
+                    selectedTab === tab.value
                       ? "text-primary border-primary"
                       : `${
                           theme === "dark"
@@ -456,7 +486,7 @@ export default function Home() {
                         } border-transparent hover:text-primary`
                   }`}
                 >
-                  {tab}
+                  {tab.label}
                 </button>
               ))}
             </div>
@@ -597,7 +627,7 @@ export default function Home() {
           subtitle={loading ? "Loading..." : `${total} properties found`}
           action={
             <button
-              onClick={() => navigate("/properties")}
+              onClick={() => navigate("/rooms")}
               className="text-primary font-semibold hover:underline text-sm flex items-center gap-1 whitespace-nowrap"
             >
               Show on Map →
@@ -610,7 +640,7 @@ export default function Home() {
               <SkeletonCard key={i} />
             ))}
           </div>
-        ) : sortedProperties.length === 0 ? (
+        ) : sortedRooms.length === 0 ? (
           <div
             className={`text-center py-16 ${
               theme === "dark" ? "text-text-secondary" : "text-gray-600"
@@ -631,16 +661,16 @@ export default function Home() {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {sortedProperties.slice(0, visibleCount).map((property) => (
-                <PropertyCard
-                  key={property._id || property.id}
-                  property={property}
-                  isFavorite={favorites.includes(property._id || property.id)}
-                  onToggleFavorite={toggleFavorite}
+              {sortedRooms.slice(0, visibleCount).map((room) => (
+                <RoomCard
+                  key={room._id}
+                  room={room}
+                  isFavorite={isWishlisted(room._id)}
+                  onToggleFavorite={toggleWishlist}
                 />
               ))}
             </div>
-            {visibleCount < sortedProperties.length && (
+            {visibleCount < sortedRooms.length && (
               <div className="text-center mt-10">
                 <button
                   onClick={() => setVisibleCount((prev) => prev + 4)}
@@ -650,7 +680,7 @@ export default function Home() {
                       : "bg-white text-gray-900"
                   } hover:bg-primary/10 font-semibold px-10 py-3 rounded-full border border-primary/20 transition`}
                 >
-                  Load More ({sortedProperties.length - visibleCount} remaining)
+                  Load More ({sortedRooms.length - visibleCount} remaining)
                 </button>
               </div>
             )}
@@ -671,7 +701,7 @@ export default function Home() {
               subtitle="Our highest-rated stays, loved by guests"
               action={
                 <button
-                  onClick={() => navigate("/properties")}
+                  onClick={() => navigate("/rooms")}
                   className="text-primary font-semibold hover:underline text-sm whitespace-nowrap"
                 >
                   View All →
@@ -679,12 +709,12 @@ export default function Home() {
               }
             />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {topRated.map((property) => (
-                <PropertyCard
-                  key={property._id || property.id}
-                  property={property}
-                  isFavorite={favorites.includes(property._id || property.id)}
-                  onToggleFavorite={toggleFavorite}
+              {topRated.map((room) => (
+                <RoomCard
+                  key={room._id}
+                  room={room}
+                  isFavorite={isWishlisted(room._id)}
+                  onToggleFavorite={toggleWishlist}
                 />
               ))}
             </div>
@@ -700,19 +730,19 @@ export default function Home() {
             subtitle="Handpicked properties for an exceptional stay"
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featured.map((property, i) => (
+            {featured.map((room, i) => (
               <div
-                key={property._id || property.id}
+                key={room._id}
                 className={i === 0 ? "md:row-span-2" : ""}
               >
                 <div
-                  onClick={() => navigate("/properties")}
+                  onClick={() => navigate(`/room/${room._id}`)}
                   className="group relative rounded-2xl overflow-hidden cursor-pointer h-full min-h-[280px]"
                 >
-                  {property.image ? (
+                  {room.image ? (
                     <img
-                      src={property.image}
-                      alt={property.title}
+                      src={room.image}
+                      alt={room.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       style={{ minHeight: i === 0 ? "400px" : "200px" }}
                     />
@@ -730,30 +760,29 @@ export default function Home() {
                       Featured
                     </p>
                     <h3 className="text-white font-bold text-lg mb-1">
-                      {property.title}
+                      {room.title}
                     </h3>
                     <p className="text-white/80 text-sm flex items-center gap-1">
-                      <MapPin className="w-4 h-4" /> {property.location}
+                      <MapPin className="w-4 h-4" /> {room.location}
                     </p>
                     <p className="text-primary font-bold mt-2">
-                      {property.price}
+                      {room.priceDisplay || `$${room.price}`}/night
                     </p>
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavorite(property._id || property.id);
-                    }}
-                    className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition"
-                  >
-                    <Heart
-                      className={`w-5 h-5 ${
-                        favorites.includes(property._id || property.id)
-                          ? "fill-red-500 text-red-500"
-                          : "fill-white/80 text-gray-700"
-                      }`}
-                    />
-                  </button>
+                  {!isHost && (
+                    <button
+                      onClick={(e) => toggleWishlist(e, room._id)}
+                      className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition"
+                    >
+                      <Heart
+                        className={`w-5 h-5 ${
+                          isWishlisted(room._id)
+                            ? "fill-red-500 text-red-500"
+                            : "fill-white/80 text-gray-700"
+                        }`}
+                      />
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -761,8 +790,8 @@ export default function Home() {
         </div>
       )}
 
-      {/* ── Favorites ─────────────────────────────────────────────────────── */}
-      {favorites.length > 0 && (
+      {/* ── Favorites (hosts don't have a wishlist) ─────────────────────────── */}
+      {!isHost && wishlist.length > 0 && (
         <div
           className={`${
             theme === "dark" ? "bg-bg-secondary/50" : "bg-gray-100"
@@ -770,14 +799,14 @@ export default function Home() {
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <SectionHeader
-              title={`My Favorites (${favoriteProperties.length})`}
+              title={`My Favorites (${favoriteRooms.length})`}
               subtitle={
-                favoriteProperties.length === 0
+                favoriteRooms.length === 0
                   ? "Scroll down to add properties to your favorites"
                   : undefined
               }
             />
-            {favoriteProperties.length === 0 ? (
+            {favoriteRooms.length === 0 ? (
               <div
                 className={`text-center py-8 ${
                   theme === "dark" ? "text-text-secondary" : "text-gray-600"
@@ -792,8 +821,8 @@ export default function Home() {
                 </p>
                 <button
                   onClick={() => {
-                    setFavorites([]);
-                    localStorage.removeItem("favorites");
+                    setWishlist([]);
+                    localStorage.removeItem("roomFavorites");
                   }}
                   className="mt-4 text-primary underline text-sm"
                 >
@@ -802,12 +831,12 @@ export default function Home() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {favoriteProperties.map((property) => (
-                  <PropertyCard
-                    key={property._id || property.id}
-                    property={property}
+                {favoriteRooms.map((room) => (
+                  <RoomCard
+                    key={room._id}
+                    room={room}
                     isFavorite={true}
-                    onToggleFavorite={toggleFavorite}
+                    onToggleFavorite={toggleWishlist}
                   />
                 ))}
               </div>
@@ -960,25 +989,25 @@ export default function Home() {
             <div className="flex flex-wrap gap-2 mb-8">
               {tabs.map((tab) => (
                 <button
-                  key={tab}
+                  key={tab.value}
                   onClick={() => {
-                    setSelectedTab(tab);
+                    setSelectedTab(tab.value);
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                   className={`capitalize px-4 py-2 border rounded-full text-sm font-semibold transition ${
-                    selectedTab === tab
+                    selectedTab === tab.value
                       ? "bg-primary text-white border-primary"
                       : theme === "dark"
                         ? "bg-bg-secondary border-primary/20 text-text-primary hover:bg-primary hover:text-white hover:border-primary"
                         : "bg-white border-primary/20 text-gray-900 hover:bg-primary hover:text-white hover:border-primary"
                   }`}
                 >
-                  {tab}
+                  {tab.label}
                 </button>
               ))}
             </div>
             <button
-              onClick={() => navigate("/properties")}
+              onClick={() => navigate("/rooms")}
               className="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-full font-semibold transition shadow-lg shadow-primary/20"
             >
               Find A Property
@@ -1023,7 +1052,7 @@ export default function Home() {
             <div className="space-y-2 mb-8">
               {[
                 { label: "Ask A Question", onClick: () => navigate("/help") },
-                { label: "Find A Property", onClick: () => navigate("/properties") },
+                { label: "Find A Property", onClick: () => navigate("/rooms") },
                 ...(!isHost
                   ? [{ label: "Become A Host", onClick: () => setHostModalOpen(true) }]
                   : []),

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { authAPI } from "../services/api";
-import { Home, DollarSign, Star, House, PartyPopper } from "lucide-react";
+import { Home, DollarSign, Star, House, PartyPopper, ShieldCheck } from "lucide-react";
 
 const STEPS = [
   {
@@ -23,19 +23,30 @@ const STEPS = [
   },
 ];
 
+const PROPERTY_TYPES = ["Apartment", "House", "Villa", "Room", "Hostel", "Other"];
+
 export default function BecomeHostModal({ isOpen, onClose }) {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { user, updateUser } = useAuth();
-  const [step, setStep] = useState(0); // 0 = intro, 1 = activated
+  const [step, setStep] = useState(0); // 0 = intro, 1 = application form, 2 = success
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [form, setForm] = useState({
+    phone: "",
+    address: "",
+    governmentId: "",
+    propertyType: "",
+    bio: "",
+  });
 
   if (!isOpen) return null;
 
   const isHost = user?.role === "host" || user?.role === "admin";
 
-  const handleSubmit = async () => {
+  const setField = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+
+  const handleContinue = () => {
     if (!user) {
       onClose();
       navigate("/sign-in");
@@ -46,12 +57,22 @@ export default function BecomeHostModal({ isOpen, onClose }) {
       navigate("/add-property");
       return;
     }
+    setForm((p) => ({ ...p, phone: p.phone || user.phone || "" }));
+    setError("");
+    setStep(1);
+  };
+
+  const handleSubmitApplication = async () => {
+    if (!form.phone.trim() || !form.address.trim() || !form.governmentId.trim()) {
+      setError("Phone, address, and government ID are required to verify your application");
+      return;
+    }
     try {
       setSubmitting(true);
       setError("");
-      const { user: updated } = await authAPI.becomeHost();
+      const { user: updated } = await authAPI.becomeHost(form);
       updateUser(updated);
-      setStep(1);
+      setStep(2);
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
@@ -67,8 +88,18 @@ export default function BecomeHostModal({ isOpen, onClose }) {
   const handleClose = () => {
     setStep(0);
     setError("");
+    setForm({ phone: "", address: "", governmentId: "", propertyType: "", bio: "" });
     onClose();
   };
+
+  const inputClass = `w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary ${
+    theme === "dark"
+      ? "bg-background border-primary/20 text-text-primary placeholder-text-muted"
+      : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400"
+  }`;
+  const labelClass = `text-xs font-semibold uppercase tracking-wide block mb-1.5 ${
+    theme === "dark" ? "text-text-secondary" : "text-gray-500"
+  }`;
 
   return (
     <div
@@ -80,7 +111,7 @@ export default function BecomeHostModal({ isOpen, onClose }) {
 
       {/* Modal */}
       <div
-        className={`relative rounded-3xl shadow-2xl w-full max-w-lg border overflow-hidden ${
+        className={`relative rounded-3xl shadow-2xl w-full max-w-lg border overflow-hidden max-h-[90vh] overflow-y-auto ${
           theme === "dark"
             ? "bg-background border-text-muted/10"
             : "bg-white border-gray-200"
@@ -99,7 +130,7 @@ export default function BecomeHostModal({ isOpen, onClose }) {
           ✕
         </button>
 
-        {step === 0 ? (
+        {step === 0 && (
           <>
             {/* Header gradient */}
             <div className="bg-gradient-to-br from-primary/20 to-primary/5 px-8 pt-10 pb-8 text-center">
@@ -169,12 +200,6 @@ export default function BecomeHostModal({ isOpen, onClose }) {
               </div>
             )}
 
-            {error && (
-              <div className="mx-8 mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-center">
-                <p className="text-red-700 text-sm font-semibold">{error}</p>
-              </div>
-            )}
-
             {/* Actions */}
             <div className="px-8 pb-8 flex gap-3">
               <button
@@ -188,21 +213,128 @@ export default function BecomeHostModal({ isOpen, onClose }) {
                 Maybe Later
               </button>
               <button
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="flex-1 py-3 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold text-sm transition shadow-lg shadow-primary/20 disabled:opacity-60"
+                onClick={handleContinue}
+                className="flex-1 py-3 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold text-sm transition shadow-lg shadow-primary/20"
               >
-                {submitting
-                  ? "Submitting..."
-                  : isHost
-                    ? "List a Property →"
-                    : user
-                      ? "Become a Host →"
-                      : "Sign In to Continue →"}
+                {isHost
+                  ? "List a Property →"
+                  : user
+                    ? "Continue →"
+                    : "Sign In to Continue →"}
               </button>
             </div>
           </>
-        ) : (
+        )}
+
+        {step === 1 && (
+          /* ── Application form ─────────────────────────────────────────── */
+          <div className="px-8 py-8">
+            <div className="flex items-center gap-3 mb-1">
+              <ShieldCheck className="w-6 h-6 text-primary shrink-0" />
+              <h2
+                className={`text-xl font-bold ${
+                  theme === "dark" ? "text-text-primary" : "text-gray-900"
+                }`}
+              >
+                Verify Your Application
+              </h2>
+            </div>
+            <p
+              className={`text-sm mb-6 ${
+                theme === "dark" ? "text-text-secondary" : "text-gray-600"
+              }`}
+            >
+              We ask for a few details to verify hosts and keep the platform trustworthy.
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <label className={labelClass}>Phone Number</label>
+                <input
+                  type="tel"
+                  value={form.phone}
+                  onChange={(e) => setField("phone", e.target.value)}
+                  placeholder="e.g. +977 9800000000"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Address</label>
+                <input
+                  type="text"
+                  value={form.address}
+                  onChange={(e) => setField("address", e.target.value)}
+                  placeholder="Your current residential address"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Government ID Number</label>
+                <input
+                  type="text"
+                  value={form.governmentId}
+                  onChange={(e) => setField("governmentId", e.target.value)}
+                  placeholder="Citizenship / Passport / National ID No."
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Property Type You Plan to List</label>
+                <select
+                  value={form.propertyType}
+                  onChange={(e) => setField("propertyType", e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">Select one (optional)</option>
+                  {PROPERTY_TYPES.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className={labelClass}>Tell us about yourself (optional)</label>
+                <textarea
+                  value={form.bio}
+                  onChange={(e) => setField("bio", e.target.value)}
+                  rows={3}
+                  placeholder="Why do you want to host on Aatithi Aagaman?"
+                  className={inputClass}
+                />
+              </div>
+            </div>
+
+            {error && (
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-center">
+                <p className="text-red-700 text-sm font-semibold">{error}</p>
+              </div>
+            )}
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setStep(0)}
+                disabled={submitting}
+                className={`flex-1 py-3 border-2 rounded-xl font-semibold text-sm transition disabled:opacity-50 ${
+                  theme === "dark"
+                    ? "border-text-muted/20 text-text-secondary hover:border-primary/30"
+                    : "border-gray-200 text-gray-600 hover:border-primary/30"
+                }`}
+              >
+                Back
+              </button>
+              <button
+                onClick={handleSubmitApplication}
+                disabled={submitting}
+                className="flex-1 py-3 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold text-sm transition shadow-lg shadow-primary/20 disabled:opacity-60"
+              >
+                {submitting ? "Verifying..." : "Submit Application →"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
           /* ── Success screen ───────────────────────────────────────────── */
           <div className="px-8 py-12 text-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -213,14 +345,14 @@ export default function BecomeHostModal({ isOpen, onClose }) {
                 theme === "dark" ? "text-text-primary" : "text-gray-900"
               }`}
             >
-              You're a Host Now!
+              Verified — You're a Host Now!
             </h2>
             <p
               className={`text-sm leading-relaxed mb-8 max-w-xs mx-auto ${
                 theme === "dark" ? "text-text-secondary" : "text-gray-600"
               }`}
             >
-              Your account has been upgraded. You can list your first property right away.
+              Your application has been recorded and your account upgraded. You can list your first property right away.
             </p>
 
             <div className="space-y-3">

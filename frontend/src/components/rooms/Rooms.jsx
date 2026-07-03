@@ -1,12 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
 import { roomsAPI, authAPI } from "../../services/api";
+import { formatNPR } from "../../utils/currency";
 import { Heart } from "lucide-react";
 
 export default function Rooms() {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { role } = useAuth();
+  const isHost = role === "host" || role === "admin";
 
   const [rooms, setRooms] = useState([]);
   const [total, setTotal] = useState(0);
@@ -146,9 +150,9 @@ export default function Rooms() {
             } border rounded-lg focus:outline-none focus:border-primary`}
           >
             <option value="all">Price Range</option>
-            <option value="under-150">Under $150</option>
-            <option value="150-250">$150 - $250</option>
-            <option value="over-250">Over $250</option>
+            <option value="under-15000">Under Rs 15,000</option>
+            <option value="15000-30000">Rs 15,000 - Rs 30,000</option>
+            <option value="over-30000">Over Rs 30,000</option>
           </select>
 
           <select
@@ -280,7 +284,7 @@ export default function Rooms() {
                         theme === "dark" ? "text-primary" : "text-blue-600"
                       }`}
                     >
-                      ${room.price}
+                      {formatNPR(room.price)}
                       <span
                         className={`text-sm font-normal ${
                           theme === "dark"
@@ -365,22 +369,24 @@ export default function Rooms() {
                     >
                       Book Now
                     </button>
-                    <button
-                      onClick={(e) => toggleWishlist(e, room._id)}
-                      className={`px-4 border-2 ${
-                        theme === "dark"
-                          ? "border-primary text-primary hover:bg-primary hover:text-white"
-                          : "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                      } font-semibold rounded-lg transition`}
-                    >
-                      <Heart
-                        className={`w-6 h-6 mx-auto ${
-                          isWishlisted(room._id)
-                            ? "fill-red-500 text-red-500"
-                            : "fill-none text-current"
-                        }`}
-                      />
-                    </button>
+                    {!isHost && (
+                      <button
+                        onClick={(e) => toggleWishlist(e, room._id)}
+                        className={`px-4 border-2 ${
+                          theme === "dark"
+                            ? "border-primary text-primary hover:bg-primary hover:text-white"
+                            : "border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                        } font-semibold rounded-lg transition`}
+                      >
+                        <Heart
+                          className={`w-6 h-6 mx-auto ${
+                            isWishlisted(room._id)
+                              ? "fill-red-500 text-red-500"
+                              : "fill-none text-current"
+                          }`}
+                        />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

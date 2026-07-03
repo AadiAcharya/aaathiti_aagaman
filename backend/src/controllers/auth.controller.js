@@ -161,9 +161,28 @@ exports.becomeHost = async (req, res) => {
       return res.json({ success: true, user: req.user });
     }
 
+    const { phone, address, governmentId, propertyType, bio } = req.body;
+    if (!phone || !address || !governmentId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Phone, address, and government ID are required to verify your host application',
+      });
+    }
+
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { role: 'host' },
+      {
+        role: 'host',
+        phone,
+        hostProfile: {
+          phone,
+          address,
+          governmentId,
+          propertyType: propertyType || '',
+          bio: bio || '',
+          submittedAt: new Date(),
+        },
+      },
       { new: true, runValidators: true }
     ).select('-password');
 
@@ -176,6 +195,13 @@ exports.becomeHost = async (req, res) => {
 // ─── POST /api/auth/wishlist/:roomId ─────────────────────────────────────────
 exports.toggleWishlist = async (req, res) => {
   try {
+    if (req.user.role === 'host' || req.user.role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Host accounts cannot use wishlists. Please use a guest account.',
+      });
+    }
+
     const user = await User.findById(req.user.id);
     const roomId = req.params.roomId;
     const idx = user.wishlist.indexOf(roomId);

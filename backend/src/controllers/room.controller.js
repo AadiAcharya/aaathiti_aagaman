@@ -1,7 +1,7 @@
 const Room = require('../models/Room.model');
 
 // ─── GET /api/rooms ───────────────────────────────────────────────────────────
-// Supports: ?type=suite&priceRange=150-250&sortBy=price-low&page=1&limit=6
+// Supports: ?type=suite&priceRange=15000-30000&sortBy=price-low&page=1&limit=6
 exports.getRooms = async (req, res) => {
   try {
     const { type, priceRange, sortBy, page = 1, limit = 6, search } = req.query;
@@ -11,13 +11,13 @@ exports.getRooms = async (req, res) => {
     // Filter by type
     if (type && type !== 'all') query.type = type;
 
-    // Filter by price range (matches frontend logic)
-    if (priceRange === 'under-150') {
-      query.price = { $lt: 150 };
-    } else if (priceRange === '150-250') {
-      query.price = { $gte: 150, $lte: 250 };
-    } else if (priceRange === 'over-250') {
-      query.price = { $gt: 250 };
+    // Filter by price range in NRS (matches frontend logic)
+    if (priceRange === 'under-15000') {
+      query.price = { $lt: 15000 };
+    } else if (priceRange === '15000-30000') {
+      query.price = { $gte: 15000, $lte: 30000 };
+    } else if (priceRange === 'over-30000') {
+      query.price = { $gt: 30000 };
     }
 
     // Search by title/description
@@ -146,6 +146,13 @@ exports.checkAvailability = async (req, res) => {
 // ─── POST /api/rooms/:id/reviews ──────────────────────────────────────────────
 exports.addReview = async (req, res) => {
   try {
+    if (req.user.role === 'host' || req.user.role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Host accounts cannot leave reviews. Please use a guest account.',
+      });
+    }
+
     const { rating, comment } = req.body;
     const room = await Room.findById(req.params.id);
     if (!room) return res.status(404).json({ success: false, message: 'Room not found' });

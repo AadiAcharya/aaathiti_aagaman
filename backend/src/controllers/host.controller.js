@@ -1,7 +1,7 @@
 const Room = require('../models/Room.model');
-const Property = require('../models/Property.model');
 const Booking = require('../models/Booking.model');
 const { Message, Notification, Transaction } = require('../models/extras.model');
+const { formatNPR } = require('../utils/currency');
 
 // ─── GET /api/host/dashboard ──────────────────────────────────────────────────
 // Stats for RoomStatus.jsx dashboard cards
@@ -52,7 +52,7 @@ exports.getHostListings = async (req, res) => {
           ...room.toObject(),
           bookingsCount: bookings,
           status: room.isAvailable ? 'Active' : 'Inactive',
-          priceDisplay: `$${room.price}/night`,
+          priceDisplay: `${formatNPR(room.price)}/night`,
         };
       })
     );
