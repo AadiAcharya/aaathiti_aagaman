@@ -22,7 +22,6 @@ import Saftey from "./components/AddProperty/Saftey.jsx";
 import HostReservation from "./components/host/HostReservation.jsx";
 import TransactionHistory from "./components/host/TransactionHistory.jsx";
 import NotificationsPage from "./components/host/NotificationsPage.jsx";
-import MessagesPage from "./components/host/MessagesPage.jsx";
 import SignIn from "./components/sign/SignIn.jsx";
 import SignUp from "./components/sign/SignUp.jsx";
 import MainLayout from "./MainLayout";
@@ -31,13 +30,13 @@ import Help from "./components/Help.jsx";
 import HowItWorks from "./components/HowItWorks.jsx";
 import RentalGuide from "./components/RentalGuide.jsx";
 import Profile from "./components/Profile.jsx";
+import AdminDashboard from "./components/admin/AdminDashboard.jsx";
 
-// Hosts/admins land on their dashboard instead of the guest homepage
+// Hosts/admins land on their own dashboard instead of the guest homepage
 function HomeGate() {
   const { role } = useAuth();
-  if (role === "host" || role === "admin") {
-    return <Navigate to="/host" replace />;
-  }
+  if (role === "admin") return <Navigate to="/admin" replace />;
+  if (role === "host") return <Navigate to="/host" replace />;
   return <Home />;
 }
 
@@ -140,14 +139,6 @@ function AppContent() {
                 </RoleRoute>
               }
             />
-            <Route
-              path="message"
-              element={
-                <RoleRoute allow={["host", "admin"]}>
-                  <MessagesPage />
-                </RoleRoute>
-              }
-            />
             <Route path="sign-in" element={<SignIn />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="signin" element={<SignIn />} />
@@ -163,6 +154,14 @@ function AppContent() {
             <Route path="help" element={<Help />} />
             <Route path="how-it-works" element={<HowItWorks />} />
             <Route path="rental-guide" element={<RentalGuide />} />
+            <Route
+              path="/admin"
+              element={
+                <RoleRoute allow={["admin"]}>
+                  <AdminDashboard />
+                </RoleRoute>
+              }
+            />
           </Routes>
         </main>
 

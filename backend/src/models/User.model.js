@@ -43,6 +43,8 @@ const userSchema = new mongoose.Schema(
     phone: { type: String, default: '' },
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Room' }],
     isVerified: { type: Boolean, default: false },
+    isBanned: { type: Boolean, default: false },
+    banReason: { type: String, default: '' },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
 

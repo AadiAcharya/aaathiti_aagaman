@@ -125,9 +125,9 @@ export default function Description() {
 
           {/* Price */}
           <div>
-            <label className="text-text-primary font-semibold text-sm block mb-2">Price per Month (USD) *</label>
+            <label className="text-text-primary font-semibold text-sm block mb-2">Price per Night (NRs) *</label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted font-bold">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted font-bold">Rs</span>
               <input
                 type="number"
                 value={form.price}

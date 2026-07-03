@@ -8,16 +8,18 @@ import BecomeHostModal from "./BecomeHostModal";
 export default function Hosting() {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const isHost = user?.role === "host" || user?.role === "admin";
   const [hostModalOpen, setHostModalOpen] = useState(false);
 
-  // This page only exists to pitch becoming a host - existing hosts don't need it
+  // This page only exists to pitch becoming a host to logged-out visitors -
+  // anyone already signed in (as a user or a host) has already made that choice
   useEffect(() => {
     if (isHost) navigate("/host", { replace: true });
-  }, [isHost, navigate]);
+    else if (isAuthenticated) navigate("/", { replace: true });
+  }, [isHost, isAuthenticated, navigate]);
 
-  if (isHost) return null;
+  if (isAuthenticated) return null;
 
   return (
     <div

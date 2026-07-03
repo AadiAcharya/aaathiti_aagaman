@@ -357,7 +357,7 @@ export default function Profile() {
               <PreferenceItem
                 label="Currency"
                 description="Set your default currency for payments"
-                value="USD"
+                value="NRS"
               />
               <TogglePreference
                 label="Email Notifications"

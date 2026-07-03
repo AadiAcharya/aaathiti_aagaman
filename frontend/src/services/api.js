@@ -117,9 +117,6 @@ export const hostAPI = {
     }),
   getTransactions: (params = {}) =>
     request("/host/transactions?" + new URLSearchParams(params)),
-  getMessages: () => request("/host/messages"),
-  sendMessage: (body) =>
-    request("/host/messages", { method: "POST", body: JSON.stringify(body) }),
   getNotifications: () => request("/host/notifications"),
   markAllRead: () => request("/host/notifications/read-all", { method: "PUT" }),
 };
@@ -137,6 +134,24 @@ export const adminAPI = {
   deleteUser: (id) => request(`/admin/users/${id}`, { method: "DELETE" }),
   getBookings: (params = {}) =>
     request("/admin/bookings?" + new URLSearchParams(params)),
+  getReports: (params = {}) =>
+    request("/reports?" + new URLSearchParams(params)),
+  updateReport: (id, body) =>
+    request(`/reports/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+};
+
+// ─── MESSAGES (guest/host/admin - any authenticated user) ────────────────────
+export const messageAPI = {
+  getMine: () => request("/messages"),
+  send: (body) =>
+    request("/messages", { method: "POST", body: JSON.stringify(body) }),
+  markRead: (id) => request(`/messages/${id}/read`, { method: "PUT" }),
+};
+
+// ─── REPORTS ──────────────────────────────────────────────────────────────────
+export const reportAPI = {
+  create: (body) =>
+    request("/reports", { method: "POST", body: JSON.stringify(body) }),
 };
 
 // ─── BOOKINGS ─────────────────────────────────────────────────────────────────

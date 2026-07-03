@@ -6,7 +6,7 @@ exports.getRooms = async (req, res) => {
   try {
     const { type, priceRange, sortBy, page = 1, limit = 6, search } = req.query;
 
-    const query = {};
+    const query = { isAvailable: true };
 
     // Filter by type
     if (type && type !== 'all') query.type = type;

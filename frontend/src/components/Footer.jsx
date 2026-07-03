@@ -123,7 +123,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <a
-                  href="/properties"
+                  href="/rooms"
                   className={`${
                     theme === "dark"
                       ? "text-text-secondary hover:text-primary"
@@ -257,7 +257,7 @@ export default function Footer() {
                     theme === "dark" ? "text-text-secondary" : "text-gray-700"
                   }`}
                 >
-                  100 Smart Street, LA, USA
+                  Bharatpur-10, Chitwan, Nepal
                 </span>
               </li>
             </ul>

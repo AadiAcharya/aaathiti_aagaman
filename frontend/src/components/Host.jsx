@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { hostAPI, roomsAPI } from "../services/api";
 import HostReservation from "./host/HostReservation";
-import MessagesPage from "./host/MessagesPage";
+import Messages from "./Messages";
 import NotificationsPage from "./host/NotificationsPage";
 import TransactionHistory from "./host/TransactionHistory";
+import StarRating from "./common/StarRating";
+import TopRatedBadge from "./common/TopRatedBadge";
 import { useTheme } from "../context/ThemeContext";
 import { formatNPR } from "../utils/currency";
+import { isTopRated } from "../utils/rating";
 import {
   Home,
   Building2,
@@ -277,6 +280,7 @@ export default function Host() {
                             "Type",
                             "Status",
                             "Price",
+                            "Rating",
                             "Bookings",
                             "Actions",
                           ].map((h) => (
@@ -337,6 +341,31 @@ export default function Host() {
                             <td className="px-4 py-3 font-semibold">
                               {listing.priceDisplay}
                             </td>
+                            <td className="px-4 py-3">
+                              {listing.reviews > 0 ? (
+                                <div className="flex flex-col gap-1">
+                                  <StarRating
+                                    rating={listing.rating}
+                                    reviews={listing.reviews}
+                                    showValue
+                                    size="w-3.5 h-3.5"
+                                  />
+                                  {isTopRated(listing.rating, listing.reviews) && (
+                                    <TopRatedBadge />
+                                  )}
+                                </div>
+                              ) : (
+                                <span
+                                  className={`text-sm ${
+                                    theme === "dark"
+                                      ? "text-slate-500"
+                                      : "text-gray-400"
+                                  }`}
+                                >
+                                  No reviews yet
+                                </span>
+                              )}
+                            </td>
                             <td
                               className={`px-4 py-3 ${
                                 theme === "dark"
@@ -374,7 +403,7 @@ export default function Host() {
                   </div>
                 ))}
               {activeTab === "reservation" && <HostReservation />}
-              {activeTab === "messages" && <MessagesPage />}
+              {activeTab === "messages" && <Messages embedded />}
               {activeTab === "notifications" && <NotificationsPage />}
               {activeTab === "transactions" && <TransactionHistory />}
             </div>

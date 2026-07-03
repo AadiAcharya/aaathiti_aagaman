@@ -82,6 +82,15 @@ exports.googleAuth = async (req, res) => {
       }
     }
 
+    if (user.isBanned) {
+      return res.status(403).json({
+        success: false,
+        message: user.banReason
+          ? `Your account has been suspended: ${user.banReason}`
+          : 'Your account has been suspended.',
+      });
+    }
+
     sendTokenResponse(user, 200, res);
   } catch (err) {
     res.status(401).json({ success: false, message: 'Google authentication failed' });
@@ -101,6 +110,14 @@ exports.login = async (req, res) => {
     if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
+    if (user.isBanned) {
+      return res.status(403).json({
+        success: false,
+        message: user.banReason
+          ? `Your account has been suspended: ${user.banReason}`
+          : 'Your account has been suspended.',
+      });
+    }
 
     sendTokenResponse(user, 200, res);
   } catch (err) {
@@ -111,7 +128,10 @@ exports.login = async (req, res) => {
 // ─── GET /api/auth/me ─────────────────────────────────────────────────────────
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).populate('wishlist', 'title image price priceDisplay');
+    const user = await User.findById(req.user.id).populate(
+      'wishlist',
+      'title image price priceDisplay rating reviews',
+    );
     res.json({ success: true, user });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

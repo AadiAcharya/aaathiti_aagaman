@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { roomsAPI } from "../../services/api";
+import { formatNPR } from "../../utils/currency";
 import { PartyPopper, Home, MapPin, Tag, Bed, ShowerHead, PawPrint, Rocket } from "lucide-react";
 
 const STORAGE_KEYS = [
@@ -83,7 +84,7 @@ export default function Post() {
         location:     property.location || "Not specified",
         image:        property.image || "",
         price:        Number(property.price) || 0,
-        priceDisplay: `$${property.price || 0}`,
+        priceDisplay: formatNPR(property.price || 0),
         type:         bedroomCount >= 3 ? "suite" : bedroomCount === 2 ? "double" : "single",
         bedType:      property.type || "",
         bedrooms:     String(property.bedrooms || "1"),
@@ -221,7 +222,7 @@ export default function Post() {
                 ))}
                 <div className="flex justify-between items-center pt-2">
                   <span className="text-text-secondary text-sm">Price</span>
-                  <span className="text-2xl font-bold text-primary">${property.price}</span>
+                  <span className="text-2xl font-bold text-primary">{formatNPR(property.price)}</span>
                 </div>
               </div>
 

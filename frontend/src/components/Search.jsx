@@ -9,9 +9,9 @@ export default function Search() {
     {
       id: 1,
       title: "Well Furnished Apartment",
-      location: "100 Smart Street, LA, USA",
+      location: "Thamel, Kathmandu, Nepal",
       host: "John Doberman",
-      price: "$ 1000  -  $ 5000",
+      price: "Rs 15000 - Rs 50000",
       bedrooms: 3,
       bathrooms: 1,
       parking: 2,
@@ -24,9 +24,9 @@ export default function Search() {
     {
       id: 2,
       title: "Large Room with Attached Bathroom",
-      location: "36 Canberra Street, LA, USA",
+      location: "Lakeside, Pokhara, Nepal",
       host: "Harry Potter",
-      price: "$ 1000  -  $ 5000",
+      price: "Rs 15000 - Rs 50000",
       bedrooms: 1,
       bathrooms: 1,
       parking: 2,
@@ -39,9 +39,9 @@ export default function Search() {
     {
       id: 3,
       title: "Well Furnished Apartment",
-      location: "100 Smart Street, LA, USA",
+      location: "Sauraha, Chitwan, Nepal",
       host: "John Doberman",
-      price: "$ 1000  -  $ 5000",
+      price: "Rs 15000 - Rs 50000",
       bedrooms: 3,
       bathrooms: 1,
       parking: 2,
@@ -339,7 +339,7 @@ export default function Search() {
                   <div className="relative w-12 h-12">
                     {/* Pin Circle */}
                     <div className="absolute inset-0 rounded-full bg-primary shadow-lg flex items-center justify-center text-white text-sm font-bold border-4 border-background hover:bg-primary-hover transition">
-                      ${property.price.split(" ")[1]}k
+                      Rs{property.price.split(" ")[1]}k
                     </div>
                   </div>
 

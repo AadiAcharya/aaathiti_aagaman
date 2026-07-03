@@ -6,13 +6,14 @@ import { Home, Calendar, Moon, Users, User, Banknote, Inbox } from "lucide-react
 
 export default function HostReservation() {
   const { theme } = useTheme();
-  const [activeTab, setActiveTab]         = useState("upcoming");
+  const [activeTab, setActiveTab]         = useState("pending");
   const [reservations, setReservations]   = useState([]);
   const [loading, setLoading]             = useState(true);
   const [error, setError]                 = useState(null);
   const [updating, setUpdating]           = useState(null);
 
   const tabToStatus = {
+    pending:  "pending",
     upcoming: "confirmed",
     past:     "completed",
     rejected: "cancelled",
@@ -76,7 +77,7 @@ export default function HostReservation() {
             theme === "dark" ? "border-text-muted/20" : "border-gray-200"
           }`}
         >
-          {["upcoming", "past", "rejected"].map((tab) => (
+          {["pending", "upcoming", "past", "rejected"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -177,8 +178,8 @@ export default function HostReservation() {
                   </div>
                 </div>
 
-                {/* Actions — only show for pending/upcoming */}
-                {activeTab === "upcoming" && (
+                {/* Actions — a fresh booking request needs the host to approve or reject it */}
+                {activeTab === "pending" && (
                   <div className="flex gap-3 flex-shrink-0">
                     <button
                       onClick={() => handleAction(reservation._id, "confirmed")}

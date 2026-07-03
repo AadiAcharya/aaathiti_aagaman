@@ -4,6 +4,9 @@ import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import { roomsAPI, bookingsAPI } from "../../services/api";
 import { formatNPR } from "../../utils/currency";
+import { isTopRated } from "../../utils/rating";
+import StarRating from "../common/StarRating";
+import TopRatedBadge from "../common/TopRatedBadge";
 import {
   Wifi,
   Tv,
@@ -314,13 +317,16 @@ export default function Room() {
             {/* Title */}
             <div className="mb-8 flex justify-between items-start">
               <div>
-                <h1
-                  className={`text-3xl font-bold ${
-                    theme === "dark" ? "text-text-primary" : "text-gray-900"
-                  } mb-2`}
-                >
-                  {room.title}
-                </h1>
+                <div className="flex items-center gap-3 mb-2">
+                  <h1
+                    className={`text-3xl font-bold ${
+                      theme === "dark" ? "text-text-primary" : "text-gray-900"
+                    }`}
+                  >
+                    {room.title}
+                  </h1>
+                  {isTopRated(room.rating, room.reviews) && <TopRatedBadge />}
+                </div>
                 <p
                   className={`${
                     theme === "dark" ? "text-text-secondary" : "text-gray-600"
@@ -330,28 +336,7 @@ export default function Room() {
                   {room.maxGuests} guests
                 </p>
               </div>
-              <div className="flex items-center gap-2">
-                <svg
-                  className="w-5 h-5 text-yellow-500 fill-current"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                </svg>
-                <span
-                  className={`font-bold ${
-                    theme === "dark" ? "text-text-primary" : "text-gray-800"
-                  }`}
-                >
-                  {room.rating}
-                </span>
-                <span
-                  className={`${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-500"
-                  }`}
-                >
-                  ({room.reviews} reviews)
-                </span>
-              </div>
+              <StarRating rating={room.rating} reviews={room.reviews} showValue size="w-5 h-5" />
             </div>
 
             {/* Main Amenities */}
@@ -1180,6 +1165,28 @@ export default function Room() {
                   className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-hover disabled:opacity-50 transition"
                 >
                   {booking ? "Reserving..." : "Reserve"}
+                </button>
+                <button
+                  onClick={() => {
+                    if (!isAuthenticated) {
+                      navigate("/sign-in");
+                      return;
+                    }
+                    const params = new URLSearchParams({
+                      to: roomHostId || "",
+                      room: room._id,
+                      roomTitle: room.title,
+                      hostName: room.host?.name || "Host",
+                    });
+                    navigate(`/messages?${params.toString()}`);
+                  }}
+                  className={`w-full mt-3 py-3 px-4 rounded-lg font-bold border-2 transition ${
+                    theme === "dark"
+                      ? "border-primary/30 text-text-primary hover:border-primary"
+                      : "border-gray-300 text-gray-800 hover:border-primary"
+                  }`}
+                >
+                  Message Host
                 </button>
               </>
             )}

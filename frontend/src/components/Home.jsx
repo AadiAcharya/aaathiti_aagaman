@@ -5,6 +5,10 @@ import { useAuth } from "../context/AuthContext";
 import { roomsAPI, authAPI } from "../services/api";
 import { blogs } from "../data/propertyData";
 import BecomeHostModal from "./BecomeHostModal";
+import StarRating from "./common/StarRating";
+import TopRatedBadge from "./common/TopRatedBadge";
+import { formatNPR } from "../utils/currency";
+import { isTopRated } from "../utils/rating";
 import {
   Home as HomeIcon,
   Heart,
@@ -26,7 +30,7 @@ const RoomCard = ({ room, isFavorite, onToggleFavorite }) => {
   const { theme } = useTheme();
   const { role } = useAuth();
   const isHost = role === "host" || role === "admin";
-  const priceLabel = room.priceDisplay || `$${room.price}`;
+  const priceLabel = formatNPR(room.price);
   return (
     <div
       onClick={() => navigate(`/room/${room._id}`)}
@@ -63,10 +67,8 @@ const RoomCard = ({ room, isFavorite, onToggleFavorite }) => {
             />
           </button>
         )}
-        {room.rating >= 4.5 && (
-          <div className="absolute top-3 right-3 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold tracking-wide">
-            ★ TOP RATED
-          </div>
+        {isTopRated(room.rating, room.reviews) && (
+          <TopRatedBadge className="absolute top-3 right-3" />
         )}
         <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <p className="text-white font-bold text-lg truncate">
@@ -88,10 +90,13 @@ const RoomCard = ({ room, isFavorite, onToggleFavorite }) => {
         <p
           className={`${
             theme === "dark" ? "text-text-secondary" : "text-gray-600"
-          } text-sm mb-3 flex items-center gap-1`}
+          } text-sm mb-2 flex items-center gap-1`}
         >
           <MapPin className="w-4 h-4" /> {room.location}
         </p>
+        <div className="mb-3">
+          <StarRating rating={room.rating} reviews={room.reviews} showValue size="w-3.5 h-3.5" />
+        </div>
         <div
           className={`flex gap-3 ${
             theme === "dark" ? "text-text-secondary" : "text-gray-500"
@@ -273,7 +278,7 @@ const StatCard = ({ icon, value, label }) => {
 export default function Home() {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const isHost = user?.role === "host" || user?.role === "admin";
 
   const [hostModalOpen, setHostModalOpen] = useState(false);
@@ -281,7 +286,7 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [guests, setGuests] = useState("");
   const [sortBy, setSortBy] = useState("default");
-  const [maxPrice, setMaxPrice] = useState(20000);
+  const [maxPrice, setMaxPrice] = useState(60000);
   const [email, setEmail] = useState("");
 
   const [rooms, setRooms] = useState([]);
@@ -346,6 +351,7 @@ export default function Home() {
         setTotal(mainRes.total || 0);
         setTopRated(
           [...(topRes.rooms || [])]
+            .filter((r) => isTopRated(r.rating, r.reviews))
             .sort((a, b) => (b.rating || 0) - (a.rating || 0))
             .slice(0, 4),
         );
@@ -379,7 +385,7 @@ export default function Home() {
     setSearchTerm("");
     setGuests("");
     setSortBy("default");
-    setMaxPrice(20000);
+    setMaxPrice(60000);
     setSelectedTab("all");
     fetchRooms({});
     setVisibleCount(4);
@@ -414,7 +420,7 @@ export default function Home() {
   const filtersActive =
     searchTerm ||
     sortBy !== "default" ||
-    maxPrice !== 20000 ||
+    maxPrice !== 60000 ||
     selectedTab !== "all";
 
   const tabs = [
@@ -565,13 +571,13 @@ export default function Home() {
                 >
                   Max Price:{" "}
                   <span className="text-primary font-bold">
-                    ${maxPrice.toLocaleString()}
+                    {formatNPR(maxPrice)}
                   </span>
                 </label>
                 <input
                   type="range"
                   min="0"
-                  max="20000"
+                  max="60000"
                   step={500}
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(Number(e.target.value))}
@@ -766,7 +772,7 @@ export default function Home() {
                       <MapPin className="w-4 h-4" /> {room.location}
                     </p>
                     <p className="text-primary font-bold mt-2">
-                      {room.priceDisplay || `$${room.price}`}/night
+                      {formatNPR(room.price)}/night
                     </p>
                   </div>
                   {!isHost && (
@@ -845,8 +851,8 @@ export default function Home() {
         </div>
       )}
 
-      {/* ── Try Hosting (hidden for existing hosts/admins) ─────────────────── */}
-      {!isHost && (
+      {/* ── Try Hosting (only shown to logged-out visitors) ─────────────────── */}
+      {!isAuthenticated && (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-20">
         <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-3xl p-8 md:p-12 border border-primary/20 overflow-hidden relative">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full translate-x-1/2 -translate-y-1/2" />
@@ -1037,7 +1043,7 @@ export default function Home() {
               } mb-6 leading-relaxed`}
             >
               Aatithi Aagaman connects guests with exceptional properties across
-              the country. Whether you're looking for a cozy room, a modern
+              Nepal. Whether you're looking for a cozy room, a modern
               flat, a luxury villa, or a budget hostel — we have it all.
             </p>
             <p
@@ -1053,7 +1059,7 @@ export default function Home() {
               {[
                 { label: "Ask A Question", onClick: () => navigate("/help") },
                 { label: "Find A Property", onClick: () => navigate("/rooms") },
-                ...(!isHost
+                ...(!isAuthenticated
                   ? [{ label: "Become A Host", onClick: () => setHostModalOpen(true) }]
                   : []),
               ].map(({ label, onClick }) => (

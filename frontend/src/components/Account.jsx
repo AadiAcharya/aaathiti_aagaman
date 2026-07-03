@@ -4,6 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { authAPI, bookingsAPI } from "../services/api";
 import { User, Calendar, Lock, Settings, DoorOpen, Luggage } from "lucide-react";
+import { formatNPR } from "../utils/currency";
 
 const TAB_LIST = [
   { id: "profile", label: "Profile", icon: User },
@@ -274,7 +275,7 @@ export default function Account() {
                       value={formData.location}
                       onChange={(v) => set("location", v)}
                       disabled={!editMode}
-                      placeholder="e.g. New York, USA"
+                      placeholder="e.g. Kathmandu, Nepal"
                     />
                     <InputField
                       label="Work"
@@ -620,7 +621,7 @@ const BookingCard = ({ booking, theme }) => (
           theme === "dark" ? "text-primary" : "text-blue-600"
         }`}
       >
-        ${booking.totalPrice.toLocaleString()}
+        {formatNPR(booking.totalPrice)}
       </p>
     </div>
     <div className="flex sm:flex-col justify-between items-end sm:items-center">

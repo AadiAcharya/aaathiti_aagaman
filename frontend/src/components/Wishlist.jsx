@@ -4,6 +4,10 @@ import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { authAPI } from "../services/api";
 import { Home as HomeIcon, Heart, HeartCrack, Search } from "lucide-react";
+import { formatNPR } from "../utils/currency";
+import { isTopRated } from "../utils/rating";
+import StarRating from "./common/StarRating";
+import TopRatedBadge from "./common/TopRatedBadge";
 
 export default function Wishlist() {
   const navigate = useNavigate();
@@ -165,6 +169,9 @@ export default function Wishlist() {
                         <HomeIcon className="w-9 h-9 text-primary" />
                       </div>
                     )}
+                    {isTopRated(room.rating, room.reviews) && (
+                      <TopRatedBadge className="absolute top-3 right-3" />
+                    )}
                     <button
                       onClick={(e) => removeFromWishlist(e, id)}
                       title="Remove from wishlist"
@@ -180,15 +187,16 @@ export default function Wishlist() {
                   </div>
                   <div className="p-5">
                     <p className="text-primary text-sm font-bold mb-1">
-                      {room.priceDisplay || `$${room.price}`}
+                      {formatNPR(room.price)}
                     </p>
                     <h3
                       className={`${
                         theme === "dark" ? "text-text-primary" : "text-gray-900"
-                      } font-bold text-base truncate`}
+                      } font-bold text-base truncate mb-1`}
                     >
                       {room.title}
                     </h3>
+                    <StarRating rating={room.rating} reviews={room.reviews} showValue size="w-3.5 h-3.5" />
                   </div>
                 </div>
               );

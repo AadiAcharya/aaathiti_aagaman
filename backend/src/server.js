@@ -44,6 +44,7 @@ app.use('/api/messages',      require('./routes/message.routes'));
 app.use('/api/notifications', require('./routes/notification.routes'));
 app.use('/api/admin',         require('./routes/admin.routes'));
 app.use('/api/host',          require('./routes/host.routes'));
+app.use('/api/reports',       require('./routes/report.routes'));
 
 // ─── Health check ─────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {

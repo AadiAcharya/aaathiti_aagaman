@@ -33,8 +33,15 @@ exports.getStats = async (req, res) => {
 // ─── GET /api/admin/users ─────────────────────────────────────────────────────
 exports.getUsers = async (req, res) => {
   try {
-    const { page = 1, limit = 20, role } = req.query;
-    const query = role ? { role } : {};
+    const { page = 1, limit = 20, role, search } = req.query;
+    const query = {};
+    if (role) query.role = role;
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
     const skip  = (Number(page) - 1) * Number(limit);
     const total = await User.countDocuments(query);
     const users = await User.find(query).sort({ createdAt: -1 }).skip(skip).limit(Number(limit));
@@ -47,10 +54,26 @@ exports.getUsers = async (req, res) => {
 // ─── PUT /api/admin/users/:id ─────────────────────────────────────────────────
 exports.updateUser = async (req, res) => {
   try {
+    const target = await User.findById(req.params.id);
+    if (!target) return res.status(404).json({ success: false, message: 'User not found' });
+
+    // Admins can't act on themselves or other admins through this panel
+    if (target.role === 'admin' || target._id.equals(req.user.id)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot modify your own account or another admin from this panel',
+      });
+    }
+
     const user = await User.findByIdAndUpdate(req.params.id, req.body, {
       new: true, runValidators: true,
     });
-    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    // Banning a host deactivates all of their listings so guests stop seeing them
+    if (req.body.isBanned === true && user.role === 'host') {
+      await Room.updateMany({ host: user._id }, { isAvailable: false });
+    }
+
     res.json({ success: true, user });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
@@ -60,8 +83,17 @@ exports.updateUser = async (req, res) => {
 // ─── DELETE /api/admin/users/:id ──────────────────────────────────────────────
 exports.deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    const target = await User.findById(req.params.id);
+    if (!target) return res.status(404).json({ success: false, message: 'User not found' });
+
+    if (target.role === 'admin' || target._id.equals(req.user.id)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot delete your own account or another admin from this panel',
+      });
+    }
+
+    await User.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: 'User deleted' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

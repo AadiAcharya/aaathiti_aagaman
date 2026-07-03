@@ -4,6 +4,9 @@ import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import { roomsAPI, authAPI } from "../../services/api";
 import { formatNPR } from "../../utils/currency";
+import { isTopRated } from "../../utils/rating";
+import StarRating from "../common/StarRating";
+import TopRatedBadge from "../common/TopRatedBadge";
 import { Heart } from "lucide-react";
 
 export default function Rooms() {
@@ -272,6 +275,9 @@ export default function Rooms() {
                     alt={room.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
+                  {isTopRated(room.rating, room.reviews) && (
+                    <TopRatedBadge className="absolute top-4 left-4" />
+                  )}
                   <div
                     className={`absolute top-4 right-4 ${
                       theme === "dark"
@@ -308,32 +314,7 @@ export default function Rooms() {
                     >
                       {room.title}
                     </h3>
-                    <div className="flex items-center gap-1">
-                      <svg
-                        className="w-4 h-4 text-yellow-500 fill-current"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                      </svg>
-                      <span
-                        className={`font-semibold ${
-                          theme === "dark"
-                            ? "text-text-primary"
-                            : "text-gray-800"
-                        } text-sm`}
-                      >
-                        {room.rating}
-                      </span>
-                      <span
-                        className={`${
-                          theme === "dark"
-                            ? "text-text-secondary"
-                            : "text-gray-500"
-                        } text-sm`}
-                      >
-                        ({room.reviews})
-                      </span>
-                    </div>
+                    <StarRating rating={room.rating} reviews={room.reviews} showValue />
                   </div>
 
                   <p

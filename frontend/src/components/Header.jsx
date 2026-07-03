@@ -150,8 +150,8 @@ export default function Header() {
             )}
           </button>
 
-          {/* Become A Host Button - hidden for existing hosts/admins */}
-          {!isHost && (
+          {/* Become A Host Button - only shown to logged-out visitors */}
+          {!isAuthenticated && (
             <button
               onClick={() => setHostModalOpen(true)}
               className={`rounded-full px-6 py-2 font-semibold transition-colors text-white ${
@@ -166,10 +166,8 @@ export default function Header() {
 
           {/* Admin Link - Hidden unless user is admin */}
           {role === "admin" && (
-            <a
-              href="http://localhost:5000/admin"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => navigate("/admin")}
               className={`rounded-full px-6 py-2 font-semibold transition-colors text-white ${
                 theme === "dark"
                   ? "bg-red-600 hover:bg-red-700"
@@ -177,7 +175,7 @@ export default function Header() {
               }`}
             >
               Admin
-            </a>
+            </button>
           )}
 
           {/* Auth Section */}
@@ -517,6 +515,20 @@ export default function Header() {
             </span>
           </button>
 
+          {role === "admin" && (
+            <button
+              onClick={() => {
+                navigate("/admin");
+                setMenuOpen(false);
+              }}
+              className={`block w-full text-left font-semibold py-2 transition ${
+                theme === "dark" ? "text-red-400" : "text-red-600"
+              }`}
+            >
+              Admin Panel
+            </button>
+          )}
+
           {isAuthenticated && (
             <>
               <div
@@ -602,8 +614,8 @@ export default function Header() {
             )}
           </button>
 
-          {/* Become A Host for Mobile - hidden for existing hosts/admins */}
-          {!isHost && (
+          {/* Become A Host for Mobile - only shown to logged-out visitors */}
+          {!isAuthenticated && (
             <button
               onClick={() => {
                 navigate("/hosting");

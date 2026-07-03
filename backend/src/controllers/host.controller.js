@@ -1,6 +1,6 @@
 const Room = require('../models/Room.model');
 const Booking = require('../models/Booking.model');
-const { Message, Notification, Transaction } = require('../models/extras.model');
+const { Notification, Transaction } = require('../models/extras.model');
 const { formatNPR } = require('../utils/currency');
 
 // ─── GET /api/host/dashboard ──────────────────────────────────────────────────
@@ -119,37 +119,6 @@ exports.getHostTransactions = async (req, res) => {
     res.json({ success: true, count: transactions.length, total, transactions });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
-  }
-};
-
-// ─── GET /api/host/messages ───────────────────────────────────────────────────
-// For MessagesPage.jsx
-exports.getHostMessages = async (req, res) => {
-  try {
-    const messages = await Message.find({ recipient: req.user.id })
-      .populate('sender', 'name avatar email')
-      .sort({ createdAt: -1 });
-    res.json({ success: true, messages });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
-
-// ─── POST /api/host/messages ──────────────────────────────────────────────────
-exports.sendMessage = async (req, res) => {
-  try {
-    const { recipientId, content, bookingId } = req.body;
-    const message = await Message.create({
-      sender:    req.user.id,
-      recipient: recipientId,
-      content,
-      booking:   bookingId,
-      threadId:  [req.user.id, recipientId].sort().join('_'),
-    });
-    await message.populate('sender', 'name avatar');
-    res.status(201).json({ success: true, message });
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
   }
 };
 

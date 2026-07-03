@@ -19,6 +19,14 @@ exports.protect = async (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ success: false, message: 'User not found' });
     }
+    if (req.user.isBanned) {
+      return res.status(403).json({
+        success: false,
+        message: req.user.banReason
+          ? `Your account has been suspended: ${req.user.banReason}`
+          : 'Your account has been suspended.',
+      });
+    }
     next();
   } catch (err) {
     return res.status(401).json({ success: false, message: 'Token invalid or expired' });

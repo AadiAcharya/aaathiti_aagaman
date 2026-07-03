@@ -1,4 +1,8 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
+import { reportAPI } from "../services/api";
 import {
   Home,
   Calendar,
@@ -8,10 +12,47 @@ import {
   HelpCircle,
   Mail,
   Phone,
+  ShieldAlert,
 } from "lucide-react";
 
 export default function Help() {
   const { theme } = useTheme();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const [contactOpen, setContactOpen] = useState(false);
+  const [form, setForm] = useState({ subject: "", message: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const openContact = () => {
+    if (!isAuthenticated) {
+      navigate("/sign-in");
+      return;
+    }
+    setSubmitted(false);
+    setSubmitError("");
+    setForm({ subject: "", message: "" });
+    setContactOpen(true);
+  };
+
+  const handleSubmitReport = async () => {
+    if (!form.subject.trim() || !form.message.trim()) {
+      setSubmitError("Please fill in both fields");
+      return;
+    }
+    try {
+      setSubmitting(true);
+      setSubmitError("");
+      await reportAPI.create({ subject: form.subject, message: form.message });
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(err.message || "Failed to send. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div
@@ -636,18 +677,22 @@ export default function Help() {
             to help!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-primary hover:bg-primary-hover text-white font-semibold px-8 py-3 rounded-lg transition">
+            <button
+              onClick={openContact}
+              className="bg-primary hover:bg-primary-hover text-white font-semibold px-8 py-3 rounded-lg transition"
+            >
               Contact Support
             </button>
-            <button
+            <a
+              href="mailto:aadityaacharya156@gmail.com"
               className={`${
                 theme === "dark"
                   ? "bg-bg-secondary hover:bg-bg-secondary/80 text-text-primary border-primary/30"
                   : "bg-white hover:bg-gray-50 text-gray-900 border-gray-300"
-              } font-semibold px-8 py-3 rounded-lg border transition`}
+              } font-semibold px-8 py-3 rounded-lg border transition inline-block`}
             >
               Email Us
-            </button>
+            </a>
           </div>
           <p
             className={`${
@@ -668,6 +713,136 @@ export default function Help() {
           </p>
         </div>
       </main>
+
+      {contactOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setContactOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={`${
+              theme === "dark"
+                ? "bg-bg-secondary border-primary/30"
+                : "bg-white border-gray-200"
+            } w-full max-w-md rounded-lg border p-6`}
+          >
+            {submitted ? (
+              <div className="text-center py-6">
+                <h3
+                  className={`text-xl font-bold mb-2 ${
+                    theme === "dark" ? "text-text-primary" : "text-gray-900"
+                  }`}
+                >
+                  Report sent
+                </h3>
+                <p
+                  className={
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                  }
+                >
+                  Our admin team has received your message and will get back
+                  to you as soon as possible.
+                </p>
+                <button
+                  onClick={() => setContactOpen(false)}
+                  className="mt-6 bg-primary hover:bg-primary-hover text-white font-semibold px-6 py-2 rounded-lg transition"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-2 mb-2">
+                  <ShieldAlert className="w-5 h-5 text-primary" />
+                  <h3
+                    className={`text-xl font-bold ${
+                      theme === "dark" ? "text-text-primary" : "text-gray-900"
+                    }`}
+                  >
+                    Contact Admin
+                  </h3>
+                </div>
+                <p
+                  className={`text-sm mb-4 ${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                  }`}
+                >
+                  Having an issue with a host or guest that hasn't been
+                  resolved through messaging? Let us know and an admin will
+                  step in.
+                </p>
+
+                <label
+                  className={`block text-sm font-semibold mb-1 ${
+                    theme === "dark" ? "text-text-primary" : "text-gray-800"
+                  }`}
+                >
+                  Subject
+                </label>
+                <input
+                  type="text"
+                  value={form.subject}
+                  onChange={(e) =>
+                    setForm({ ...form, subject: e.target.value })
+                  }
+                  placeholder="e.g. Host not responding about booking"
+                  className={`w-full mb-4 px-4 py-2 rounded-lg border outline-none ${
+                    theme === "dark"
+                      ? "bg-bg-primary border-primary/30 text-text-primary placeholder-text-secondary/60"
+                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-400"
+                  }`}
+                />
+
+                <label
+                  className={`block text-sm font-semibold mb-1 ${
+                    theme === "dark" ? "text-text-primary" : "text-gray-800"
+                  }`}
+                >
+                  Message
+                </label>
+                <textarea
+                  value={form.message}
+                  onChange={(e) =>
+                    setForm({ ...form, message: e.target.value })
+                  }
+                  rows={5}
+                  placeholder="Describe what happened, including any relevant booking or room details"
+                  className={`w-full mb-2 px-4 py-2 rounded-lg border outline-none resize-none ${
+                    theme === "dark"
+                      ? "bg-bg-primary border-primary/30 text-text-primary placeholder-text-secondary/60"
+                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-400"
+                  }`}
+                />
+
+                {submitError && (
+                  <p className="text-red-500 text-sm mb-2">{submitError}</p>
+                )}
+
+                <div className="flex gap-3 mt-4">
+                  <button
+                    onClick={() => setContactOpen(false)}
+                    className={`flex-1 py-2 rounded-lg border font-semibold transition ${
+                      theme === "dark"
+                        ? "border-primary/30 text-text-primary hover:border-primary"
+                        : "border-gray-300 text-gray-800 hover:border-primary"
+                    }`}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSubmitReport}
+                    disabled={submitting}
+                    className="flex-1 bg-primary hover:bg-primary-hover disabled:opacity-60 text-white font-semibold py-2 rounded-lg transition"
+                  >
+                    {submitting ? "Sending..." : "Send Report"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
