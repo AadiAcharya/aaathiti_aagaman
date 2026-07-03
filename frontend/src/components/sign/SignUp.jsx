@@ -4,6 +4,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { authAPI } from "../../services/api";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
+import PasswordInput from "../common/PasswordInput";
 
 const SignUp = () => {
   const { theme } = useTheme();
@@ -17,8 +18,6 @@ const SignUp = () => {
     confirmPassword: "",
     role: "user",
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirm] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
@@ -184,7 +183,7 @@ const SignUp = () => {
           </div>
 
           {/* Password */}
-          <div className="relative">
+          <div>
             <label
               className={`block mb-1 text-sm font-medium ${
                 theme === "dark" ? "text-text-secondary" : "text-gray-700"
@@ -192,29 +191,21 @@ const SignUp = () => {
             >
               Password
             </label>
-            <input
-              type={showPassword ? "text" : "password"}
+            <PasswordInput
               name="password"
               value={form.password}
               onChange={handleChange}
               disabled={loading}
-              className={inputClass("password") + " pr-10"}
+              className={inputClass("password")}
               placeholder="Create a password"
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-9 text-gray-400 hover:text-gray-200"
-            >
-              {showPassword ? "Hide" : "Show"}
-            </button>
             {errors.password && (
               <p className="text-red-400 text-xs mt-1">{errors.password}</p>
             )}
           </div>
 
           {/* Confirm Password */}
-          <div className="relative">
+          <div>
             <label
               className={`block mb-1 text-sm font-medium ${
                 theme === "dark" ? "text-text-secondary" : "text-gray-700"
@@ -222,22 +213,14 @@ const SignUp = () => {
             >
               Confirm Password
             </label>
-            <input
-              type={showConfirmPassword ? "text" : "password"}
+            <PasswordInput
               name="confirmPassword"
               value={form.confirmPassword}
               onChange={handleChange}
               disabled={loading}
-              className={inputClass("confirmPassword") + " pr-10"}
+              className={inputClass("confirmPassword")}
               placeholder="Confirm your password"
             />
-            <button
-              type="button"
-              onClick={() => setShowConfirm(!showConfirmPassword)}
-              className="absolute right-3 top-9 text-gray-400 hover:text-gray-200"
-            >
-              {showConfirmPassword ? "Hide" : "Show"}
-            </button>
             {errors.confirmPassword && (
               <p className="text-red-400 text-xs mt-1">
                 {errors.confirmPassword}

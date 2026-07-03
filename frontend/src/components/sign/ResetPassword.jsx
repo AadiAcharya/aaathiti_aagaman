@@ -3,6 +3,7 @@ import { useState } from "react";
 import { authAPI } from "../../services/api";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
+import PasswordInput from "../common/PasswordInput";
 
 const ResetPassword = () => {
   const { theme } = useTheme();
@@ -85,8 +86,7 @@ const ResetPassword = () => {
             >
               New Password
             </label>
-            <input
-              type="password"
+            <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -108,8 +108,7 @@ const ResetPassword = () => {
             >
               Confirm Password
             </label>
-            <input
-              type="password"
+            <PasswordInput
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required

@@ -4,6 +4,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { authAPI } from "../../services/api";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
+import PasswordInput from "../common/PasswordInput";
 
 const SignIn = () => {
   const { theme } = useTheme();
@@ -143,8 +144,7 @@ const SignIn = () => {
             >
               Password
             </label>
-            <input
-              type="password"
+            <PasswordInput
               name="password"
               value={form.password}
               onChange={handleChange}
