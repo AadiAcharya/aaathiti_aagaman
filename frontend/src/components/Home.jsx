@@ -252,12 +252,13 @@ const SectionHeader = ({ title, subtitle, action }) => {
 };
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
+// Fixed width + shrink-0 since these live in a horizontally scrolling marquee
 const StatCard = ({ icon, value, label }) => {
   const Icon = icon;
   const { theme } = useTheme();
   return (
     <div
-      className={`text-center p-6 ${
+      className={`text-center p-6 w-48 shrink-0 ${
         theme === "dark"
           ? "bg-bg-secondary border-text-muted/10 hover:border-primary/30"
           : "bg-white border-gray-200 hover:border-blue-200"
@@ -278,58 +279,19 @@ const StatCard = ({ icon, value, label }) => {
   );
 };
 
-// ─── Rotating Stat Card ─────────────────────────────────────────────────────
-// Cycles through several stats in one slot — the current one animates out,
-// the next one animates in, on a loop.
-const ROTATE_INTERVAL = 3200;
-const EXIT_DURATION = 350;
-
-const RotatingStatCard = ({ items }) => {
-  const { theme } = useTheme();
-  const [index, setIndex] = useState(0);
-  const [exiting, setExiting] = useState(false);
-
-  useEffect(() => {
-    const rotate = setInterval(() => {
-      setExiting(true);
-      setTimeout(() => {
-        setIndex((i) => (i + 1) % items.length);
-        setExiting(false);
-      }, EXIT_DURATION);
-    }, ROTATE_INTERVAL);
-    return () => clearInterval(rotate);
-  }, [items.length]);
-
-  const { icon, value, label } = items[index];
-  const Icon = icon;
-
-  return (
-    <div
-      className={`text-center p-6 overflow-hidden ${
-        theme === "dark"
-          ? "bg-bg-secondary border-text-muted/10 hover:border-primary/30"
-          : "bg-white border-gray-200 hover:border-blue-200"
-      } rounded-2xl border transition`}
-    >
-      <div
-        key={index}
-        className={exiting ? "animate-stat-exit" : "animate-stat-enter"}
-      >
-        <div className="mb-2 flex justify-center">
-          <Icon className="w-9 h-9 text-primary" />
-        </div>
-        <p className="text-3xl font-bold text-primary mb-1">{value}</p>
-        <p
-          className={`${
-            theme === "dark" ? "text-text-secondary" : "text-gray-600"
-          } text-sm`}
-        >
-          {label}
-        </p>
-      </div>
+// ─── Stats Marquee ──────────────────────────────────────────────────────────
+// Cards aren't interactive, so instead of a static grid they scroll past
+// continuously — the list is duplicated once so the loop is seamless
+// (animating to -50% lands exactly back on the start of the duplicate copy).
+const StatsMarquee = ({ items }) => (
+  <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
+    <div className="flex gap-4 w-max animate-marquee hover:[animation-play-state:paused]">
+      {[...items, ...items].map((s, i) => (
+        <StatCard key={i} {...s} />
+      ))}
     </div>
-  );
-};
+  </div>
+);
 
 // ─── Main Home Component ──────────────────────────────────────────────────────
 export default function Home() {
@@ -667,28 +629,20 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── Stats Bar ──────────────────────────────────────────────────────── */}
-      <div className="bg-primary/5 border-y border-primary/10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[
-              { icon: HomeIcon, value: "500+", label: "Properties Listed" },
-              { icon: Users, value: "12K+", label: "Happy Guests" },
-              { icon: Star, value: "4.8", label: "Average Rating" },
-              { icon: ShieldCheck, value: "100%", label: "Verified Hosts" },
-              { icon: Headset, value: "24/7", label: "Guest Support" },
-            ].map((s) => (
-              <StatCard key={s.label} {...s} />
-            ))}
-            <RotatingStatCard
-              items={[
-                { icon: Globe, value: "50+", label: "Cities Covered" },
-                { icon: Sparkles, value: "30+", label: "Amenities Offered" },
-                { icon: MessageSquare, value: "1.2K+", label: "Verified Reviews" },
-              ]}
-            />
-          </div>
-        </div>
+      {/* ── Stats Marquee ──────────────────────────────────────────────────── */}
+      <div className="bg-primary/5 border-y border-primary/10 py-8">
+        <StatsMarquee
+          items={[
+            { icon: HomeIcon, value: "500+", label: "Properties Listed" },
+            { icon: Users, value: "12K+", label: "Happy Guests" },
+            { icon: Globe, value: "50+", label: "Cities Covered" },
+            { icon: Star, value: "4.8", label: "Average Rating" },
+            { icon: ShieldCheck, value: "100%", label: "Verified Hosts" },
+            { icon: Headset, value: "24/7", label: "Guest Support" },
+            { icon: Sparkles, value: "30+", label: "Amenities Offered" },
+            { icon: MessageSquare, value: "1.2K+", label: "Verified Reviews" },
+          ]}
+        />
       </div>
 
       {/* ── Nearby Properties ──────────────────────────────────────────────── */}
