@@ -95,6 +95,9 @@ export default function Post() {
         pets:         property.pets || "No",
         amenities:    [...(property.amenities || []), ...(property.facilities || [])],
         safety:       property.safety || [],
+        ...(typeof property.lat === "number" && typeof property.lng === "number"
+          ? { lat: property.lat, lng: property.lng }
+          : {}),
       });
 
       clearStorage();

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PawPrint, Ban, Upload, Loader2, X } from "lucide-react";
 import { uploadAPI } from "../../services/api";
+import { forwardGeocode, reverseGeocode } from "../../utils/geocode";
+import LocationPicker from "./LocationPicker";
 
 const MAX_ADDITIONAL_PHOTOS = 5; // + 1 cover photo = 6 total
 
@@ -36,12 +38,14 @@ export default function Description() {
         title: "", location: "", description: "",
         price: "", bedrooms: "1", bathrooms: "1",
         parking: "0", pets: "No", image: "", images: [],
+        lat: null, lng: null,
       };
     } catch {
       return {
         title: "", location: "", description: "",
         price: "", bedrooms: "1", bathrooms: "1",
         parking: "0", pets: "No", image: "", images: [],
+        lat: null, lng: null,
       };
     }
   });
@@ -49,6 +53,7 @@ export default function Description() {
   const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
   const [galleryUploading, setGalleryUploading] = useState(false);
+  const [locating, setLocating] = useState(false);
 
   const set = (key, val) => {
     setForm((prev) => ({ ...prev, [key]: val }));
@@ -91,6 +96,24 @@ export default function Description() {
 
   const removeGalleryImage = (index) => {
     setForm((prev) => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
+  };
+
+  // Called when the host clicks/drags the pin on the map, or uses "Use my location".
+  const handlePickLocation = async (lat, lng) => {
+    setForm((prev) => ({ ...prev, lat, lng }));
+    if (!form.location.trim()) {
+      const address = await reverseGeocode(lat, lng);
+      if (address) set("location", address);
+    }
+  };
+
+  // Called when the host types an address and clicks "Find on map".
+  const handleFindOnMap = async () => {
+    if (!form.location.trim()) return;
+    setLocating(true);
+    const coords = await forwardGeocode(form.location);
+    setLocating(false);
+    if (coords) setForm((prev) => ({ ...prev, lat: coords.lat, lng: coords.lng }));
   };
 
   const validate = () => {
@@ -143,13 +166,27 @@ export default function Description() {
           {/* Location */}
           <div>
             <label className="text-text-primary font-semibold text-sm block mb-2">Location *</label>
-            <input
-              value={form.location}
-              onChange={(e) => set("location", e.target.value)}
-              placeholder="e.g. Kathmandu, Nepal"
-              className={inputClass("location")}
-            />
+            <div className="flex gap-2">
+              <input
+                value={form.location}
+                onChange={(e) => set("location", e.target.value)}
+                placeholder="e.g. Kathmandu, Nepal"
+                className={inputClass("location")}
+              />
+              <button
+                type="button"
+                onClick={handleFindOnMap}
+                disabled={locating || !form.location.trim()}
+                className="shrink-0 px-4 py-3 rounded-xl border-2 border-text-muted/30 text-text-secondary font-semibold text-sm hover:border-primary hover:text-primary transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {locating ? "Finding..." : "Find on map"}
+              </button>
+            </div>
             {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
+
+            <div className="mt-3">
+              <LocationPicker lat={form.lat} lng={form.lng} onPick={handlePickLocation} />
+            </div>
           </div>
 
           {/* Description */}

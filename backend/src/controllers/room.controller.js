@@ -75,7 +75,9 @@ exports.getRoomById = async (req, res) => {
 // ─── POST /api/rooms ──────────────────────────────────────────────────────────
 exports.createRoom = async (req, res) => {
   try {
-    const coords = await geocodeLocation(req.body.location);
+    // A pin dropped on the map picker takes priority over auto-geocoding the address text.
+    const hasClientCoords = typeof req.body.lat === 'number' && typeof req.body.lng === 'number';
+    const coords = hasClientCoords ? null : await geocodeLocation(req.body.location);
     const room = await Room.create({
       ...req.body,
       host: req.user.id,
@@ -99,8 +101,9 @@ exports.updateRoom = async (req, res) => {
     }
 
     const updates = { ...req.body };
-    // Re-geocode only when the location text actually changed
-    if (updates.location && updates.location !== room.location) {
+    const hasClientCoords = typeof updates.lat === 'number' && typeof updates.lng === 'number';
+    // Re-geocode only when the location text changed and no map pin was supplied
+    if (!hasClientCoords && updates.location && updates.location !== room.location) {
       const coords = await geocodeLocation(updates.location);
       if (coords) Object.assign(updates, coords);
     }
