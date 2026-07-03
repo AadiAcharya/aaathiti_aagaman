@@ -1,249 +1,98 @@
 import { Link } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
+import Logo from "./common/Logo";
+
+const COLUMNS = [
+  {
+    title: "Company",
+    links: [
+      { label: "How It Works", to: "/how-it-works" },
+      { label: "Contact Us", to: "/help" },
+      { label: "Rental Guide", to: "/rental-guide" },
+    ],
+  },
+  {
+    title: "Help Center",
+    links: [
+      { label: "Find a Property", to: "/rooms" },
+      { label: "How To Host?", to: "/hosting" },
+      { label: "FAQs", to: "/how-it-works" },
+      { label: "Report an Issue", to: "/help" },
+    ],
+  },
+];
 
 export default function Footer() {
-  const { theme } = useTheme();
   return (
-    <footer
-      className={`w-full ${
-        theme === "dark" ? "bg-bg-secondary" : "bg-gray-100"
-      } py-16 px-8 md:px-20`}
-    >
+    <footer className="w-full bg-bg-secondary border-t border-border py-16 px-6 md:px-10">
       <div className="max-w-7xl mx-auto">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          {/* About Section */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div>
-            <h3
-              className={`${
-                theme === "dark" ? "text-text-primary" : "text-gray-900"
-              } font-bold text-2xl mb-4`}
-            >
-              AATHITI
-            </h3>
-            <p
-              className={`${
-                theme === "dark" ? "text-text-secondary" : "text-gray-600"
-              } text-sm leading-relaxed mb-6`}
-            >
-              Find your next stay or list your own property — Aathiti
-              Aagaman connects hosts and guests across Nepal.
+            <Link to="/" className="flex items-center gap-2.5 mb-4 w-fit">
+              <Logo className="w-8 h-8" />
+              <span className="font-display font-bold text-lg text-text-primary">
+                Aathiti Aagaman
+              </span>
+            </Link>
+            <p className="text-text-secondary text-sm leading-relaxed">
+              Find your next stay or list your own property — Aathiti Aagaman
+              connects hosts and guests across Nepal.
             </p>
           </div>
 
-          {/* Company Links */}
-          <div>
-            <h4
-              className={`${
-                theme === "dark" ? "text-text-primary" : "text-gray-900"
-              } font-bold text-lg mb-6`}
-            >
-              COMPANY
-            </h4>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  to="/how-it-works"
-                  className={`${
-                    theme === "dark"
-                      ? "text-text-secondary hover:text-primary"
-                      : "text-gray-600 hover:text-blue-600"
-                  } transition text-sm`}
-                >
-                  How It Works
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/help"
-                  className={`${
-                    theme === "dark"
-                      ? "text-text-secondary hover:text-primary"
-                      : "text-gray-600 hover:text-blue-600"
-                  } transition text-sm`}
-                >
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/rental-guide"
-                  className={`${
-                    theme === "dark"
-                      ? "text-text-secondary hover:text-primary"
-                      : "text-gray-600 hover:text-blue-600"
-                  } transition text-sm`}
-                >
-                  Rental Guide
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {COLUMNS.map((col) => (
+            <div key={col.title}>
+              <h4 className="font-semibold text-sm tracking-wide uppercase text-text-primary mb-5">
+                {col.title}
+              </h4>
+              <ul className="space-y-3">
+                {col.links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      to={link.to}
+                      className="text-sm text-text-secondary hover:text-primary transition-colors duration-[var(--duration-fast)]"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
 
-          {/* Help Center Links */}
           <div>
-            <h4
-              className={`${
-                theme === "dark" ? "text-text-primary" : "text-gray-900"
-              } font-bold text-lg mb-6`}
-            >
-              HELP CENTER
+            <h4 className="font-semibold text-sm tracking-wide uppercase text-text-primary mb-5">
+              Contact Info
             </h4>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  to="/rooms"
-                  className={`${
-                    theme === "dark"
-                      ? "text-text-secondary hover:text-primary"
-                      : "text-gray-600 hover:text-blue-600"
-                  } transition text-sm`}
-                >
-                  Find a Property
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/hosting"
-                  className={`${
-                    theme === "dark"
-                      ? "text-text-secondary hover:text-primary"
-                      : "text-gray-600 hover:text-blue-600"
-                  } transition text-sm`}
-                >
-                  How To Host?
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/how-it-works"
-                  className={`${
-                    theme === "dark"
-                      ? "text-text-secondary hover:text-primary"
-                      : "text-gray-600 hover:text-blue-600"
-                  } transition text-sm`}
-                >
-                  FAQs
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/help"
-                  className={`${
-                    theme === "dark"
-                      ? "text-text-secondary hover:text-primary"
-                      : "text-gray-600 hover:text-blue-600"
-                  } transition text-sm`}
-                >
-                  Report an Issue
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div>
-            <h4
-              className={`${
-                theme === "dark" ? "text-text-primary" : "text-gray-900"
-              } font-bold text-lg mb-6`}
-            >
-              CONTACT INFO
-            </h4>
-            <ul className="space-y-3">
-              <li
-                className={`${
-                  theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                } text-sm`}
-              >
-                <span
-                  className={`${
-                    theme === "dark" ? "text-text-muted" : "text-gray-500"
-                  }`}
-                >
-                  Phone:{" "}
-                </span>
+            <ul className="space-y-3 text-sm">
+              <li className="text-text-secondary">
+                <span className="text-text-muted">Phone: </span>
                 <a
                   href="tel:+977 9865004688"
-                  className={`${
-                    theme === "dark"
-                      ? "text-primary hover:text-primary-hover"
-                      : "text-blue-600 hover:text-blue-800"
-                  } transition`}
+                  className="text-primary hover:text-primary-hover transition-colors"
                 >
                   +977 9865004688
                 </a>
               </li>
-              <li
-                className={`${
-                  theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                } text-sm`}
-              >
-                <span
-                  className={`${
-                    theme === "dark" ? "text-text-muted" : "text-gray-500"
-                  }`}
-                >
-                  Email:{" "}
-                </span>
+              <li className="text-text-secondary">
+                <span className="text-text-muted">Email: </span>
                 <a
                   href="mailto:aadityaacharya156@gmail.com"
-                  className={`${
-                    theme === "dark"
-                      ? "text-primary hover:text-primary-hover"
-                      : "text-blue-600 hover:text-blue-800"
-                  } transition`}
+                  className="text-primary hover:text-primary-hover transition-colors"
                 >
                   aadityaacharya156@gmail.com
                 </a>
               </li>
-              <li
-                className={`${
-                  theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                } text-sm`}
-              >
-                <span
-                  className={`${
-                    theme === "dark" ? "text-text-muted" : "text-gray-500"
-                  }`}
-                >
-                  Location:{" "}
-                </span>
-                <span
-                  className={`${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-700"
-                  }`}
-                >
-                  Bharatpur-10, Chitwan, Nepal
-                </span>
+              <li className="text-text-secondary">
+                <span className="text-text-muted">Location: </span>
+                Bharatpur-10, Chitwan, Nepal
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Divider */}
-        <div
-          className={`border-t ${
-            theme === "dark" ? "border-text-muted" : "border-gray-200"
-          } my-8`}
-        ></div>
-
-        {/* Copyright Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <p
-            className={`${
-              theme === "dark" ? "text-text-secondary" : "text-gray-600"
-            } text-xs`}
-          >
-            © 2026 CCT project Design | All rights reserved
-          </p>
-          <p
-            className={`${
-              theme === "dark" ? "text-text-secondary" : "text-gray-600"
-            } text-xs`}
-          >
-            Created with love by{" "}
-            <span className="text-primary font-bold">The CodeMan</span>
+        <div className="border-t border-border pt-6">
+          <p className="text-xs text-text-muted text-center md:text-left">
+            © 2026 Aathiti Aagaman. All rights reserved.
           </p>
         </div>
       </div>

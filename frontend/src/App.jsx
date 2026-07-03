@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ToastProvider } from "./components/ui/Toast";
 import RoleRoute from "./RoleRoute";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -180,7 +181,9 @@ export default function App() {
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <AuthProvider>
         <ThemeProvider>
-          <AppContent />
+          <ToastProvider>
+            <AppContent />
+          </ToastProvider>
         </ThemeProvider>
       </AuthProvider>
     </GoogleOAuthProvider>

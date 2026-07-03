@@ -7,6 +7,8 @@ import { blogs } from "../data/propertyData";
 import BecomeHostModal from "./BecomeHostModal";
 import StarRating from "./common/StarRating";
 import TopRatedBadge from "./common/TopRatedBadge";
+import ScaledDashboard from "./common/ScaledDashboard";
+import DashboardMockup from "./common/DashboardMockup";
 import { formatNPR } from "../utils/currency";
 import { isTopRated } from "../utils/rating";
 import {
@@ -455,176 +457,217 @@ export default function Home() {
         theme === "dark" ? "bg-background" : "bg-gray-50"
       }`}
     >
-      {/* ── Hero / Banner ──────────────────────────────────────────────────── */}
-      <div
-        className={`relative ${
-          theme === "dark"
-            ? "bg-gradient-to-br from-bg-secondary to-background"
-            : "bg-gradient-to-br from-gray-100 to-gray-200"
-        } overflow-hidden`}
-      >
+      {/* ── Hero ──────────────────────────────────────────────────────────── */}
+      <section className="relative min-h-[100svh] overflow-hidden bg-gradient-to-br from-[#0b1220] via-[#131c2e] to-[#0b1220] flex flex-col">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-0 w-[28rem] h-[28rem] bg-primary/20 rounded-full blur-3xl -translate-x-1/3 -translate-y-1/3" />
-          <div className="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-accent/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+          <div className="absolute top-0 left-0 w-[32rem] h-[32rem] bg-primary/20 rounded-full blur-3xl -translate-x-1/3 -translate-y-1/3" />
+          <div className="absolute bottom-0 right-0 w-[32rem] h-[32rem] bg-accent/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
         </div>
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-16">
-          <div className="mb-10 text-center md:text-left">
-            <p className="text-primary font-semibold text-sm tracking-widest uppercase mb-3">
-              Welcome to
-            </p>
-            <h1
-              className={`text-5xl md:text-6xl font-bold ${
-                theme === "dark" ? "text-text-primary" : "text-gray-900"
-              } mb-4 leading-[1.1] tracking-tight`}
-            >
-              Aatithi <span className="text-primary">Aagaman</span>
-            </h1>
-            <p
-              className={`${
-                theme === "dark" ? "text-text-secondary" : "text-gray-600"
-              } text-lg md:text-xl max-w-xl mx-auto md:mx-0`}
-            >
-              Find your perfect stay — rooms, flats, villas & hostels across the
-              country
-            </p>
-          </div>
 
-          <div
-            className={`${
-              theme === "dark"
-                ? "bg-background border-primary/20 shadow-2xl shadow-primary/5"
-                : "bg-white border-gray-200 shadow-lg"
-            } rounded-3xl p-6 md:p-8 border`}
+        <div className="flex-1 min-h-8 sm:min-h-12 lg:min-h-16 shrink-0" />
+
+        <div className="relative z-10 text-center px-5">
+          <h1 className="text-white font-normal leading-[1.05] tracking-tight text-[40px] min-[400px]:text-[44px] sm:text-6xl lg:text-7xl xl:text-[80px]">
+            <span className="block animate-fade-up">Find your stay.</span>
+            <span className="block animate-fade-up [animation-delay:100ms]">
+              Anywhere in Nepal.
+            </span>
+          </h1>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSearch();
+              document
+                .getElementById("properties")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="animate-fade-up [animation-delay:220ms] mt-5 sm:mt-6 w-full max-w-xl mx-auto"
           >
-            <div className="flex gap-2 sm:gap-6 mb-6 overflow-x-auto pb-1">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.value}
-                  onClick={() => setSelectedTab(tab.value)}
-                  className={`capitalize font-semibold pb-2 px-1 text-sm sm:text-base whitespace-nowrap transition border-b-2 ${
-                    selectedTab === tab.value
-                      ? "text-primary border-primary"
-                      : `${
-                          theme === "dark"
-                            ? "text-text-secondary"
-                            : "text-gray-500"
-                        } border-transparent hover:text-primary`
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label
-                  className={`${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                  } text-xs font-semibold block mb-1 uppercase tracking-wide`}
-                >
-                  Location
-                </label>
-                <input
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                  type="text"
-                  placeholder="Which city?"
-                  className={`w-full ${
-                    theme === "dark"
-                      ? "bg-bg-secondary text-text-primary placeholder-text-muted"
-                      : "bg-gray-100 text-gray-900 placeholder-gray-400"
-                  } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
-                />
-              </div>
-              <div>
-                <label
-                  className={`${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                  } text-xs font-semibold block mb-1 uppercase tracking-wide`}
-                >
-                  Sort By
-                </label>
-                <select
-                  className={`w-full ${
-                    theme === "dark"
-                      ? "bg-bg-secondary text-text-primary"
-                      : "bg-gray-100 text-gray-900"
-                  } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  <option value="default">Default</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="name">Name: A to Z</option>
-                </select>
-              </div>
-              <div>
-                <label
-                  className={`${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                  } text-xs font-semibold block mb-1 uppercase tracking-wide`}
-                >
-                  Guests
-                </label>
-                <input
-                  type="number"
-                  value={guests}
-                  min={1}
-                  onChange={(e) => setGuests(e.target.value)}
-                  placeholder="How many?"
-                  className={`w-full ${
-                    theme === "dark"
-                      ? "bg-bg-secondary text-text-primary placeholder-text-muted"
-                      : "bg-gray-100 text-gray-900 placeholder-gray-400"
-                  } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
-                />
-              </div>
-              <div>
-                <label
-                  className={`${
-                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                  } text-xs font-semibold block mb-1 uppercase tracking-wide`}
-                >
-                  Max Price:{" "}
-                  <span className="text-primary font-bold">
-                    {formatNPR(maxPrice)}
-                  </span>
-                </label>
-                <input
-                  type="range"
-                  min="0"
-                  max="60000"
-                  step={500}
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(Number(e.target.value))}
-                  className="w-full accent-primary mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-3">
-              {filtersActive && (
-                <button
-                  onClick={resetFilters}
-                  className={`px-6 py-3 rounded-xl font-semibold text-sm transition ${
-                    theme === "dark"
-                      ? "bg-primary/10 text-primary hover:bg-primary/20"
-                      : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                  }`}
-                >
-                  Reset
-                </button>
-              )}
+            <div className="flex items-center gap-3 rounded-full bg-white/10 backdrop-blur-md ring-1 ring-white/15 pl-5 pr-1.5 py-1.5">
+              <input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                type="text"
+                placeholder="Search by city, area, or property name"
+                className="flex-1 bg-transparent text-sm sm:text-base text-white placeholder-white/50 outline-none py-2"
+              />
               <button
-                onClick={handleSearch}
-                className="px-8 py-3 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-hover transition w-full sm:w-auto"
+                type="submit"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary text-white hover:scale-105 active:scale-95 transition-transform shrink-0 flex items-center justify-center"
               >
-                Search
+                <Search className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
               </button>
             </div>
+          </form>
+
+          <p className="animate-fade-up [animation-delay:340ms] mt-4 sm:mt-5 text-white/70 text-sm sm:text-base lg:text-lg leading-relaxed max-w-md mx-auto">
+            Verified rooms, flats, villas & hostels across the country
+            <br />— booked safely, hosted honestly.
+          </p>
+
+          <div className="animate-fade-up [animation-delay:460ms] mt-4 sm:mt-5 flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={() => navigate("/rooms")}
+              className="bg-primary text-white text-sm font-medium px-6 py-2.5 rounded-full hover:bg-primary-hover hover:shadow-lg transition-all"
+            >
+              Browse Rooms
+            </button>
+            <button
+              onClick={() => setHostModalOpen(true)}
+              className="text-white text-sm font-medium px-6 py-2.5 rounded-full ring-1 ring-white/25 hover:bg-white/10 transition-colors"
+            >
+              Become a Host
+            </button>
+          </div>
+        </div>
+
+        <div className="flex-1 min-h-10 sm:min-h-12 lg:min-h-16 shrink-0" />
+
+        <div className="animate-hero-rise [animation-delay:620ms] relative z-10 w-[92%] sm:w-[84%] lg:w-[72%] max-w-4xl mx-auto shrink-0 mb-6 sm:mb-10 lg:mb-14">
+          <ScaledDashboard>
+            <DashboardMockup />
+          </ScaledDashboard>
+        </div>
+      </section>
+
+      {/* ── Search Filters ────────────────────────────────────────────────── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 -mt-6 sm:-mt-8 relative z-10">
+        <div
+          className={`${
+            theme === "dark"
+              ? "bg-background border-primary/20 shadow-2xl shadow-primary/5"
+              : "bg-white border-gray-200 shadow-lg"
+          } rounded-3xl p-6 md:p-8 border`}
+        >
+          <div className="flex gap-2 sm:gap-6 mb-6 overflow-x-auto pb-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => setSelectedTab(tab.value)}
+                className={`capitalize font-semibold pb-2 px-1 text-sm sm:text-base whitespace-nowrap transition border-b-2 ${
+                  selectedTab === tab.value
+                    ? "text-primary border-primary"
+                    : `${
+                        theme === "dark"
+                          ? "text-text-secondary"
+                          : "text-gray-500"
+                      } border-transparent hover:text-primary`
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label
+                className={`${
+                  theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                } text-xs font-semibold block mb-1 uppercase tracking-wide`}
+              >
+                Location
+              </label>
+              <input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                type="text"
+                placeholder="Which city?"
+                className={`w-full ${
+                  theme === "dark"
+                    ? "bg-bg-secondary text-text-primary placeholder-text-muted"
+                    : "bg-gray-100 text-gray-900 placeholder-gray-400"
+                } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
+              />
+            </div>
+            <div>
+              <label
+                className={`${
+                  theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                } text-xs font-semibold block mb-1 uppercase tracking-wide`}
+              >
+                Sort By
+              </label>
+              <select
+                className={`w-full ${
+                  theme === "dark"
+                    ? "bg-bg-secondary text-text-primary"
+                    : "bg-gray-100 text-gray-900"
+                } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="default">Default</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="name">Name: A to Z</option>
+              </select>
+            </div>
+            <div>
+              <label
+                className={`${
+                  theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                } text-xs font-semibold block mb-1 uppercase tracking-wide`}
+              >
+                Guests
+              </label>
+              <input
+                type="number"
+                value={guests}
+                min={1}
+                onChange={(e) => setGuests(e.target.value)}
+                placeholder="How many?"
+                className={`w-full ${
+                  theme === "dark"
+                    ? "bg-bg-secondary text-text-primary placeholder-text-muted"
+                    : "bg-gray-100 text-gray-900 placeholder-gray-400"
+                } rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary text-sm`}
+              />
+            </div>
+            <div>
+              <label
+                className={`${
+                  theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                } text-xs font-semibold block mb-1 uppercase tracking-wide`}
+              >
+                Max Price:{" "}
+                <span className="text-primary font-bold">
+                  {formatNPR(maxPrice)}
+                </span>
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="60000"
+                step={500}
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                className="w-full accent-primary mt-1"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3">
+            {filtersActive && (
+              <button
+                onClick={resetFilters}
+                className={`px-6 py-3 rounded-xl font-semibold text-sm transition ${
+                  theme === "dark"
+                    ? "bg-primary/10 text-primary hover:bg-primary/20"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                }`}
+              >
+                Reset
+              </button>
+            )}
+            <button
+              onClick={handleSearch}
+              className="px-8 py-3 bg-primary text-white rounded-xl font-semibold text-sm hover:bg-primary-hover transition w-full sm:w-auto"
+            >
+              Search
+            </button>
           </div>
         </div>
       </div>
@@ -646,7 +689,7 @@ export default function Home() {
       </div>
 
       {/* ── Nearby Properties ──────────────────────────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-20">
+      <div id="properties" className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-20">
         <SectionHeader
           title="Nearby Listed Properties"
           subtitle={loading ? "Loading..." : `${total} properties found`}
