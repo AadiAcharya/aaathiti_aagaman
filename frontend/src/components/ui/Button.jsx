@@ -21,25 +21,29 @@ const SIZES = {
   lg: "text-sm px-6 py-2.5 gap-2",
 };
 
-export default function Button({
-  variant = "primary",
-  size = "md",
-  loading = false,
-  disabled = false,
-  icon: Icon,
-  iconPosition = "left",
-  fullWidth = false,
-  className = "",
-  children,
-  ...rest
-}) {
+export default function Button(props) {
+  const {
+    as: Component = "button",
+    variant = "primary",
+    size = "md",
+    loading = false,
+    disabled = false,
+    icon: Icon,
+    iconPosition = "left",
+    fullWidth = false,
+    className = "",
+    children,
+    ...rest
+  } = props;
   const isDisabled = disabled || loading;
   return (
-    <button
-      disabled={isDisabled}
+    <Component
+      disabled={Component === "button" ? isDisabled : undefined}
+      aria-disabled={isDisabled || undefined}
       className={`inline-flex items-center justify-center rounded-[var(--radius-control)] font-medium
         transition-colors transition-transform duration-[var(--duration-fast)] ease-[var(--ease-premium)]
         active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100
+        ${isDisabled ? "opacity-50 pointer-events-none" : ""}
         ${VARIANTS[variant] || VARIANTS.primary} ${SIZES[size] || SIZES.md}
         ${fullWidth ? "w-full" : ""} ${className}`}
       {...rest}
@@ -53,6 +57,6 @@ export default function Button({
       {!loading && Icon && iconPosition === "right" && (
         <Icon className="w-4 h-4 shrink-0" />
       )}
-    </button>
+    </Component>
   );
 }

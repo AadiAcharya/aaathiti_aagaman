@@ -16,12 +16,17 @@ const sendTokenResponse = (user, statusCode, res) => {
     success: true,
     token,
     user: {
-      _id:    user._id,
-      name:   user.name,
-      email:  user.email,
-      role:   user.role,
-      avatar: user.avatar,
-      phone:  user.phone,
+      _id:       user._id,
+      name:      user.name,
+      email:     user.email,
+      role:      user.role,
+      avatar:    user.avatar,
+      phone:     user.phone,
+      bio:       user.bio,
+      location:  user.location,
+      work:      user.work,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt,
     },
   });
 };
@@ -143,10 +148,10 @@ exports.getMe = async (req, res) => {
 // ─── PUT /api/auth/update-profile ────────────────────────────────────────────
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, phone, avatar } = req.body;
+    const { name, phone, avatar, bio, location, work } = req.body;
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { name, phone, avatar },
+      { name, phone, avatar, bio, location, work },
       { new: true, runValidators: true }
     );
     res.json({ success: true, user });

@@ -26,7 +26,9 @@ import SignIn from "./components/sign/SignIn.jsx";
 import SignUp from "./components/sign/SignUp.jsx";
 import ForgotPassword from "./components/sign/ForgotPassword.jsx";
 import ResetPassword from "./components/sign/ResetPassword.jsx";
-import Host from "./components/Host.jsx";
+import HostLayout from "./components/host/HostLayout.jsx";
+import HostOverview from "./components/host/HostOverview.jsx";
+import HostListings from "./components/host/HostListings.jsx";
 import Help from "./components/Help.jsx";
 import HowItWorks from "./components/HowItWorks.jsx";
 import RentalGuide from "./components/RentalGuide.jsx";
@@ -148,13 +150,20 @@ function AppContent() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route
-              path="host"
+              path="/host"
               element={
                 <RoleRoute allow={["host", "admin"]}>
-                  <Host />
+                  <HostLayout />
                 </RoleRoute>
               }
-            />
+            >
+              <Route index element={<HostOverview />} />
+              <Route path="listings" element={<HostListings />} />
+              <Route path="reservations" element={<HostReservation />} />
+              <Route path="messages" element={<Messages embedded />} />
+              <Route path="transactions" element={<TransactionHistory />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+            </Route>
             <Route path="help" element={<Help />} />
             <Route path="how-it-works" element={<HowItWorks />} />
             <Route path="rental-guide" element={<RentalGuide />} />
