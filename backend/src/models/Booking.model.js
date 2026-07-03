@@ -57,6 +57,10 @@ const bookingSchema = new mongoose.Schema(
 
     // Host (for easy host-side queries)
     host: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+
+    // Set once the guest has left a review for this stay — a completed
+    // booking can only be reviewed once.
+    reviewed: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

@@ -20,6 +20,9 @@ import {
   CheckCircle,
   XCircle,
   Send,
+  EyeOff,
+  Eye,
+  Star,
 } from "lucide-react";
 
 const LIMIT = 10;
@@ -45,6 +48,16 @@ export default function AdminDashboard() {
   const [bookingsTotal, setBookingsTotal] = useState(0);
   const [bookingsPage, setBookingsPage] = useState(1);
   const [bookingsLoading, setBookingsLoading] = useState(true);
+
+  // Listings tab state
+  const [listings, setListings] = useState([]);
+  const [listingsTotal, setListingsTotal] = useState(0);
+  const [listingsPage, setListingsPage] = useState(1);
+  const [listingsSearch, setListingsSearch] = useState("");
+  const [listingsLoading, setListingsLoading] = useState(true);
+  const [listingActioningId, setListingActioningId] = useState(null);
+  const [expandedListingId, setExpandedListingId] = useState(null);
+  const [reviewActioningId, setReviewActioningId] = useState(null);
 
   // Reports tab state
   const [reports, setReports] = useState([]);
@@ -99,6 +112,67 @@ export default function AdminDashboard() {
     };
     fetchBookings();
   }, [activeTab, bookingsPage]);
+
+  const fetchListings = useCallback(async () => {
+    try {
+      setListingsLoading(true);
+      const params = { page: listingsPage, limit: LIMIT };
+      if (listingsSearch.trim()) params.search = listingsSearch.trim();
+      const res = await adminAPI.getListings(params);
+      setListings(res.rooms);
+      setListingsTotal(res.total);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setListingsLoading(false);
+    }
+  }, [listingsPage, listingsSearch]);
+
+  useEffect(() => {
+    if (activeTab === "listings") fetchListings();
+  }, [activeTab, fetchListings]);
+
+  const toggleListingStatus = async (room) => {
+    try {
+      setListingActioningId(room._id);
+      setError("");
+      const res = await adminAPI.updateListing(room._id, { isAvailable: !room.isAvailable });
+      setListings((prev) => prev.map((r) => (r._id === room._id ? res.room : r)));
+    } catch (err) {
+      setError(err.message || "Action failed");
+    } finally {
+      setListingActioningId(null);
+    }
+  };
+
+  const removeListing = async (room) => {
+    if (!window.confirm(`Permanently delete "${room.title}"? This cannot be undone.`)) return;
+    try {
+      setListingActioningId(room._id);
+      setError("");
+      await adminAPI.deleteListing(room._id);
+      setListings((prev) => prev.filter((r) => r._id !== room._id));
+      setListingsTotal((t) => t - 1);
+    } catch (err) {
+      setError(err.message || "Action failed");
+    } finally {
+      setListingActioningId(null);
+    }
+  };
+
+  const removeReview = async (room, reviewId) => {
+    if (!window.confirm("Delete this review?")) return;
+    try {
+      setReviewActioningId(reviewId);
+      setError("");
+      const res = await adminAPI.deleteListingReview(room._id, reviewId);
+      setListings((prev) => prev.map((r) => (r._id === room._id ? res.room : r)));
+    } catch (err) {
+      setError(err.message || "Action failed");
+    } finally {
+      setReviewActioningId(null);
+    }
+  };
 
   useEffect(() => {
     if (activeTab !== "reports") return;
@@ -191,6 +265,7 @@ export default function AdminDashboard() {
   const usersPages = Math.max(1, Math.ceil(usersTotal / LIMIT));
   const bookingsPages = Math.max(1, Math.ceil(bookingsTotal / LIMIT));
   const reportsPages = Math.max(1, Math.ceil(reportsTotal / LIMIT));
+  const listingsPages = Math.max(1, Math.ceil(listingsTotal / LIMIT));
 
   return (
     <div
@@ -256,7 +331,7 @@ export default function AdminDashboard() {
           <div
             className={`flex gap-2 mb-6 ${theme === "dark" ? "border-b border-slate-700" : "border-b"}`}
           >
-            {["users", "bookings", "reports"].map((tab) => (
+            {["users", "listings", "bookings", "reports"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -486,6 +561,165 @@ export default function AdminDashboard() {
                   <button
                     onClick={() => setUsersPage((p) => Math.min(usersPages, p + 1))}
                     disabled={usersPage >= usersPages}
+                    className="p-2 rounded-lg border border-gray-300 disabled:opacity-40"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "listings" && (
+            <div
+              className={`rounded-2xl border overflow-hidden ${
+                theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-gray-200"
+              }`}
+            >
+              <div className="p-4 flex flex-wrap gap-3 border-b border-slate-700/20">
+                <div className="relative flex-1 min-w-[200px]">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    value={listingsSearch}
+                    onChange={(e) => {
+                      setListingsSearch(e.target.value);
+                      setListingsPage(1);
+                    }}
+                    placeholder="Search by title or location..."
+                    className={`w-full pl-9 pr-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 ${
+                      theme === "dark"
+                        ? "bg-slate-900 border-slate-700 text-slate-100"
+                        : "bg-gray-50 border-gray-300 text-gray-900"
+                    }`}
+                  />
+                </div>
+              </div>
+
+              {listingsLoading ? (
+                <div className="flex justify-center py-16">
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500" />
+                </div>
+              ) : listings.length === 0 ? (
+                <div className={`text-center py-16 ${theme === "dark" ? "text-slate-400" : "text-gray-500"}`}>
+                  No listings found
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-700/20">
+                  {listings.map((room) => (
+                    <div key={room._id} className="p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex gap-3">
+                          <img
+                            src={room.image || "/placeholder.svg"}
+                            alt={room.title}
+                            className="w-16 h-16 object-cover rounded-lg shrink-0"
+                          />
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-semibold">{room.title}</span>
+                              <span
+                                className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                                  room.isAvailable
+                                    ? "bg-green-100 text-green-700"
+                                    : "bg-red-100 text-red-700"
+                                }`}
+                              >
+                                {room.isAvailable ? "Active" : "Deactivated"}
+                              </span>
+                            </div>
+                            <p className={`text-sm ${theme === "dark" ? "text-slate-400" : "text-gray-600"}`}>
+                              Host: {room.host?.name || "Unknown"} ({room.host?.email || "-"})
+                            </p>
+                            <p className={`text-sm ${theme === "dark" ? "text-slate-400" : "text-gray-600"}`}>
+                              {formatNPR(room.price)} / night · {room.location || "No location set"}
+                            </p>
+                            <button
+                              onClick={() =>
+                                setExpandedListingId((id) => (id === room._id ? null : room._id))
+                              }
+                              className={`text-xs mt-1 font-semibold inline-flex items-center gap-1 ${
+                                theme === "dark" ? "text-purple-400" : "text-purple-600"
+                              }`}
+                            >
+                              <Star className="w-3 h-3" />
+                              {room.reviewsArray?.length || 0} reviews
+                            </button>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 shrink-0">
+                          <button
+                            onClick={() => toggleListingStatus(room)}
+                            disabled={listingActioningId === room._id}
+                            title={room.isAvailable ? "Deactivate listing" : "Reactivate listing"}
+                            className={`p-1.5 rounded-lg disabled:opacity-50 ${
+                              room.isAvailable
+                                ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+                                : "bg-green-100 text-green-700 hover:bg-green-200"
+                            }`}
+                          >
+                            {room.isAvailable ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                          <button
+                            onClick={() => removeListing(room)}
+                            disabled={listingActioningId === room._id}
+                            title="Delete listing"
+                            className="p-1.5 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 disabled:opacity-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {expandedListingId === room._id && (
+                        <div className="mt-3 pl-4 border-l-2 border-slate-700/20 space-y-2">
+                          {(room.reviewsArray || []).length === 0 ? (
+                            <p className={`text-xs ${theme === "dark" ? "text-slate-500" : "text-gray-400"}`}>
+                              No reviews yet.
+                            </p>
+                          ) : (
+                            room.reviewsArray.map((rev) => (
+                              <div key={rev._id} className="flex items-start justify-between gap-3 text-sm">
+                                <div>
+                                  <span className="font-semibold">{rev.name}</span>{" "}
+                                  <span className="text-yellow-500">{"★".repeat(rev.rating)}</span>
+                                  <p className={theme === "dark" ? "text-slate-400" : "text-gray-600"}>
+                                    {rev.comment}
+                                  </p>
+                                </div>
+                                <button
+                                  onClick={() => removeReview(room, rev._id)}
+                                  disabled={reviewActioningId === rev._id}
+                                  title="Delete review"
+                                  className="p-1 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 disabled:opacity-50 shrink-0"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex items-center justify-between p-4 border-t border-slate-700/20 text-sm">
+                <span className={theme === "dark" ? "text-slate-400" : "text-gray-500"}>
+                  Page {listingsPage} of {listingsPages} · {listingsTotal} listings
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setListingsPage((p) => Math.max(1, p - 1))}
+                    disabled={listingsPage <= 1}
+                    className="p-2 rounded-lg border border-gray-300 disabled:opacity-40"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setListingsPage((p) => Math.min(listingsPages, p + 1))}
+                    disabled={listingsPage >= listingsPages}
                     className="p-2 rounded-lg border border-gray-300 disabled:opacity-40"
                   >
                     <ChevronRight className="w-4 h-4" />

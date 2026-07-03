@@ -11,7 +11,6 @@ import Hosting from "./components/Hosting";
 import Messages from "./components/Messages";
 import Room from "./components/rooms/Room";
 import Rooms from "./components/rooms/Rooms";
-import Search from "./components/Search";
 import Wishlist from "./components/Wishlist";
 import AddProperty from "./components/AddProperty/AddProperty.jsx";
 import Amenities from "./components/AddProperty/Amenities.jsx";
@@ -24,13 +23,15 @@ import TransactionHistory from "./components/host/TransactionHistory.jsx";
 import NotificationsPage from "./components/host/NotificationsPage.jsx";
 import SignIn from "./components/sign/SignIn.jsx";
 import SignUp from "./components/sign/SignUp.jsx";
-import MainLayout from "./MainLayout";
+import ForgotPassword from "./components/sign/ForgotPassword.jsx";
+import ResetPassword from "./components/sign/ResetPassword.jsx";
 import Host from "./components/Host.jsx";
 import Help from "./components/Help.jsx";
 import HowItWorks from "./components/HowItWorks.jsx";
 import RentalGuide from "./components/RentalGuide.jsx";
 import Profile from "./components/Profile.jsx";
 import AdminDashboard from "./components/admin/AdminDashboard.jsx";
+import NotFound from "./components/NotFound.jsx";
 
 // Hosts/admins land on their own dashboard instead of the guest homepage
 function HomeGate() {
@@ -56,7 +57,6 @@ function AppContent() {
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<HomeGate />} />
-            {/* <Route element={<MainLayout />} /> */}
             <Route path="/account" element={<Account />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/hosting" element={<Hosting />} />
@@ -64,7 +64,8 @@ function AppContent() {
             <Route path="/room/:roomId" element={<Room />} />
             <Route path="/room" element={<Room />} />
             <Route path="/rooms" element={<Rooms />} />
-            <Route path="/search" element={<Search />} />
+            <Route path="/search" element={<Navigate to="/rooms" replace />} />
+            <Route path="/properties" element={<Navigate to="/rooms" replace />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route
               path="/add-property"
@@ -143,6 +144,8 @@ function AppContent() {
             <Route path="sign-up" element={<SignUp />} />
             <Route path="signin" element={<SignIn />} />
             <Route path="signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route
               path="host"
               element={
@@ -162,6 +165,7 @@ function AppContent() {
                 </RoleRoute>
               }
             />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
 

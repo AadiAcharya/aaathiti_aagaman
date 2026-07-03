@@ -201,6 +201,19 @@ export default function HostReservation() {
                     </button>
                   </div>
                 )}
+
+                {/* Once checkout has passed, the host confirms the stay actually happened — this unlocks the guest's ability to leave a review */}
+                {activeTab === "upcoming" && new Date(reservation.checkOut) <= new Date() && (
+                  <div className="flex-shrink-0">
+                    <button
+                      onClick={() => handleAction(reservation._id, "completed")}
+                      disabled={updating === reservation._id}
+                      className="px-6 py-2 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-full transition-all disabled:opacity-50"
+                    >
+                      ✓ Confirm Stay Completed
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 
 export default function Footer() {
@@ -25,29 +26,9 @@ export default function Footer() {
                 theme === "dark" ? "text-text-secondary" : "text-gray-600"
               } text-sm leading-relaxed mb-6`}
             >
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Find your next stay or list your own property — Aathiti
+              Aagaman connects hosts and guests across Nepal.
             </p>
-            <div className="flex gap-3">
-              <button
-                className={`${
-                  theme === "dark"
-                    ? "bg-bg-secondary border-text-muted text-text-primary hover:bg-primary hover:text-white"
-                    : "bg-white border-gray-300 text-gray-800 hover:bg-blue-600 hover:text-white"
-                } border px-4 py-2 rounded-md text-sm font-medium transition`}
-              >
-                PlayStore
-              </button>
-              <button
-                className={`${
-                  theme === "dark"
-                    ? "bg-bg-secondary border-text-muted text-text-primary hover:bg-primary hover:text-white"
-                    : "bg-white border-gray-300 text-gray-800 hover:bg-blue-600 hover:text-white"
-                } border px-4 py-2 rounded-md text-sm font-medium transition`}
-              >
-                AppleStore
-              </button>
-            </div>
           </div>
 
           {/* Company Links */}
@@ -61,32 +42,20 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/how-it-works"
                   className={`${
                     theme === "dark"
                       ? "text-text-secondary hover:text-primary"
                       : "text-gray-600 hover:text-blue-600"
                   } transition text-sm`}
                 >
-                  About Us
-                </a>
+                  How It Works
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className={`${
-                    theme === "dark"
-                      ? "text-text-secondary hover:text-primary"
-                      : "text-gray-600 hover:text-blue-600"
-                  } transition text-sm`}
-                >
-                  Legal Information
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
+                <Link
+                  to="/help"
                   className={`${
                     theme === "dark"
                       ? "text-text-secondary hover:text-primary"
@@ -94,19 +63,19 @@ export default function Footer() {
                   } transition text-sm`}
                 >
                   Contact Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/rental-guide"
                   className={`${
                     theme === "dark"
                       ? "text-text-secondary hover:text-primary"
                       : "text-gray-600 hover:text-blue-600"
                   } transition text-sm`}
                 >
-                  Blogs
-                </a>
+                  Rental Guide
+                </Link>
               </li>
             </ul>
           </div>
@@ -122,8 +91,8 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="/rooms"
+                <Link
+                  to="/rooms"
                   className={`${
                     theme === "dark"
                       ? "text-text-secondary hover:text-primary"
@@ -131,11 +100,11 @@ export default function Footer() {
                   } transition text-sm`}
                 >
                   Find a Property
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/hosting"
+                <Link
+                  to="/hosting"
                   className={`${
                     theme === "dark"
                       ? "text-text-secondary hover:text-primary"
@@ -143,23 +112,11 @@ export default function Footer() {
                   } transition text-sm`}
                 >
                   How To Host?
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className={`${
-                    theme === "dark"
-                      ? "text-text-secondary hover:text-primary"
-                      : "text-gray-600 hover:text-blue-600"
-                  } transition text-sm`}
-                >
-                  Why Us?
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
+                <Link
+                  to="/how-it-works"
                   className={`${
                     theme === "dark"
                       ? "text-text-secondary hover:text-primary"
@@ -167,19 +124,19 @@ export default function Footer() {
                   } transition text-sm`}
                 >
                   FAQs
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/help"
                   className={`${
                     theme === "dark"
                       ? "text-text-secondary hover:text-primary"
                       : "text-gray-600 hover:text-blue-600"
                   } transition text-sm`}
                 >
-                  Rental Guides
-                </a>
+                  Report an Issue
+                </Link>
               </li>
             </ul>
           </div>

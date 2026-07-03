@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User.model');
+const { sendEmail } = require('../utils/email');
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -165,6 +167,78 @@ exports.changePassword = async (req, res) => {
 
     user.password = newPassword;
     await user.save();
+    sendTokenResponse(user, 200, res);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─── POST /api/auth/forgot-password ──────────────────────────────────────────
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    // Always respond with success so this endpoint can't be used to enumerate emails
+    if (!user) {
+      return res.json({
+        success: true,
+        message: 'If an account with that email exists, a reset link has been sent.',
+      });
+    }
+
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+    user.resetPasswordExpire = Date.now() + 30 * 60 * 1000; // 30 minutes
+    await user.save({ validateBeforeSave: false });
+
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${rawToken}`;
+
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: 'Password Reset — Aathiti Aagaman',
+        text: `You requested a password reset. Click the link below to set a new password. This link expires in 30 minutes.\n\n${resetUrl}\n\nIf you didn't request this, you can safely ignore this email.`,
+      });
+    } catch (emailErr) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+      return res.status(500).json({ success: false, message: 'Could not send reset email' });
+    }
+
+    res.json({
+      success: true,
+      message: 'If an account with that email exists, a reset link has been sent.',
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─── PUT /api/auth/reset-password/:token ─────────────────────────────────────
+exports.resetPassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (!password || password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+    }
+
+    const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'Reset link is invalid or has expired' });
+    }
+
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
     sendTokenResponse(user, 200, res);
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

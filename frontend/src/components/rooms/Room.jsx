@@ -7,6 +7,7 @@ import { formatNPR } from "../../utils/currency";
 import { isTopRated } from "../../utils/rating";
 import StarRating from "../common/StarRating";
 import TopRatedBadge from "../common/TopRatedBadge";
+import RoomMap from "../common/RoomMap";
 import {
   Wifi,
   Tv,
@@ -63,16 +64,13 @@ export default function Room() {
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
   const [booking, setBooking] = useState(false);
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewComment, setReviewComment] = useState("");
-  const [reviewSubmitting, setReviewSubmitting] = useState(false);
-  const [reviewError, setReviewError] = useState("");
   const [bookingMsg, setBookingMsg] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editForm, setEditForm] = useState(null);
   const [editSaving, setEditSaving] = useState(false);
   const [editError, setEditError] = useState("");
   const [statusUpdating, setStatusUpdating] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
 
   const roomHostId = room?.host?._id || room?.host;
   const isOwner = !!(user && roomHostId && roomHostId === user._id);
@@ -123,32 +121,6 @@ export default function Room() {
       setBookingMsg({ type: "error", text: err.message });
     } finally {
       setBooking(false);
-    }
-  };
-
-  const handleSubmitReview = async () => {
-    if (!isAuthenticated) {
-      navigate("/sign-in");
-      return;
-    }
-    if (!reviewComment.trim()) {
-      setReviewError("Please write a comment");
-      return;
-    }
-    try {
-      setReviewSubmitting(true);
-      setReviewError("");
-      const { reviews, rating } = await roomsAPI.addReview(roomId, {
-        rating: reviewRating,
-        comment: reviewComment.trim(),
-      });
-      setRoom((prev) => ({ ...prev, reviewsArray: reviews, rating }));
-      setReviewComment("");
-      setReviewRating(5);
-    } catch (err) {
-      setReviewError(err.message || "Failed to submit review");
-    } finally {
-      setReviewSubmitting(false);
     }
   };
 
@@ -249,68 +221,124 @@ export default function Room() {
     >
       <div className="max-w-7xl mx-auto px-8 py-12">
         {/* Image Gallery */}
-        <div className="grid grid-cols-4 gap-4 mb-12">
-          <div className="col-span-2 row-span-2">
-            <img
-              src={room.image}
-              alt={room.title}
-              className="w-full h-full rounded-2xl object-cover shadow-lg shadow-primary/10"
-              style={{ minHeight: "320px" }}
-            />
-          </div>
-          {room.images?.slice(0, 2).map((img, i) => (
-            <img
-              key={i}
-              src={img}
-              alt=""
-              className={`h-40 w-full rounded-lg object-cover border ${
-                theme === "dark" ? "border-primary/10" : "border-gray-200"
-              }`}
-            />
-          ))}
-          {Array.from({
-            length: Math.max(0, 2 - (room.images?.length || 0)),
-          }).map((_, i) => (
-            <div
-              key={i}
-              className={`${
-                theme === "dark"
-                  ? "bg-bg-secondary border-primary/10"
-                  : "bg-gray-100 border-gray-200"
-              } h-40 rounded-lg border flex items-center justify-center`}
-            >
-              <p
-                className={`${
-                  theme === "dark" ? "text-text-secondary" : "text-gray-500"
-                } text-sm`}
+        {(() => {
+          const allImages = [room.image, ...(room.images || [])].filter(Boolean);
+          const extraCount = allImages.length - 3;
+          return (
+            <div className="grid grid-cols-4 gap-4 mb-12">
+              <div
+                className="col-span-2 row-span-2 cursor-pointer"
+                onClick={() => allImages.length && setLightboxIndex(0)}
               >
-                No image
-              </p>
+                <img
+                  src={room.image}
+                  alt={room.title}
+                  className="w-full h-full rounded-2xl object-cover shadow-lg shadow-primary/10"
+                  style={{ minHeight: "320px" }}
+                />
+              </div>
+              {allImages.slice(1, 3).map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  alt=""
+                  onClick={() => setLightboxIndex(i + 1)}
+                  className={`h-40 w-full rounded-lg object-cover border cursor-pointer ${
+                    theme === "dark" ? "border-primary/10" : "border-gray-200"
+                  }`}
+                />
+              ))}
+              {Array.from({ length: Math.max(0, 3 - allImages.length) }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`${
+                    theme === "dark"
+                      ? "bg-bg-secondary border-primary/10"
+                      : "bg-gray-100 border-gray-200"
+                  } h-40 rounded-lg border flex items-center justify-center`}
+                >
+                  <p
+                    className={`${
+                      theme === "dark" ? "text-text-secondary" : "text-gray-500"
+                    } text-sm`}
+                  >
+                    No image
+                  </p>
+                </div>
+              ))}
+              {extraCount > 0 && (
+                <div
+                  onClick={() => setLightboxIndex(3)}
+                  className={`${
+                    theme === "dark"
+                      ? "bg-gradient-to-br from-bg-secondary to-bg-secondary/50 border-primary/20"
+                      : "bg-gradient-to-br from-gray-100 to-gray-200/50 border-gray-300"
+                  } h-40 rounded-lg relative flex flex-col items-center justify-center border cursor-pointer group`}
+                >
+                  <span
+                    className={`text-4xl font-bold ${
+                      theme === "dark" ? "text-accent" : "text-blue-600"
+                    } group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    +{extraCount}
+                  </span>
+                  <span
+                    className={`text-sm font-semibold ${
+                      theme === "dark" ? "text-text-primary" : "text-gray-800"
+                    }`}
+                  >
+                    More Photos
+                  </span>
+                </div>
+              )}
+
+              {lightboxIndex !== null && (
+                <div
+                  className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-6"
+                  onClick={() => setLightboxIndex(null)}
+                >
+                  <button
+                    onClick={() => setLightboxIndex(null)}
+                    className="absolute top-6 right-6 text-white text-3xl leading-none hover:text-gray-300"
+                  >
+                    &times;
+                  </button>
+                  {allImages.length > 1 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLightboxIndex((i) => (i - 1 + allImages.length) % allImages.length);
+                      }}
+                      className="absolute left-6 text-white text-4xl leading-none hover:text-gray-300"
+                    >
+                      &#8249;
+                    </button>
+                  )}
+                  <img
+                    src={allImages[lightboxIndex]}
+                    alt=""
+                    onClick={(e) => e.stopPropagation()}
+                    className="max-h-[85vh] max-w-[85vw] object-contain rounded-lg"
+                  />
+                  {allImages.length > 1 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLightboxIndex((i) => (i + 1) % allImages.length);
+                      }}
+                      className="absolute right-6 text-white text-4xl leading-none hover:text-gray-300"
+                    >
+                      &#8250;
+                    </button>
+                  )}
+                  <span className="absolute bottom-6 text-white text-sm">
+                    {lightboxIndex + 1} / {allImages.length}
+                  </span>
+                </div>
+              )}
             </div>
-          ))}
-          <div
-            className={`${
-              theme === "dark"
-                ? "bg-gradient-to-br from-bg-secondary to-bg-secondary/50 border-primary/20"
-                : "bg-gradient-to-br from-gray-100 to-gray-200/50 border-gray-300"
-            } h-40 rounded-lg relative flex flex-col items-center justify-center border cursor-pointer group`}
-          >
-            <span
-              className={`text-4xl font-bold ${
-                theme === "dark" ? "text-accent" : "text-blue-600"
-              } group-hover:scale-110 transition-transform duration-300`}
-            >
-              +2
-            </span>
-            <span
-              className={`text-sm font-semibold ${
-                theme === "dark" ? "text-text-primary" : "text-gray-800"
-              }`}
-            >
-              More Photos
-            </span>
-          </div>
-        </div>
+          );
+        })()}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2">
@@ -525,6 +553,27 @@ export default function Room() {
               </div>
             )}
 
+            {/* Location */}
+            {room.location && (
+              <div className="mb-12">
+                <h2
+                  className={`text-xl font-bold ${
+                    theme === "dark" ? "text-text-primary" : "text-gray-900"
+                  } mb-2`}
+                >
+                  Location
+                </h2>
+                <p
+                  className={`${
+                    theme === "dark" ? "text-text-secondary" : "text-gray-600"
+                  } mb-4`}
+                >
+                  {room.location}
+                </p>
+                <RoomMap rooms={[room]} height="320px" />
+              </div>
+            )}
+
             {/* Reviews */}
             <div className="mb-12">
               <h2
@@ -623,71 +672,24 @@ export default function Room() {
                 ))}
               </div>
 
-              {/* Write a review - host accounts don't book/review, they'd use a guest account for that */}
+              {/* Reviews can only be left from My Bookings, for a stay the host has confirmed as completed */}
               {!isHost && (
-                <div
-                  className={`p-6 rounded-xl border ${
-                    theme === "dark"
-                      ? "bg-bg-secondary border-primary/20"
-                      : "bg-white border-gray-200"
+                <p
+                  className={`text-sm ${
+                    theme === "dark" ? "text-text-muted" : "text-gray-500"
                   }`}
                 >
-                  <h3
-                    className={`font-bold mb-4 ${
-                      theme === "dark" ? "text-text-primary" : "text-gray-900"
+                  Stayed here? You can leave a review from{" "}
+                  <button
+                    onClick={() => navigate("/account")}
+                    className={`font-semibold underline ${
+                      theme === "dark" ? "text-primary" : "text-blue-600"
                     }`}
                   >
-                    Write a Review
-                  </h3>
-                  <div className="flex items-center gap-1 mb-3">
-                    {Array.from({ length: 5 }).map((_, si) => (
-                      <button
-                        key={si}
-                        type="button"
-                        onClick={() => setReviewRating(si + 1)}
-                        aria-label={`Rate ${si + 1} star`}
-                      >
-                        <Star
-                          className={`w-6 h-6 ${
-                            si < reviewRating
-                              ? "fill-yellow-400 text-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      </button>
-                    ))}
-                  </div>
-                  <textarea
-                    value={reviewComment}
-                    onChange={(e) => setReviewComment(e.target.value)}
-                    rows={3}
-                    placeholder={
-                      isAuthenticated
-                        ? "Share your experience..."
-                        : "Sign in to leave a review"
-                    }
-                    disabled={!isAuthenticated || reviewSubmitting}
-                    className={`w-full px-3 py-2 mb-3 ${
-                      theme === "dark"
-                        ? "bg-background border-primary/20 text-text-primary"
-                        : "bg-gray-50 border-gray-300 text-gray-900"
-                    } border rounded-lg focus:outline-none focus:border-primary disabled:opacity-60`}
-                  />
-                  {reviewError && (
-                    <p className="text-red-500 text-sm mb-3">{reviewError}</p>
-                  )}
-                  <button
-                    onClick={handleSubmitReview}
-                    disabled={reviewSubmitting}
-                    className="bg-primary hover:bg-primary-hover text-white font-semibold px-6 py-2 rounded-lg transition disabled:opacity-50"
-                  >
-                    {reviewSubmitting
-                      ? "Submitting..."
-                      : isAuthenticated
-                        ? "Submit Review"
-                        : "Sign In to Review"}
-                  </button>
-                </div>
+                    My Bookings
+                  </button>{" "}
+                  once your host confirms the stay is complete.
+                </p>
               )}
             </div>
           </div>

@@ -1,4 +1,6 @@
 const Room = require('../models/Room.model');
+const Booking = require('../models/Booking.model');
+const { geocodeLocation } = require('../utils/geocode');
 
 // ─── GET /api/rooms ───────────────────────────────────────────────────────────
 // Supports: ?type=suite&priceRange=15000-30000&sortBy=price-low&page=1&limit=6
@@ -73,7 +75,12 @@ exports.getRoomById = async (req, res) => {
 // ─── POST /api/rooms ──────────────────────────────────────────────────────────
 exports.createRoom = async (req, res) => {
   try {
-    const room = await Room.create({ ...req.body, host: req.user.id });
+    const coords = await geocodeLocation(req.body.location);
+    const room = await Room.create({
+      ...req.body,
+      host: req.user.id,
+      ...(coords || {}),
+    });
     res.status(201).json({ success: true, room });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
@@ -91,7 +98,14 @@ exports.updateRoom = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Not authorized' });
     }
 
-    room = await Room.findByIdAndUpdate(req.params.id, req.body, {
+    const updates = { ...req.body };
+    // Re-geocode only when the location text actually changed
+    if (updates.location && updates.location !== room.location) {
+      const coords = await geocodeLocation(updates.location);
+      if (coords) Object.assign(updates, coords);
+    }
+
+    room = await Room.findByIdAndUpdate(req.params.id, updates, {
       new: true, runValidators: true,
     });
     res.json({ success: true, room });
@@ -144,6 +158,8 @@ exports.checkAvailability = async (req, res) => {
 };
 
 // ─── POST /api/rooms/:id/reviews ──────────────────────────────────────────────
+// Reviews are only allowed for a specific completed, unreviewed stay — this
+// prevents anyone from reviewing a room they never actually booked.
 exports.addReview = async (req, res) => {
   try {
     if (req.user.role === 'host' || req.user.role === 'admin') {
@@ -153,21 +169,37 @@ exports.addReview = async (req, res) => {
       });
     }
 
-    const { rating, comment } = req.body;
+    const { rating, comment, bookingId } = req.body;
     const room = await Room.findById(req.params.id);
     if (!room) return res.status(404).json({ success: false, message: 'Room not found' });
 
-    // Check if user already reviewed
-    const alreadyReviewed = room.reviewsArray.find(
-      (r) => r.user?.toString() === req.user.id
-    );
-    if (alreadyReviewed) {
-      return res.status(400).json({ success: false, message: 'You already reviewed this room' });
+    const booking = await Booking.findById(bookingId);
+    if (!booking || booking.user.toString() !== req.user.id) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+    if (booking.room.toString() !== room._id.toString()) {
+      return res.status(400).json({ success: false, message: 'Booking does not match this room' });
+    }
+    if (booking.status !== 'completed') {
+      return res.status(400).json({
+        success: false,
+        message: 'You can only review a stay after the host has marked it complete',
+      });
+    }
+    if (booking.reviewed) {
+      return res.status(400).json({ success: false, message: 'This stay has already been reviewed' });
     }
 
     room.reviewsArray.push({ user: req.user.id, name: req.user.name, rating, comment });
     room.updateRating();
     await room.save();
+
+    // Mark every completed booking this guest has for this room as reviewed,
+    // since only one review per room per guest is stored.
+    await Booking.updateMany(
+      { user: req.user.id, room: room._id, status: 'completed' },
+      { reviewed: true }
+    );
 
     res.status(201).json({ success: true, reviews: room.reviewsArray, rating: room.rating });
   } catch (err) {

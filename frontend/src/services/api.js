@@ -24,6 +24,26 @@ const request = async (endpoint, options = {}) => {
   return data;
 };
 
+// ─── UPLOAD ───────────────────────────────────────────────────────────────────
+// Separate from request() since file uploads use multipart/form-data,
+// not JSON — the browser sets the Content-Type boundary automatically.
+export const uploadAPI = {
+  uploadImage: async (file) => {
+    const token = getToken();
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const res = await fetch(`${BASE_URL}/upload`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Upload failed");
+    return data;
+  },
+};
+
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
 export const authAPI = {
   register: (body) =>
@@ -50,6 +70,16 @@ export const authAPI = {
     request("/auth/become-host", { method: "PUT", body: JSON.stringify(body) }),
   toggleWishlist: (roomId) =>
     request(`/auth/wishlist/${roomId}`, { method: "POST" }),
+  forgotPassword: (email) =>
+    request("/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    }),
+  resetPassword: (token, password) =>
+    request(`/auth/reset-password/${token}`, {
+      method: "PUT",
+      body: JSON.stringify({ password }),
+    }),
 };
 
 // ─── ROOMS ────────────────────────────────────────────────────────────────────
@@ -138,6 +168,16 @@ export const adminAPI = {
     request("/reports?" + new URLSearchParams(params)),
   updateReport: (id, body) =>
     request(`/reports/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  getListings: (params = {}) =>
+    request("/admin/listings?" + new URLSearchParams(params)),
+  updateListing: (id, body) =>
+    request(`/admin/listings/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    }),
+  deleteListing: (id) => request(`/admin/listings/${id}`, { method: "DELETE" }),
+  deleteListingReview: (id, reviewId) =>
+    request(`/admin/listings/${id}/reviews/${reviewId}`, { method: "DELETE" }),
 };
 
 // ─── MESSAGES (guest/host/admin - any authenticated user) ────────────────────

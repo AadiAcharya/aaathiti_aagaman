@@ -117,6 +117,8 @@ exports.getBookingById = async (req, res) => {
 };
 
 // ─── PUT /api/bookings/:id/cancel ────────────────────────────────────────────
+const CANCELLATION_CUTOFF_HOURS = 24;
+
 exports.cancelBooking = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);
@@ -128,14 +130,43 @@ exports.cancelBooking = async (req, res) => {
     if (booking.status === 'cancelled') {
       return res.status(400).json({ success: false, message: 'Booking already cancelled' });
     }
+    if (booking.status === 'completed') {
+      return res.status(400).json({ success: false, message: 'A completed stay cannot be cancelled' });
+    }
+
+    // Admins can force-cancel past the cutoff; guests can't cancel same-day/last-minute
+    if (req.user.role !== 'admin') {
+      const hoursUntilCheckIn = (new Date(booking.checkIn) - Date.now()) / (1000 * 60 * 60);
+      if (hoursUntilCheckIn < CANCELLATION_CUTOFF_HOURS) {
+        return res.status(400).json({
+          success: false,
+          message: hoursUntilCheckIn < 0
+            ? 'This stay has already started and can no longer be cancelled'
+            : `Bookings can only be cancelled at least ${CANCELLATION_CUTOFF_HOURS} hours before check-in`,
+        });
+      }
+    }
 
     booking.status = 'cancelled';
     await booking.save();
 
     // Remove date block from room
-    await Room.findByIdAndUpdate(booking.room, {
-      $pull: { bookedDates: { checkIn: booking.checkIn, checkOut: booking.checkOut } },
-    });
+    const room = await Room.findByIdAndUpdate(
+      booking.room,
+      { $pull: { bookedDates: { checkIn: booking.checkIn, checkOut: booking.checkOut } } },
+      { new: true }
+    );
+
+    if (room?.host) {
+      await Notification.create({
+        user:      room.host,
+        title:     'Booking Cancelled',
+        message:   `${booking.guestName || 'A guest'} cancelled their booking for "${room.title}".`,
+        type:      'booking',
+        relatedId: booking._id,
+        link:      '/reservation',
+      });
+    }
 
     res.json({ success: true, booking });
   } catch (err) {

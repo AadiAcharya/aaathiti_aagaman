@@ -7,7 +7,8 @@ import { formatNPR } from "../../utils/currency";
 import { isTopRated } from "../../utils/rating";
 import StarRating from "../common/StarRating";
 import TopRatedBadge from "../common/TopRatedBadge";
-import { Heart } from "lucide-react";
+import { Heart, ImageOff, LayoutGrid, Map } from "lucide-react";
+import RoomMap from "../common/RoomMap";
 
 export default function Rooms() {
   const navigate = useNavigate();
@@ -25,6 +26,10 @@ export default function Rooms() {
   const [roomType, setRoomType] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState("default");
+
+  const [viewMode, setViewMode] = useState("grid"); // "grid" | "map"
+  const [mapRooms, setMapRooms] = useState([]);
+  const [mapLoading, setMapLoading] = useState(false);
 
   // Wishlist stored in state (synced from backend if logged in, else localStorage)
   const [wishlist, setWishlist] = useState(() => {
@@ -59,6 +64,27 @@ export default function Rooms() {
   useEffect(() => {
     setPage(1);
   }, [roomType, priceRange, sortBy]);
+
+  // Map view shows all matching rooms at once, not just the current page
+  useEffect(() => {
+    if (viewMode !== "map") return;
+    const fetchAllForMap = async () => {
+      try {
+        setMapLoading(true);
+        const params = { page: 1, limit: 100 };
+        if (roomType !== "all") params.type = roomType;
+        if (priceRange !== "all") params.priceRange = priceRange;
+        if (sortBy !== "default") params.sortBy = sortBy;
+        const data = await roomsAPI.getAll(params);
+        setMapRooms(data.rooms);
+      } catch {
+        setMapRooms([]);
+      } finally {
+        setMapLoading(false);
+      }
+    };
+    fetchAllForMap();
+  }, [viewMode, roomType, priceRange, sortBy]);
 
   const resetFilters = () => {
     setRoomType("all");
@@ -193,7 +219,57 @@ export default function Rooms() {
           >
             {loading ? "Loading..." : `${total} rooms found`}
           </div>
+
+          <div
+            className={`ml-auto flex rounded-lg border overflow-hidden ${
+              theme === "dark" ? "border-primary/10" : "border-gray-300"
+            }`}
+          >
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`px-4 py-3 flex items-center gap-2 text-sm font-semibold transition ${
+                viewMode === "grid"
+                  ? "bg-primary text-white"
+                  : theme === "dark"
+                    ? "bg-bg-secondary text-text-secondary hover:text-text-primary"
+                    : "bg-white text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              <LayoutGrid className="w-4 h-4" /> Grid
+            </button>
+            <button
+              onClick={() => setViewMode("map")}
+              className={`px-4 py-3 flex items-center gap-2 text-sm font-semibold transition ${
+                viewMode === "map"
+                  ? "bg-primary text-white"
+                  : theme === "dark"
+                    ? "bg-bg-secondary text-text-secondary hover:text-text-primary"
+                    : "bg-white text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              <Map className="w-4 h-4" /> Map
+            </button>
+          </div>
         </div>
+
+        {/* Map View */}
+        {viewMode === "map" && (
+          <div className="mb-12">
+            {mapLoading ? (
+              <div
+                className={`h-[500px] rounded-xl border flex items-center justify-center ${
+                  theme === "dark"
+                    ? "border-primary/10 text-text-secondary"
+                    : "border-gray-200 text-gray-500"
+                }`}
+              >
+                Loading map...
+              </div>
+            ) : (
+              <RoomMap rooms={mapRooms} height="500px" />
+            )}
+          </div>
+        )}
 
         {/* Error */}
         {error && (
@@ -205,6 +281,8 @@ export default function Rooms() {
           </div>
         )}
 
+        {viewMode === "grid" && (
+        <>
         {/* Loading skeletons */}
         {loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -265,16 +343,33 @@ export default function Rooms() {
                 className={`${
                   theme === "dark"
                     ? "bg-bg-secondary border-primary/10 hover:shadow-2xl"
-                    : "bg-white border-gray-200 hover:shadow-lg"
-                } rounded-lg overflow-hidden border transition group cursor-pointer`}
+                    : "bg-white border-gray-200 hover:shadow-xl"
+                } rounded-xl overflow-hidden border shadow-sm transition-shadow duration-300 group cursor-pointer flex flex-col`}
               >
                 {/* Room Image */}
-                <div className="relative h-56 overflow-hidden">
-                  <img
-                    src={room.image}
-                    alt={room.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
+                <div
+                  className={`relative h-56 overflow-hidden shrink-0 ${
+                    theme === "dark" ? "bg-bg-secondary" : "bg-gray-100"
+                  }`}
+                >
+                  {room.image ? (
+                    <img
+                      src={room.image}
+                      alt={room.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextElementSibling.style.display = "flex";
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className={`${room.image ? "hidden" : "flex"} absolute inset-0 items-center justify-center ${
+                      theme === "dark" ? "text-text-muted" : "text-gray-400"
+                    }`}
+                  >
+                    <ImageOff className="w-10 h-10" />
+                  </div>
                   {isTopRated(room.rating, room.reviews) && (
                     <TopRatedBadge className="absolute top-4 left-4" />
                   )}
@@ -305,12 +400,12 @@ export default function Rooms() {
                 </div>
 
                 {/* Room Info */}
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-3">
+                <div className="p-6 flex flex-col flex-1">
+                  <div className="flex justify-between items-start gap-2 mb-3">
                     <h3
                       className={`font-bold ${
                         theme === "dark" ? "text-text-primary" : "text-gray-900"
-                      } text-xl`}
+                      } text-xl line-clamp-1`}
                     >
                       {room.title}
                     </h3>
@@ -320,13 +415,13 @@ export default function Rooms() {
                   <p
                     className={`${
                       theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                    } text-sm mb-4`}
+                    } text-sm mb-4 line-clamp-2`}
                   >
                     {room.description}
                   </p>
 
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {room.amenities?.map((amenity, index) => (
+                    {room.amenities?.slice(0, 4).map((amenity, index) => (
                       <span
                         key={index}
                         className={`px-3 py-1 ${
@@ -338,9 +433,20 @@ export default function Rooms() {
                         {amenity}
                       </span>
                     ))}
+                    {(room.amenities?.length || 0) > 4 && (
+                      <span
+                        className={`px-3 py-1 ${
+                          theme === "dark"
+                            ? "bg-bg-secondary text-text-muted border border-primary/10"
+                            : "bg-gray-100 text-gray-500"
+                        } text-xs rounded-full font-medium`}
+                      >
+                        +{room.amenities.length - 4} more
+                      </span>
+                    )}
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="flex gap-3 mt-auto">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -402,6 +508,8 @@ export default function Rooms() {
             </button>
           )}
         </div>
+        </>
+        )}
       </main>
     </div>
   );

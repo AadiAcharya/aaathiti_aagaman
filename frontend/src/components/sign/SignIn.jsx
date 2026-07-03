@@ -178,8 +178,8 @@ const SignIn = () => {
             </div>
 
             <div className="text-sm">
-              <a
-                href="#"
+              <Link
+                to="/forgot-password"
                 className={`font-medium ${
                   theme === "dark"
                     ? "text-primary hover:text-primary-hover"
@@ -187,7 +187,7 @@ const SignIn = () => {
                 }`}
               >
                 Forgot your password?
-              </a>
+              </Link>
             </div>
           </div>
 

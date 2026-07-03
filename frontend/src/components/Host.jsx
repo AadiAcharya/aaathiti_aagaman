@@ -32,6 +32,8 @@ export default function Host() {
     avgRating: 0,
   });
   const [listings, setListings] = useState([]);
+  const [listingBreakdown, setListingBreakdown] = useState([]);
+  const [monthlyRevenue, setMonthlyRevenue] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleting, setDeleting] = useState(null);
@@ -45,6 +47,8 @@ export default function Host() {
           hostAPI.getListings(),
         ]);
         setStats(dashRes.stats);
+        setListingBreakdown(dashRes.listingBreakdown || []);
+        setMonthlyRevenue(dashRes.monthlyRevenue || []);
         setListings(listRes.listings);
       } catch (err) {
         setError(err.message);
@@ -204,6 +208,86 @@ export default function Host() {
           </div>
         </div>
       </section>
+
+      {/* Analytics: revenue trend + per-listing performance */}
+      {!loading && stats.totalListings > 0 && (
+        <section className="px-6 md:px-12 pb-4">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Revenue trend */}
+            <div
+              className={`rounded-xl p-6 border ${
+                theme === "dark"
+                  ? "bg-slate-800 border-slate-700"
+                  : "bg-white border-gray-200"
+              }`}
+            >
+              <h3 className="font-bold mb-4">Revenue — Last 6 Months</h3>
+              {monthlyRevenue.every((m) => m.total === 0) ? (
+                <p className={`text-sm ${theme === "dark" ? "text-slate-400" : "text-gray-500"}`}>
+                  No completed transactions yet.
+                </p>
+              ) : (
+                <div className="flex items-end justify-between gap-2 h-40">
+                  {monthlyRevenue.map((m) => {
+                    const max = Math.max(...monthlyRevenue.map((x) => x.total), 1);
+                    const heightPct = Math.max((m.total / max) * 100, 2);
+                    return (
+                      <div key={m.label} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+                        <span className={`text-xs font-semibold ${theme === "dark" ? "text-slate-300" : "text-gray-700"}`}>
+                          {m.total > 0 ? formatNPR(m.total) : ""}
+                        </span>
+                        <div
+                          style={{ height: `${heightPct}%` }}
+                          className={`w-full rounded-t-md min-h-[4px] ${
+                            theme === "dark" ? "bg-blue-500" : "bg-blue-500"
+                          }`}
+                        />
+                        <span className={`text-xs ${theme === "dark" ? "text-slate-400" : "text-gray-500"}`}>
+                          {m.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Per-listing performance */}
+            <div
+              className={`rounded-xl p-6 border ${
+                theme === "dark"
+                  ? "bg-slate-800 border-slate-700"
+                  : "bg-white border-gray-200"
+              }`}
+            >
+              <h3 className="font-bold mb-4">Listing Performance</h3>
+              {listingBreakdown.length === 0 ? (
+                <p className={`text-sm ${theme === "dark" ? "text-slate-400" : "text-gray-500"}`}>
+                  No listings yet.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {listingBreakdown.slice(0, 5).map((l) => (
+                    <div key={l.roomId} className="flex items-center justify-between gap-3 text-sm">
+                      <span className={`truncate ${theme === "dark" ? "text-slate-200" : "text-gray-800"}`}>
+                        {l.title}
+                      </span>
+                      <span className="flex items-center gap-3 shrink-0">
+                        <span className={theme === "dark" ? "text-slate-400" : "text-gray-500"}>
+                          {l.bookingsCount} booking{l.bookingsCount === 1 ? "" : "s"}
+                        </span>
+                        <span className={`font-semibold ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}>
+                          {formatNPR(l.revenue)}
+                        </span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Host Dashboard Section */}
       <section className="py-12 px-6 md:px-12">

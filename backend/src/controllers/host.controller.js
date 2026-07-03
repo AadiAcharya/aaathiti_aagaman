@@ -9,20 +9,47 @@ exports.getDashboard = async (req, res) => {
   try {
     const hostId = req.user.id;
 
-    const [totalListings, bookings, transactions] = await Promise.all([
-      Room.countDocuments({ host: hostId }),
-      Booking.find({ host: hostId }),
-      Transaction.find({ user: hostId, type: 'charge', status: 'completed' }),
+    const [rooms, bookings, transactions] = await Promise.all([
+      Room.find({ host: hostId }, 'title rating'),
+      Booking.find({ host: hostId }, 'room status grandTotal createdAt'),
+      Transaction.find({ user: hostId, type: 'charge', status: 'completed' }, 'amount createdAt'),
     ]);
 
+    const totalListings  = rooms.length;
     const activeBookings = bookings.filter((b) => b.status === 'confirmed').length;
     const totalRevenue   = transactions.reduce((sum, t) => sum + t.amount, 0);
-
-    // Average rating across all host rooms
-    const rooms = await Room.find({ host: hostId }, 'rating');
     const avgRating = rooms.length
       ? (rooms.reduce((s, r) => s + r.rating, 0) / rooms.length).toFixed(1)
       : 0;
+
+    // Per-listing breakdown: bookings count + revenue for each of the host's rooms
+    const listingBreakdown = rooms.map((room) => {
+      const roomBookings = bookings.filter((b) => b.room.toString() === room._id.toString());
+      const revenue = roomBookings
+        .filter((b) => b.status === 'confirmed' || b.status === 'completed')
+        .reduce((sum, b) => sum + b.grandTotal, 0);
+      return {
+        roomId: room._id,
+        title: room.title,
+        bookingsCount: roomBookings.length,
+        revenue,
+      };
+    }).sort((a, b) => b.revenue - a.revenue);
+
+    // Revenue trend for the last 6 months (including months with no revenue)
+    const monthlyRevenue = [];
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthEnd   = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+      const total = transactions
+        .filter((t) => t.createdAt >= monthStart && t.createdAt < monthEnd)
+        .reduce((sum, t) => sum + t.amount, 0);
+      monthlyRevenue.push({
+        label: monthStart.toLocaleString('en-US', { month: 'short' }),
+        total,
+      });
+    }
 
     res.json({
       success: true,
@@ -32,6 +59,8 @@ exports.getDashboard = async (req, res) => {
         totalRevenue: totalRevenue.toFixed(2),
         avgRating,
       },
+      listingBreakdown,
+      monthlyRevenue,
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -94,8 +123,54 @@ exports.updateReservationStatus = async (req, res) => {
     const booking = await Booking.findOne({ _id: req.params.id, host: req.user.id });
     if (!booking) return res.status(404).json({ success: false, message: 'Booking not found' });
 
+    // A stay can only be confirmed complete once checkout has actually passed —
+    // this is what unlocks the guest's ability to leave a review, so it can't
+    // be marked early.
+    if (status === 'completed') {
+      if (booking.status !== 'confirmed') {
+        return res.status(400).json({
+          success: false,
+          message: 'Only a confirmed booking can be marked as completed',
+        });
+      }
+      if (new Date(booking.checkOut) > new Date()) {
+        return res.status(400).json({
+          success: false,
+          message: 'This stay cannot be marked complete until after checkout',
+        });
+      }
+    }
+
+    const previousStatus = booking.status;
     booking.status = status;
     await booking.save();
+
+    // Releasing a booking (rejected/cancelled by host) must free up the blocked dates
+    if (status === 'cancelled' && previousStatus !== 'cancelled') {
+      await Room.findByIdAndUpdate(booking.room, {
+        $pull: { bookedDates: { checkIn: booking.checkIn, checkOut: booking.checkOut } },
+      });
+    }
+
+    if (status !== previousStatus) {
+      const room = await Room.findById(booking.room).select('title');
+      const statusMessages = {
+        confirmed: `Your booking for "${room?.title || 'the room'}" has been confirmed by the host.`,
+        cancelled: `Your booking for "${room?.title || 'the room'}" was declined by the host.`,
+        completed: `Your stay at "${room?.title || 'the room'}" has been marked complete.`,
+      };
+      if (statusMessages[status]) {
+        await Notification.create({
+          user:      booking.user,
+          title:     'Booking Update',
+          message:   statusMessages[status],
+          type:      'booking',
+          relatedId: booking._id,
+          link:      '/reservation',
+        });
+      }
+    }
+
     res.json({ success: true, booking });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

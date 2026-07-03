@@ -83,6 +83,7 @@ export default function Post() {
         description:  property.description || "No description provided yet.",
         location:     property.location || "Not specified",
         image:        property.image || "",
+        images:       property.images || [],
         price:        Number(property.price) || 0,
         priceDisplay: formatNPR(property.price || 0),
         type:         bedroomCount >= 3 ? "suite" : bedroomCount === 2 ? "double" : "single",
@@ -172,6 +173,15 @@ export default function Post() {
                 </div>
               )}
             </div>
+            {(property.images || []).length > 0 && (
+              <div className="grid grid-cols-5 gap-2">
+                {property.images.map((img, i) => (
+                  <div key={i} className="h-16 rounded-lg overflow-hidden border border-text-muted/20">
+                    <img src={img} alt={`Additional ${i + 1}`} className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Title & Info */}
             <div className="bg-bg-secondary rounded-2xl p-6 border border-text-muted/20">

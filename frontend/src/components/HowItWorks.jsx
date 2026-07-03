@@ -174,7 +174,7 @@ export default function HowItWorks() {
                 <div className="mb-4">
                   <step.icon className="w-11 h-11" />
                   <div
-                    className={`mt-3 inline-block rounded-full w-10 h-10 flex items-center justify-center font-bold text-white ${
+                    className={`mt-3 rounded-full w-10 h-10 flex items-center justify-center font-bold text-white ${
                       theme === "dark" ? "bg-blue-600" : "bg-blue-500"
                     }`}
                   >
@@ -304,7 +304,7 @@ export default function HowItWorks() {
                 <div className="mb-4">
                   <step.icon className="w-11 h-11" />
                   <div
-                    className={`mt-3 inline-block rounded-full w-10 h-10 flex items-center justify-center font-bold text-white ${
+                    className={`mt-3 rounded-full w-10 h-10 flex items-center justify-center font-bold text-white ${
                       theme === "dark" ? "bg-blue-600" : "bg-blue-500"
                     }`}
                   >

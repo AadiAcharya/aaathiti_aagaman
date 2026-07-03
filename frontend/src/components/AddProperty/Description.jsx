@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PawPrint, Ban } from "lucide-react";
+import { PawPrint, Ban, Upload, Loader2, X } from "lucide-react";
+import { uploadAPI } from "../../services/api";
+
+const MAX_ADDITIONAL_PHOTOS = 5; // + 1 cover photo = 6 total
 
 const steps = ["Type", "Amenities", "Description", "Facilities", "Safety", "Post"];
 const StepBar = ({ current }) => (
@@ -32,22 +35,62 @@ export default function Description() {
       return saved ? JSON.parse(saved) : {
         title: "", location: "", description: "",
         price: "", bedrooms: "1", bathrooms: "1",
-        parking: "0", pets: "No", image: "",
+        parking: "0", pets: "No", image: "", images: [],
       };
     } catch {
       return {
         title: "", location: "", description: "",
         price: "", bedrooms: "1", bathrooms: "1",
-        parking: "0", pets: "No", image: "",
+        parking: "0", pets: "No", image: "", images: [],
       };
     }
   });
 
   const [errors, setErrors] = useState({});
+  const [uploading, setUploading] = useState(false);
+  const [galleryUploading, setGalleryUploading] = useState(false);
 
   const set = (key, val) => {
     setForm((prev) => ({ ...prev, [key]: val }));
     setErrors((prev) => ({ ...prev, [key]: "" }));
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploading(true);
+      setErrors((prev) => ({ ...prev, image: "" }));
+      const { url } = await uploadAPI.uploadImage(file);
+      set("image", url);
+    } catch (err) {
+      setErrors((prev) => ({ ...prev, image: err.message || "Upload failed" }));
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleGalleryUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    const remainingSlots = MAX_ADDITIONAL_PHOTOS - (form.images?.length || 0);
+    const toUpload = files.slice(0, remainingSlots);
+    try {
+      setGalleryUploading(true);
+      setErrors((prev) => ({ ...prev, images: "" }));
+      const uploaded = await Promise.all(toUpload.map((f) => uploadAPI.uploadImage(f)));
+      setForm((prev) => ({ ...prev, images: [...(prev.images || []), ...uploaded.map((r) => r.url)] }));
+    } catch (err) {
+      setErrors((prev) => ({ ...prev, images: err.message || "Upload failed" }));
+    } finally {
+      setGalleryUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  const removeGalleryImage = (index) => {
+    setForm((prev) => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
   };
 
   const validate = () => {
@@ -187,21 +230,68 @@ export default function Description() {
             </div>
           </div>
 
-          {/* Image URL */}
+          {/* Cover Photo */}
           <div>
-            <label className="text-text-primary font-semibold text-sm block mb-2">Image URL (optional)</label>
+            <label className="text-text-primary font-semibold text-sm block mb-2">Cover Photo</label>
+            <div className="flex items-center gap-3">
+              <label className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed cursor-pointer transition text-sm font-semibold ${
+                uploading ? "opacity-60 pointer-events-none" : "hover:border-primary"
+              } border-text-muted/30 text-text-secondary`}>
+                {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                {uploading ? "Uploading..." : "Upload from device"}
+                <input type="file" accept="image/png,image/jpeg,image/webp,image/gif"
+                  onChange={handleFileUpload} disabled={uploading} className="hidden" />
+              </label>
+            </div>
+            <p className="text-text-muted text-xs mt-2 mb-2">Or paste an image URL instead:</p>
             <input
               value={form.image}
               onChange={(e) => set("image", e.target.value)}
               placeholder="https://images.unsplash.com/..."
               className={inputClass("image")}
             />
+            {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
             {form.image && (
               <div className="mt-3 h-40 rounded-xl overflow-hidden border border-text-muted/20">
                 <img src={form.image} alt="preview" className="w-full h-full object-cover"
                   onError={(e) => { e.target.style.display = "none"; }} />
               </div>
             )}
+          </div>
+
+          {/* Additional Photos */}
+          <div>
+            <label className="text-text-primary font-semibold text-sm block mb-2">
+              Additional Photos
+              <span className="text-text-muted font-normal"> — more photos help guests decide ({(form.images || []).length}/{MAX_ADDITIONAL_PHOTOS})</span>
+            </label>
+
+            {(form.images || []).length > 0 && (
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 mb-3">
+                {form.images.map((img, i) => (
+                  <div key={i} className="relative h-24 rounded-lg overflow-hidden border border-text-muted/20 group">
+                    <img src={img} alt={`Additional ${i + 1}`} className="w-full h-full object-cover"
+                      onError={(e) => { e.target.style.display = "none"; }} />
+                    <button type="button" onClick={() => removeGalleryImage(i)}
+                      className="absolute top-1 right-1 bg-black/60 hover:bg-black/80 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {(form.images || []).length < MAX_ADDITIONAL_PHOTOS && (
+              <label className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed cursor-pointer transition text-sm font-semibold w-fit ${
+                galleryUploading ? "opacity-60 pointer-events-none" : "hover:border-primary"
+              } border-text-muted/30 text-text-secondary`}>
+                {galleryUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                {galleryUploading ? "Uploading..." : "Add more photos"}
+                <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple
+                  onChange={handleGalleryUpload} disabled={galleryUploading} className="hidden" />
+              </label>
+            )}
+            {errors.images && <p className="text-red-500 text-xs mt-1">{errors.images}</p>}
           </div>
         </div>
 

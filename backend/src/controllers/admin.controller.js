@@ -65,12 +65,25 @@ exports.updateUser = async (req, res) => {
       });
     }
 
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    // Whitelist fields — never let admin-panel input reach fields like
+    // `password` directly, since findByIdAndUpdate skips the pre('save')
+    // hashing hook and would store it in plaintext.
+    const updates = {};
+    if (req.body.role !== undefined) {
+      if (!['user', 'host'].includes(req.body.role)) {
+        return res.status(400).json({ success: false, message: "Role must be 'user' or 'host'" });
+      }
+      updates.role = req.body.role;
+    }
+    if (req.body.isBanned !== undefined) updates.isBanned = !!req.body.isBanned;
+    if (req.body.banReason !== undefined) updates.banReason = String(req.body.banReason);
+
+    const user = await User.findByIdAndUpdate(req.params.id, updates, {
       new: true, runValidators: true,
     });
 
     // Banning a host deactivates all of their listings so guests stop seeing them
-    if (req.body.isBanned === true && user.role === 'host') {
+    if (updates.isBanned === true && user.role === 'host') {
       await Room.updateMany({ host: user._id }, { isAvailable: false });
     }
 
@@ -95,6 +108,79 @@ exports.deleteUser = async (req, res) => {
 
     await User.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: 'User deleted' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─── GET /api/admin/listings ──────────────────────────────────────────────────
+exports.getListings = async (req, res) => {
+  try {
+    const { page = 1, limit = 20, search } = req.query;
+    const query = {};
+    if (search) {
+      query.$or = [
+        { title:    { $regex: search, $options: 'i' } },
+        { location: { $regex: search, $options: 'i' } },
+      ];
+    }
+    const skip  = (Number(page) - 1) * Number(limit);
+    const total = await Room.countDocuments(query);
+    const rooms = await Room.find(query)
+      .populate('host', 'name email')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit));
+    res.json({ success: true, count: rooms.length, total, rooms });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─── PUT /api/admin/listings/:id ──────────────────────────────────────────────
+// Toggle a listing's availability (deactivate/reactivate) without banning the host
+exports.updateListing = async (req, res) => {
+  try {
+    if (req.body.isAvailable === undefined) {
+      return res.status(400).json({ success: false, message: 'isAvailable is required' });
+    }
+    const room = await Room.findByIdAndUpdate(
+      req.params.id,
+      { isAvailable: !!req.body.isAvailable },
+      { new: true, runValidators: true }
+    ).populate('host', 'name email');
+    if (!room) return res.status(404).json({ success: false, message: 'Listing not found' });
+    res.json({ success: true, room });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+// ─── DELETE /api/admin/listings/:id ───────────────────────────────────────────
+exports.deleteListing = async (req, res) => {
+  try {
+    const room = await Room.findByIdAndDelete(req.params.id);
+    if (!room) return res.status(404).json({ success: false, message: 'Listing not found' });
+    res.json({ success: true, message: 'Listing deleted' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// ─── DELETE /api/admin/listings/:id/reviews/:reviewId ─────────────────────────
+exports.deleteListingReview = async (req, res) => {
+  try {
+    const room = await Room.findById(req.params.id);
+    if (!room) return res.status(404).json({ success: false, message: 'Listing not found' });
+
+    const review = room.reviewsArray.id(req.params.reviewId);
+    if (!review) return res.status(404).json({ success: false, message: 'Review not found' });
+
+    review.deleteOne();
+    room.updateRating();
+    await room.save();
+
+    res.json({ success: true, room });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

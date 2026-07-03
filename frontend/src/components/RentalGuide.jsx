@@ -476,7 +476,7 @@ export default function RentalGuide() {
           </p>
           <button
             className="px-8 py-3 bg-white text-blue-700 font-bold rounded-lg hover:bg-gray-200 transition-all duration-300"
-            onClick={() => navigate("/properties")}
+            onClick={() => navigate("/rooms")}
           >
             Browse Properties →
           </button>

@@ -20,8 +20,12 @@ import {
   PawPrint,
   Search,
   Users,
-  Building2,
   Star,
+  Globe,
+  ShieldCheck,
+  Headset,
+  Sparkles,
+  MessageSquare,
 } from "lucide-react";
 
 // ─── Room Card ────────────────────────────────────────────────────────────────
@@ -274,6 +278,59 @@ const StatCard = ({ icon, value, label }) => {
   );
 };
 
+// ─── Rotating Stat Card ─────────────────────────────────────────────────────
+// Cycles through several stats in one slot — the current one animates out,
+// the next one animates in, on a loop.
+const ROTATE_INTERVAL = 3200;
+const EXIT_DURATION = 350;
+
+const RotatingStatCard = ({ items }) => {
+  const { theme } = useTheme();
+  const [index, setIndex] = useState(0);
+  const [exiting, setExiting] = useState(false);
+
+  useEffect(() => {
+    const rotate = setInterval(() => {
+      setExiting(true);
+      setTimeout(() => {
+        setIndex((i) => (i + 1) % items.length);
+        setExiting(false);
+      }, EXIT_DURATION);
+    }, ROTATE_INTERVAL);
+    return () => clearInterval(rotate);
+  }, [items.length]);
+
+  const { icon, value, label } = items[index];
+  const Icon = icon;
+
+  return (
+    <div
+      className={`text-center p-6 overflow-hidden ${
+        theme === "dark"
+          ? "bg-bg-secondary border-text-muted/10 hover:border-primary/30"
+          : "bg-white border-gray-200 hover:border-blue-200"
+      } rounded-2xl border transition`}
+    >
+      <div
+        key={index}
+        className={exiting ? "animate-stat-exit" : "animate-stat-enter"}
+      >
+        <div className="mb-2 flex justify-center">
+          <Icon className="w-9 h-9 text-primary" />
+        </div>
+        <p className="text-3xl font-bold text-primary mb-1">{value}</p>
+        <p
+          className={`${
+            theme === "dark" ? "text-text-secondary" : "text-gray-600"
+          } text-sm`}
+        >
+          {label}
+        </p>
+      </div>
+    </div>
+  );
+};
+
 // ─── Main Home Component ──────────────────────────────────────────────────────
 export default function Home() {
   const navigate = useNavigate();
@@ -439,12 +496,14 @@ export default function Home() {
       {/* ── Hero / Banner ──────────────────────────────────────────────────── */}
       <div
         className={`relative ${
-          theme === "dark" ? "bg-bg-secondary" : "bg-gray-100"
+          theme === "dark"
+            ? "bg-gradient-to-br from-bg-secondary to-background"
+            : "bg-gradient-to-br from-gray-100 to-gray-200"
         } overflow-hidden`}
       >
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary rounded-full translate-x-1/2 translate-y-1/2" />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-0 w-[28rem] h-[28rem] bg-primary/20 rounded-full blur-3xl -translate-x-1/3 -translate-y-1/3" />
+          <div className="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-accent/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
         </div>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-12 md:py-16">
           <div className="mb-10 text-center md:text-left">
@@ -452,13 +511,11 @@ export default function Home() {
               Welcome to
             </p>
             <h1
-              className={`text-5xl md:text-7xl font-bold ${
+              className={`text-5xl md:text-6xl font-bold ${
                 theme === "dark" ? "text-text-primary" : "text-gray-900"
-              } mb-4 leading-tight`}
+              } mb-4 leading-[1.1] tracking-tight`}
             >
-              Aatithi
-              <br />
-              <span className="text-primary">Aagaman</span>
+              Aatithi <span className="text-primary">Aagaman</span>
             </h1>
             <p
               className={`${
@@ -613,15 +670,23 @@ export default function Home() {
       {/* ── Stats Bar ──────────────────────────────────────────────────────── */}
       <div className="bg-primary/5 border-y border-primary/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
               { icon: HomeIcon, value: "500+", label: "Properties Listed" },
               { icon: Users, value: "12K+", label: "Happy Guests" },
-              { icon: Building2, value: "50+", label: "Cities Covered" },
               { icon: Star, value: "4.8", label: "Average Rating" },
+              { icon: ShieldCheck, value: "100%", label: "Verified Hosts" },
+              { icon: Headset, value: "24/7", label: "Guest Support" },
             ].map((s) => (
               <StatCard key={s.label} {...s} />
             ))}
+            <RotatingStatCard
+              items={[
+                { icon: Globe, value: "50+", label: "Cities Covered" },
+                { icon: Sparkles, value: "30+", label: "Amenities Offered" },
+                { icon: MessageSquare, value: "1.2K+", label: "Verified Reviews" },
+              ]}
+            />
           </div>
         </div>
       </div>

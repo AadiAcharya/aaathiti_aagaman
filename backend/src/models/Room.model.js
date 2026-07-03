@@ -30,6 +30,8 @@ const roomSchema = new mongoose.Schema(
     size:      { type: String, default: '' },
     maxGuests: { type: Number, default: 1 },
     location:  { type: String, default: '' },
+    lat:       { type: Number },
+    lng:       { type: Number },
     bedrooms:  { type: String, default: '1' },
     bathrooms: { type: String, default: '1' },
     parking:   { type: String, default: '0' },
