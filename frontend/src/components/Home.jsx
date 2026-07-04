@@ -798,11 +798,8 @@ export default function Home() {
             subtitle="Handpicked properties for an exceptional stay"
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featured.map((room, i) => (
-              <div
-                key={room._id}
-                className={i === 0 ? "md:row-span-2" : ""}
-              >
+            {featured.map((room) => (
+              <div key={room._id}>
                 <div
                   onClick={() => navigate(`/room/${room._id}`)}
                   className="group relative rounded-2xl overflow-hidden cursor-pointer h-full min-h-[280px]"
@@ -812,12 +809,12 @@ export default function Home() {
                       src={room.image}
                       alt={room.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      style={{ minHeight: i === 0 ? "400px" : "200px" }}
+                      style={{ minHeight: "280px" }}
                     />
                   ) : (
                     <div
                       className="w-full h-full bg-primary/10 flex items-center justify-center"
-                      style={{ minHeight: i === 0 ? "400px" : "200px" }}
+                      style={{ minHeight: "280px" }}
                     >
                       <HomeIcon className="w-14 h-14 text-primary" />
                     </div>

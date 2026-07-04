@@ -14,8 +14,7 @@ router.post(
 
 // eSewa routes
 router.post("/esewa/initiate", protect, ctrl.initiateESewaPayment);
-router.get("/esewa/callback", ctrl.esewaCallback);
-router.get("/esewa/verify", ctrl.verifyESewaPayment);
+router.post("/esewa/verify-return", protect, ctrl.verifyEsewaReturn);
 
 // Common routes
 router.get("/transactions", protect, ctrl.getMyTransactions);

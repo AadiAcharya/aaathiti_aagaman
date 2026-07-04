@@ -129,8 +129,11 @@ export const paymentsAPI = {
       method: "POST",
       body: JSON.stringify({ bookingId }),
     }),
-  verifyEsewa: (refId, pid) =>
-    request(`/payments/esewa/verify?refId=${refId}&pid=${pid}`),
+  verifyEsewaReturn: (data) =>
+    request("/payments/esewa/verify-return", {
+      method: "POST",
+      body: JSON.stringify({ data }),
+    }),
   getTransactions: () => request("/payments/transactions"),
 };
 

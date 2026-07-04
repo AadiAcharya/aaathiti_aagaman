@@ -251,17 +251,28 @@ export default function Account() {
       label: "Room",
       sortable: false,
       render: (b) => (
-        <div className="flex items-center gap-3">
+        <button
+          type="button"
+          disabled={!b.room?._id}
+          onClick={() => navigate(`/room/${b.room._id}`)}
+          className="flex items-center gap-3 text-left disabled:cursor-default"
+        >
           <img
             src={b.room?.image || "/placeholder.svg"}
             alt=""
             className="w-12 h-12 rounded-[var(--radius-control)] object-cover shrink-0"
           />
           <div className="min-w-0">
-            <p className="font-medium text-text-primary truncate">{b.room?.title || "Room unavailable"}</p>
+            <p
+              className={`font-medium truncate ${
+                b.room?._id ? "text-text-primary hover:text-primary hover:underline" : "text-text-primary"
+              }`}
+            >
+              {b.room?.title || "Room unavailable"}
+            </p>
             <p className="text-xs text-text-muted">#{b._id.slice(-6)}</p>
           </div>
-        </div>
+        </button>
       ),
     },
     {
@@ -296,8 +307,18 @@ export default function Account() {
         const cancellable = canCancelBooking(b);
         const showCancel = b.status === "pending" || b.status === "confirmed";
         const showReview = b.status === "completed" && !b.reviewed;
+        const showPay =
+          (b.status === "pending" || b.status === "confirmed") && b.paymentStatus !== "paid";
         return (
           <div className="flex items-center justify-end gap-4">
+            {showPay && (
+              <button
+                onClick={() => navigate(`/payment/${b._id}`)}
+                className="text-primary hover:text-primary-hover text-sm font-semibold"
+              >
+                Pay Now
+              </button>
+            )}
             {showReview && (
               <button
                 onClick={() => openReview(b)}

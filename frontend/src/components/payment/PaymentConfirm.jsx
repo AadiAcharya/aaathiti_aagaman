@@ -7,7 +7,10 @@ import Card from "../ui/Card";
 import Button from "../ui/Button";
 import Badge from "../ui/Badge";
 import Skeleton from "../ui/Skeleton";
-import { CreditCard, Wallet, CheckCircle2, ImageOff, ArrowLeft, ShieldCheck } from "lucide-react";
+import ConfirmDialog from "../ui/ConfirmDialog";
+import { CreditCard, Wallet, CheckCircle2, XCircle, ImageOff, ArrowLeft, ShieldCheck } from "lucide-react";
+
+const CANCELLATION_CUTOFF_HOURS = 24;
 
 const formatDate = (d) =>
   new Date(d).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
@@ -24,6 +27,9 @@ export default function PaymentConfirm() {
   const [card, setCard] = useState({ name: "", number: "", expiry: "", cvv: "" });
   const [paying, setPaying] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -37,6 +43,7 @@ export default function PaymentConfirm() {
         const { booking: b } = await bookingsAPI.getById(bookingId);
         setBooking(b);
         setPaid(b.paymentStatus === "paid");
+        setCancelled(b.status === "cancelled");
       } catch (err) {
         setError(err.message || "Booking not found");
       } finally {
@@ -91,6 +98,27 @@ export default function PaymentConfirm() {
     }
   };
 
+  const hoursUntilCheckIn = booking
+    ? (new Date(booking.checkIn).getTime() - Date.now()) / (1000 * 60 * 60)
+    : 0;
+  const canCancel = hoursUntilCheckIn >= CANCELLATION_CUTOFF_HOURS;
+
+  const handleCancelBooking = async () => {
+    try {
+      setCancelling(true);
+      setError("");
+      await bookingsAPI.cancel(bookingId);
+      setCancelled(true);
+      setShowCancelConfirm(false);
+      toast("Booking cancelled", { type: "success" });
+    } catch (err) {
+      setError(err.message || "Could not cancel this booking");
+      setShowCancelConfirm(false);
+    } finally {
+      setCancelling(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="max-w-5xl mx-auto px-6 py-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -126,18 +154,35 @@ export default function PaymentConfirm() {
       </button>
 
       <h1 className="text-3xl font-display font-bold text-text-primary mb-1">
-        {paid ? "Payment Complete" : "Confirm & Pay"}
+        {cancelled ? "Booking Cancelled" : paid ? "Payment Complete" : "Confirm & Pay"}
       </h1>
       <p className="text-text-secondary mb-10">
-        {paid
-          ? "Your booking is confirmed — a receipt is below."
-          : "Review your stay and choose how you'd like to pay."}
+        {cancelled
+          ? "This booking has been cancelled — the dates are now free for other guests."
+          : paid
+            ? "Your booking is confirmed — a receipt is below."
+            : "Review your stay and choose how you'd like to pay."}
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Payment options — left */}
         <div className="lg:col-span-2 space-y-6">
-          {paid ? (
+          {cancelled ? (
+            <Card className="flex items-start gap-4">
+              <XCircle className="w-8 h-8 text-danger shrink-0" />
+              <div>
+                <p className="font-semibold text-text-primary">This booking was cancelled</p>
+                <p className="text-text-secondary text-sm mt-1">
+                  {paid
+                    ? "A refund has been issued and will reflect in your transaction history."
+                    : "No payment was ever taken for this booking."}
+                </p>
+                <Button size="sm" variant="secondary" className="mt-4" onClick={() => navigate("/account")}>
+                  View My Bookings
+                </Button>
+              </div>
+            </Card>
+          ) : paid ? (
             <Card className="flex items-start gap-4">
               <CheckCircle2 className="w-8 h-8 text-success shrink-0" />
               <div>
@@ -284,8 +329,8 @@ export default function PaymentConfirm() {
               <div className="min-w-0">
                 <p className="font-semibold text-text-primary truncate">{room.title || "Room"}</p>
                 <p className="text-text-muted text-xs mt-0.5">Booking #{booking._id.slice(-6)}</p>
-                <Badge tone={paid ? "success" : "warning"} className="mt-1.5">
-                  {paid ? "Paid" : "Payment Pending"}
+                <Badge tone={cancelled && paid ? "info" : paid ? "success" : "warning"} className="mt-1.5">
+                  {cancelled && paid ? "Refunded" : paid ? "Paid" : "Payment Pending"}
                 </Badge>
               </div>
             </div>
@@ -322,7 +367,7 @@ export default function PaymentConfirm() {
               </div>
             </div>
 
-            {!paid && (
+            {!cancelled && !paid && (
               <Link
                 to="/account"
                 className="block text-center text-text-muted hover:text-text-primary text-xs mt-5"
@@ -330,9 +375,41 @@ export default function PaymentConfirm() {
                 Pay later from My Bookings
               </Link>
             )}
+
+            {!cancelled && (
+              <button
+                type="button"
+                onClick={() => canCancel && setShowCancelConfirm(true)}
+                disabled={!canCancel}
+                title={
+                  canCancel
+                    ? undefined
+                    : `Bookings can only be cancelled at least ${CANCELLATION_CUTOFF_HOURS}h before check-in`
+                }
+                className="block w-full text-center text-danger hover:text-danger/80 text-xs font-medium mt-3 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Cancel this booking
+              </button>
+            )}
           </Card>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={showCancelConfirm}
+        title="Cancel this booking?"
+        description={
+          paid
+            ? "This booking has already been paid for — cancelling will refund the payment and release the dates."
+            : "This will release the dates so other guests can book them."
+        }
+        confirmLabel="Cancel Booking"
+        cancelLabel="Keep Booking"
+        danger
+        loading={cancelling}
+        onConfirm={handleCancelBooking}
+        onCancel={() => setShowCancelConfirm(false)}
+      />
     </div>
   );
 }

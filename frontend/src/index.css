@@ -51,6 +51,11 @@
 
 /* Light mode (default — no .dark class on <html>) */
 :root {
+  /* Tells the browser to render native controls (date-picker icon,
+     scrollbars, etc.) in a light style — without this the calendar icon
+     on <input type="date"> stays dark and vanishes on a dark background. */
+  color-scheme: light;
+
   --color-background: #faf8f4;
   --color-bg-secondary: #f2ede4;
   --color-bg-elevated: #ffffff;
@@ -78,6 +83,8 @@
 
 /* Dark mode (.dark class toggled on <html> by ThemeContext) */
 .dark {
+  color-scheme: dark;
+
   --color-background: #0b1220;
   --color-bg-secondary: #131c2e;
   --color-bg-elevated: #1a2438;

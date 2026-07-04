@@ -212,99 +212,89 @@ exports.initiateESewaPayment = async (req, res) => {
       payload: esewaPayload,
       esewaUrl:
         esewaConfig.environment === "production"
-          ? "https://esewa.com.np/api/epay/main/v2/form"
-          : "https://uat.esewa.com.np/api/epay/main/v2/form",
+          ? "https://epay.esewa.com.np/api/epay/main/v2/form"
+          : "https://rc-epay.esewa.com.np/api/epay/main/v2/form",
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
-// ─── GET /api/payments/esewa/callback ──────────────────────────────────────────
-// eSewa payment callback
-exports.esewaCallback = async (req, res) => {
+// ─── POST /api/payments/esewa/verify-return ──────────────────────────────────
+// eSewa's real ePay v2 flow redirects the browser (not our server) to
+// success_url/failure_url with a single `?data=` param: a base64-encoded JSON
+// blob, itself signed with the same HMAC secret used to initiate the payment.
+// The frontend lands on that URL, then POSTs the raw `data` string here so we
+// can verify it server-side (never trust the redirect alone) before marking
+// anything paid.
+exports.verifyEsewaReturn = async (req, res) => {
   try {
-    const { pid, refId, status } = req.query;
-
-    if (!pid || !refId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing required parameters" });
+    const { data } = req.body;
+    if (!data) {
+      return res.status(400).json({ success: false, message: "Missing eSewa response data" });
     }
 
-    // Extract booking ID from pid (format: bookingId-timestamp)
-    const bookingId = pid.split("-")[0];
+    let parsed;
+    try {
+      parsed = JSON.parse(Buffer.from(data, "base64").toString("utf-8"));
+    } catch {
+      return res.status(400).json({ success: false, message: "Malformed eSewa response" });
+    }
 
-    const booking = await Booking.findById(bookingId);
-    if (!booking)
-      return res
-        .status(404)
-        .json({ success: false, message: "Booking not found" });
+    const { transaction_uuid, total_amount, status, signed_field_names, signature } = parsed;
+    if (!transaction_uuid || !signed_field_names || !signature) {
+      return res.status(400).json({ success: false, message: "Incomplete eSewa response" });
+    }
+
+    // Re-derive the signature from the fields eSewa says it signed, in the
+    // order it says it signed them — a mismatch means the response was
+    // tampered with (or our secret is wrong) and must not be trusted.
+    const message = signed_field_names
+      .split(",")
+      .map((field) => `${field}=${parsed[field]}`)
+      .join(",");
+    const expectedSignature = crypto
+      .createHmac("sha256", esewaConfig.secret)
+      .update(message)
+      .digest("base64");
+
+    if (expectedSignature !== signature) {
+      return res.status(400).json({ success: false, message: "Signature verification failed" });
+    }
+
+    const booking = await Booking.findOne({ esewaTransactionId: transaction_uuid });
+    if (!booking) {
+      return res.status(404).json({ success: false, message: "Booking not found for this transaction" });
+    }
+
+    // The signature is valid, but make sure the amount actually matches what
+    // we charged for — a valid signature on the wrong amount is still wrong.
+    if (Math.round(Number(total_amount)) !== Math.round(booking.grandTotal)) {
+      return res.status(400).json({ success: false, message: "Amount mismatch" });
+    }
 
     if (status === "COMPLETE") {
-      // Payment successful
-      booking.paymentStatus = "paid";
-      booking.status = "confirmed";
-      booking.esewaRefId = refId;
-      await booking.save();
+      if (booking.paymentStatus !== "paid") {
+        booking.paymentStatus = "paid";
+        booking.status = "confirmed";
+        await booking.save();
 
-      // Attributed to the host, not the paying guest — see note in confirmPayment above.
-      await Transaction.create({
-        user: booking.host,
-        booking: booking._id,
-        amount: booking.grandTotal,
-        type: "charge",
-        status: "completed",
-        description: `eSewa Payment - Ref: ${refId}`,
-      });
-
-      return res.json({
-        success: true,
-        message: "Payment successful",
-        booking,
-      });
-    } else {
-      // Payment failed
-      booking.paymentStatus = "failed";
-      await booking.save();
-
-      return res.status(400).json({
-        success: false,
-        message: "Payment failed or cancelled",
-      });
-    }
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
-
-// ─── GET /api/payments/esewa/verify ────────────────────────────────────────────
-// Verify eSewa payment status
-exports.verifyESewaPayment = async (req, res) => {
-  try {
-    const { refId, pid } = req.query;
-
-    if (!refId || !pid) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing parameters" });
+        // Attributed to the host, not the paying guest — see note in confirmPayment above.
+        await Transaction.create({
+          user: booking.host,
+          booking: booking._id,
+          amount: booking.grandTotal,
+          type: "charge",
+          status: "completed",
+          description: `eSewa payment — transaction ${transaction_uuid}`,
+        });
+      }
+      return res.json({ success: true, paid: true, booking });
     }
 
-    // In production, you would call eSewa's verification API here
-    // For now, we trust the callback
-
-    const booking = await Booking.findById(pid.split("-")[0]);
-    if (!booking) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Booking not found" });
-    }
-
-    res.json({
-      success: true,
-      paymentStatus: booking.paymentStatus,
-      booking,
-    });
+    booking.paymentStatus = "failed";
+    await booking.save();
+    return res.json({ success: true, paid: false, booking, status });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
