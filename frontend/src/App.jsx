@@ -13,6 +13,7 @@ import Hosting from "./components/Hosting";
 import Messages from "./components/Messages";
 import Room from "./components/rooms/Room";
 import Rooms from "./components/rooms/Rooms";
+import PaymentConfirm from "./components/payment/PaymentConfirm";
 import Wishlist from "./components/Wishlist";
 import AddProperty from "./components/AddProperty/AddProperty.jsx";
 import Amenities from "./components/AddProperty/Amenities.jsx";
@@ -69,6 +70,7 @@ function AppContent() {
             <Route path="/room/:roomId" element={<Room />} />
             <Route path="/room" element={<Room />} />
             <Route path="/rooms" element={<Rooms />} />
+            <Route path="/payment/:bookingId" element={<PaymentConfirm />} />
             <Route path="/search" element={<Navigate to="/rooms" replace />} />
             <Route path="/properties" element={<Navigate to="/rooms" replace />} />
             <Route path="/wishlist" element={<Wishlist />} />

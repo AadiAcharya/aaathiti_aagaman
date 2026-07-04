@@ -276,7 +276,12 @@ export default function Account() {
     {
       key: "status",
       label: "Status",
-      render: (b) => <Badge tone={STATUS_TONE[b.status] || "default"}>{b.status}</Badge>,
+      render: (b) => (
+        <div className="flex items-center gap-1.5">
+          <Badge tone={STATUS_TONE[b.status] || "default"}>{b.status}</Badge>
+          {b.paymentStatus === "refunded" && <Badge tone="info">Refunded</Badge>}
+        </div>
+      ),
     },
     {
       key: "totalPrice",
