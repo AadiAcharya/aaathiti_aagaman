@@ -2,14 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PawPrint, Ban, Upload, Loader2, X, Link2 } from "lucide-react";
 import { uploadAPI } from "../../services/api";
-<<<<<<< HEAD
 import { forwardGeocode, reverseGeocode } from "../../utils/geocode";
 import LocationPicker from "./LocationPicker";
-=======
 import StepBar from "./StepBar";
 import Button from "../ui/Button";
 import Select from "../ui/Select";
->>>>>>> 4d2b801b055b54d5a6a3033a5f5aac24769e704f
 
 const MAX_ADDITIONAL_PHOTOS = 5; // + 1 cover photo = 6 total
 
@@ -38,11 +35,8 @@ export default function Description() {
   const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
   const [galleryUploading, setGalleryUploading] = useState(false);
-<<<<<<< HEAD
   const [locating, setLocating] = useState(false);
-=======
   const [coverMode, setCoverMode] = useState("upload");
->>>>>>> 4d2b801b055b54d5a6a3033a5f5aac24769e704f
 
   const set = (key, val) => {
     setForm((prev) => ({ ...prev, [key]: val }));

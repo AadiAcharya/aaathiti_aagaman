@@ -7,6 +7,7 @@ import { isTopRated } from "../../utils/rating";
 import StarRating from "../common/StarRating";
 import TopRatedBadge from "../common/TopRatedBadge";
 import Select from "../ui/Select";
+import Input from "../ui/Input";
 import Button from "../ui/Button";
 import Badge from "../ui/Badge";
 import Card from "../ui/Card";
@@ -31,6 +32,9 @@ export default function Rooms() {
   const [roomType, setRoomType] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState("default");
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [guests, setGuests] = useState("");
 
   const [viewMode, setViewMode] = useState("grid"); // "grid" | "map"
   const [mapRooms, setMapRooms] = useState([]);
@@ -42,16 +46,30 @@ export default function Rooms() {
     return saved ? JSON.parse(saved) : [];
   });
 
+  // Only apply the date filter once both ends of the range are picked and valid.
+  const datesValid = Boolean(checkIn && checkOut && checkOut > checkIn);
+
+  const buildParams = useCallback(
+    (base) => {
+      const params = { ...base };
+      if (roomType !== "all") params.type = roomType;
+      if (priceRange !== "all") params.priceRange = priceRange;
+      if (sortBy !== "default") params.sortBy = sortBy;
+      if (guests) params.guests = guests;
+      if (datesValid) {
+        params.checkIn = checkIn;
+        params.checkOut = checkOut;
+      }
+      return params;
+    },
+    [roomType, priceRange, sortBy, guests, checkIn, checkOut, datesValid],
+  );
+
   const fetchRooms = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const params = { page, limit: LIMIT };
-      if (roomType !== "all") params.type = roomType;
-      if (priceRange !== "all") params.priceRange = priceRange;
-      if (sortBy !== "default") params.sortBy = sortBy;
-
-      const data = await roomsAPI.getAll(params);
+      const data = await roomsAPI.getAll(buildParams({ page, limit: LIMIT }));
       setRooms(data.rooms);
       setTotal(data.total);
     } catch (err) {
@@ -59,7 +77,7 @@ export default function Rooms() {
     } finally {
       setLoading(false);
     }
-  }, [roomType, priceRange, sortBy, page]);
+  }, [buildParams, page]);
 
   useEffect(() => {
     fetchRooms();
@@ -68,7 +86,7 @@ export default function Rooms() {
   // Reset to page 1 when filters change
   useEffect(() => {
     setPage(1);
-  }, [roomType, priceRange, sortBy]);
+  }, [roomType, priceRange, sortBy, guests, checkIn, checkOut]);
 
   // Map view shows all matching rooms at once, not just the current page
   useEffect(() => {
@@ -76,11 +94,7 @@ export default function Rooms() {
     const fetchAllForMap = async () => {
       try {
         setMapLoading(true);
-        const params = { page: 1, limit: 100 };
-        if (roomType !== "all") params.type = roomType;
-        if (priceRange !== "all") params.priceRange = priceRange;
-        if (sortBy !== "default") params.sortBy = sortBy;
-        const data = await roomsAPI.getAll(params);
+        const data = await roomsAPI.getAll(buildParams({ page: 1, limit: 100 }));
         setMapRooms(data.rooms);
       } catch {
         setMapRooms([]);
@@ -89,12 +103,15 @@ export default function Rooms() {
       }
     };
     fetchAllForMap();
-  }, [viewMode, roomType, priceRange, sortBy]);
+  }, [viewMode, buildParams]);
 
   const resetFilters = () => {
     setRoomType("all");
     setPriceRange("all");
     setSortBy("default");
+    setCheckIn("");
+    setCheckOut("");
+    setGuests("");
     setPage(1);
   };
 
@@ -128,7 +145,12 @@ export default function Rooms() {
 
   const totalPages = Math.max(1, Math.ceil(total / LIMIT));
   const filtersActive =
-    roomType !== "all" || priceRange !== "all" || sortBy !== "default";
+    roomType !== "all" ||
+    priceRange !== "all" ||
+    sortBy !== "default" ||
+    Boolean(checkIn) ||
+    Boolean(checkOut) ||
+    Boolean(guests);
 
   return (
     <div className="min-h-screen bg-background">
@@ -144,7 +166,35 @@ export default function Rooms() {
 
         {/* Filter / sort / view control bar */}
         <Card padding="p-4" className="mb-10">
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="w-40">
+              <Input
+                type="date"
+                label="Check-in"
+                value={checkIn}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) => setCheckIn(e.target.value)}
+              />
+            </div>
+            <div className="w-40">
+              <Input
+                type="date"
+                label="Check-out"
+                value={checkOut}
+                min={checkIn || new Date().toISOString().split("T")[0]}
+                onChange={(e) => setCheckOut(e.target.value)}
+              />
+            </div>
+            <div className="w-28">
+              <Input
+                type="number"
+                label="Guests"
+                placeholder="Any"
+                min={1}
+                value={guests}
+                onChange={(e) => setGuests(e.target.value)}
+              />
+            </div>
             <div className="w-44">
               <Select value={roomType} onChange={(e) => setRoomType(e.target.value)}>
                 <option value="all">All Room Types</option>
@@ -199,6 +249,12 @@ export default function Rooms() {
               ))}
             </div>
           </div>
+
+          {checkIn && checkOut && !datesValid && (
+            <p className="text-danger text-xs font-medium mt-3">
+              Check-out must be after check-in — dates were ignored.
+            </p>
+          )}
         </Card>
 
         {viewMode === "map" && (

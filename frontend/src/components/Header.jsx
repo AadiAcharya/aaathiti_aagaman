@@ -33,7 +33,7 @@ export default function Header() {
   const navLinks = isHost
     ? [
         { label: "Dashboard", path: "/host" },
-        { label: "Add Property", path: "/add-property" },
+        ...(role === "host" ? [{ label: "Add Property", path: "/add-property" }] : []),
       ]
     : [
         { label: "Browse Rooms", path: "/rooms" },

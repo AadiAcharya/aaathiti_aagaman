@@ -4,6 +4,7 @@ import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ToastProvider } from "./components/ui/Toast";
 import RoleRoute from "./RoleRoute";
+import ScrollToTop from "./components/ScrollToTop";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
@@ -48,6 +49,7 @@ function AppContent() {
   const { theme } = useTheme();
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <div
         className={`min-h-screen flex flex-col ${
           theme === "dark"

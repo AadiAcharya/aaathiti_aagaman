@@ -1,6 +1,6 @@
 const Booking = require('../models/Booking.model');
 const Room = require('../models/Room.model');
-const { Notification } = require('../models/extras.model');
+const { Notification, Transaction } = require('../models/extras.model');
 
 // ─── POST /api/bookings ───────────────────────────────────────────────────────
 exports.createBooking = async (req, res) => {
@@ -147,8 +147,25 @@ exports.cancelBooking = async (req, res) => {
       }
     }
 
+    const wasPaid = booking.paymentStatus === 'paid';
+
     booking.status = 'cancelled';
+    if (wasPaid) booking.paymentStatus = 'refunded';
     await booking.save();
+
+    // Attributed to the host (same convention as the charge transaction created
+    // at payment time) so the host's revenue chart and transaction history both
+    // reflect the money moving back out.
+    if (wasPaid) {
+      await Transaction.create({
+        user:        booking.host,
+        booking:     booking._id,
+        amount:      booking.grandTotal,
+        type:        'refund',
+        status:      'completed',
+        description: `Refund for cancelled booking #${booking._id}`,
+      });
+    }
 
     // Remove date block from room
     const room = await Room.findByIdAndUpdate(
@@ -161,7 +178,9 @@ exports.cancelBooking = async (req, res) => {
       await Notification.create({
         user:      room.host,
         title:     'Booking Cancelled',
-        message:   `${booking.guestName || 'A guest'} cancelled their booking for "${room.title}".`,
+        message:   wasPaid
+          ? `${booking.guestName || 'A guest'} cancelled their booking for "${room.title}". A refund has been issued.`
+          : `${booking.guestName || 'A guest'} cancelled their booking for "${room.title}".`,
         type:      'booking',
         relatedId: booking._id,
         link:      '/reservation',

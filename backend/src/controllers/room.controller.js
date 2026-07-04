@@ -3,10 +3,10 @@ const Booking = require('../models/Booking.model');
 const { geocodeLocation } = require('../utils/geocode');
 
 // ─── GET /api/rooms ───────────────────────────────────────────────────────────
-// Supports: ?type=suite&priceRange=15000-30000&sortBy=price-low&page=1&limit=6
+// Supports: ?type=suite&priceRange=15000-30000&sortBy=price-low&page=1&limit=6&checkIn=&checkOut=&guests=
 exports.getRooms = async (req, res) => {
   try {
-    const { type, priceRange, sortBy, page = 1, limit = 6, search } = req.query;
+    const { type, priceRange, sortBy, page = 1, limit = 6, search, checkIn, checkOut, guests } = req.query;
 
     const query = { isAvailable: true };
 
@@ -28,6 +28,21 @@ exports.getRooms = async (req, res) => {
         { title:       { $regex: search, $options: 'i' } },
         { description: { $regex: search, $options: 'i' } },
       ];
+    }
+
+    // Guest capacity
+    if (guests) query.maxGuests = { $gte: Number(guests) };
+
+    // Exclude rooms with a booking that overlaps the requested date range
+    // (same overlap rule as checkAvailability below).
+    if (checkIn && checkOut) {
+      const reqIn = new Date(checkIn);
+      const reqOut = new Date(checkOut);
+      query.bookedDates = {
+        $not: {
+          $elemMatch: { checkIn: { $lt: reqOut }, checkOut: { $gt: reqIn } },
+        },
+      };
     }
 
     // Sort options (match frontend sortBy values)

@@ -170,14 +170,30 @@ exports.updateReservationStatus = async (req, res) => {
     }
 
     const previousStatus = booking.status;
+    const isNewCancellation = status === 'cancelled' && previousStatus !== 'cancelled';
+    const wasPaid = booking.paymentStatus === 'paid';
+
     booking.status = status;
+    if (isNewCancellation && wasPaid) booking.paymentStatus = 'refunded';
     await booking.save();
 
     // Releasing a booking (rejected/cancelled by host) must free up the blocked dates
-    if (status === 'cancelled' && previousStatus !== 'cancelled') {
+    if (isNewCancellation) {
       await Room.findByIdAndUpdate(booking.room, {
         $pull: { bookedDates: { checkIn: booking.checkIn, checkOut: booking.checkOut } },
       });
+
+      // Same refund ledger convention as the guest-initiated cancel path.
+      if (wasPaid) {
+        await Transaction.create({
+          user:        booking.host,
+          booking:     booking._id,
+          amount:      booking.grandTotal,
+          type:        'refund',
+          status:      'completed',
+          description: `Refund for cancelled booking #${booking._id}`,
+        });
+      }
     }
 
     if (status !== previousStatus) {

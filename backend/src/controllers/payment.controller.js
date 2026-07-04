@@ -92,9 +92,10 @@ exports.confirmPayment = async (req, res) => {
     booking.paymentIntentId = paymentIntentId;
     await booking.save();
 
-    // Record transaction
+    // Attributed to the host, not the paying guest — this is the ledger the
+    // host revenue dashboard and admin totals read from (see host.controller.js).
     await Transaction.create({
-      user: req.user.id,
+      user: booking.host,
       booking: booking._id,
       amount: booking.grandTotal,
       type: "charge",
@@ -247,9 +248,9 @@ exports.esewaCallback = async (req, res) => {
       booking.esewaRefId = refId;
       await booking.save();
 
-      // Record transaction
+      // Attributed to the host, not the paying guest — see note in confirmPayment above.
       await Transaction.create({
-        user: booking.user,
+        user: booking.host,
         booking: booking._id,
         amount: booking.grandTotal,
         type: "charge",
