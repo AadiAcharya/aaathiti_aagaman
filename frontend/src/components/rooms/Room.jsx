@@ -113,10 +113,7 @@ export default function Room() {
         checkOut,
         guests,
       });
-      setBookingMsg({
-        type: "success",
-        text: `Booking confirmed! Total: ${formatNPR(b.grandTotal)}`,
-      });
+      navigate(`/payment/${b._id}`);
     } catch (err) {
       setBookingMsg({ type: "error", text: err.message });
     } finally {

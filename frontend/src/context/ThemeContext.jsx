@@ -2,16 +2,21 @@ import { createContext, useContext, useState, useLayoutEffect } from "react";
 
 const ThemeContext = createContext();
 
+const getInitialTheme = () => {
+  const stored = localStorage.getItem("theme");
+  if (stored === "light" || stored === "dark") return stored;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+};
+
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState("light"); // Default to light
+  const [theme, setTheme] = useState(getInitialTheme);
 
   useLayoutEffect(() => {
     const isDark = theme === "dark";
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    document.documentElement.classList.toggle("dark", isDark);
+    localStorage.setItem("theme", theme);
   }, [theme]);
 
   const toggleTheme = () => {

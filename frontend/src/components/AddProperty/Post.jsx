@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { roomsAPI } from "../../services/api";
 import { formatNPR } from "../../utils/currency";
-import { PartyPopper, Home, MapPin, Tag, Bed, ShowerHead, PawPrint, Rocket } from "lucide-react";
+import { PartyPopper, Home, MapPin, Tag, Bed, ShowerHead, PawPrint, Rocket, Check, Circle } from "lucide-react";
+import StepBar from "./StepBar";
+import Button from "../ui/Button";
+import Spinner from "../ui/Spinner";
 
 const STORAGE_KEYS = [
   "addProperty_type",
@@ -12,27 +15,6 @@ const STORAGE_KEYS = [
   "addProperty_safety",
 ];
 const clearStorage = () => STORAGE_KEYS.forEach((k) => localStorage.removeItem(k));
-
-const steps = ["Type", "Amenities", "Description", "Facilities", "Safety", "Post"];
-const StepBar = ({ current }) => (
-  <div className="max-w-6xl mx-auto px-6 pt-8 pb-2">
-    <div className="flex items-center gap-2">
-      {steps.map((s, i) => (
-        <div key={s} className="flex items-center gap-2 flex-1">
-          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-            i < current ? "bg-primary text-white" :
-            i === current ? "bg-primary text-white ring-4 ring-primary/20" :
-            "bg-bg-secondary text-text-muted border border-text-muted/20"
-          }`}>
-            {i < current ? "✓" : i + 1}
-          </div>
-          <span className={`text-xs font-semibold hidden sm:block ${i === current ? "text-primary" : "text-text-muted"}`}>{s}</span>
-          {i < steps.length - 1 && <div className={`h-0.5 flex-1 rounded ${i < current ? "bg-primary" : "bg-text-muted/20"}`} />}
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 export default function Post() {
   const navigate    = useNavigate();
@@ -95,6 +77,9 @@ export default function Post() {
         pets:         property.pets || "No",
         amenities:    [...(property.amenities || []), ...(property.facilities || [])],
         safety:       property.safety || [],
+        ...(typeof property.lat === "number" && typeof property.lng === "number"
+          ? { lat: property.lat, lng: property.lng }
+          : {}),
       });
 
       clearStorage();
@@ -116,14 +101,12 @@ export default function Post() {
           Your property is now live. Guests can find and book it right away.
         </p>
         <div className="flex gap-4 justify-center">
-          <button onClick={() => navigate("/rooms")}
-            className="bg-primary hover:bg-primary-hover text-white font-bold px-8 py-3 rounded-xl transition shadow-lg">
+          <Button size="lg" onClick={() => navigate("/rooms")}>
             Browse Listings
-          </button>
-          <button onClick={() => navigate("/")}
-            className="bg-bg-secondary hover:bg-background text-text-primary font-bold px-8 py-3 rounded-xl border border-text-muted transition">
+          </Button>
+          <Button variant="secondary" size="lg" onClick={() => navigate("/")}>
             Go Home
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -131,7 +114,7 @@ export default function Post() {
 
   if (!property) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
+      <Spinner size="lg" />
     </div>
   );
 
@@ -245,36 +228,36 @@ export default function Post() {
                   { label: "Safety",         done: (property.safety?.length || 0) > 0 },
                 ].map(({ label, done }) => (
                   <div key={label} className="flex items-center gap-2 text-sm">
-                    <span className={done ? "text-green-500" : "text-text-muted"}>
-                      {done ? "✓" : "○"}
-                    </span>
+                    {done ? (
+                      <Check className="w-4 h-4 text-success" />
+                    ) : (
+                      <Circle className="w-4 h-4 text-text-muted" />
+                    )}
                     <span className={done ? "text-text-primary" : "text-text-muted"}>{label}</span>
                   </div>
                 ))}
               </div>
 
               {error && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+                <div className="mb-4 p-3 bg-danger-subtle border border-danger/30 rounded-xl text-danger text-sm">
                   {error}
                 </div>
               )}
 
-              <button onClick={handlePost} disabled={submitting}
-                className="w-full bg-primary hover:bg-primary-hover text-white font-bold py-4 rounded-xl transition mb-3 disabled:opacity-60 flex items-center justify-center gap-2 shadow-lg">
-                {submitting ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Posting...
-                  </>
-                ) : (
-                  <span className="inline-flex items-center gap-2"><Rocket className="w-4 h-4" /> Post My Property</span>
-                )}
-              </button>
+              <Button
+                fullWidth
+                size="lg"
+                icon={Rocket}
+                loading={submitting}
+                onClick={handlePost}
+                className="mb-3"
+              >
+                Post My Property
+              </Button>
 
-              <button onClick={() => navigate("/safety")}
-                className="w-full bg-bg-secondary hover:bg-background text-text-primary font-bold py-3 rounded-xl border-2 border-text-muted/30 transition text-sm">
+              <Button variant="secondary" fullWidth onClick={() => navigate("/safety")}>
                 ← Back to Edit
-              </button>
+              </Button>
             </div>
           </div>
         </div>

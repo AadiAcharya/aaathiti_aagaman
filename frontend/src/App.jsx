@@ -2,7 +2,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ToastProvider } from "./components/ui/Toast";
 import RoleRoute from "./RoleRoute";
+import ScrollToTop from "./components/ScrollToTop";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
@@ -11,6 +13,7 @@ import Hosting from "./components/Hosting";
 import Messages from "./components/Messages";
 import Room from "./components/rooms/Room";
 import Rooms from "./components/rooms/Rooms";
+import PaymentConfirm from "./components/payment/PaymentConfirm";
 import Wishlist from "./components/Wishlist";
 import AddProperty from "./components/AddProperty/AddProperty.jsx";
 import Amenities from "./components/AddProperty/Amenities.jsx";
@@ -25,7 +28,9 @@ import SignIn from "./components/sign/SignIn.jsx";
 import SignUp from "./components/sign/SignUp.jsx";
 import ForgotPassword from "./components/sign/ForgotPassword.jsx";
 import ResetPassword from "./components/sign/ResetPassword.jsx";
-import Host from "./components/Host.jsx";
+import HostLayout from "./components/host/HostLayout.jsx";
+import HostOverview from "./components/host/HostOverview.jsx";
+import HostListings from "./components/host/HostListings.jsx";
 import Help from "./components/Help.jsx";
 import HowItWorks from "./components/HowItWorks.jsx";
 import RentalGuide from "./components/RentalGuide.jsx";
@@ -45,6 +50,7 @@ function AppContent() {
   const { theme } = useTheme();
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <div
         className={`min-h-screen flex flex-col ${
           theme === "dark"
@@ -64,6 +70,7 @@ function AppContent() {
             <Route path="/room/:roomId" element={<Room />} />
             <Route path="/room" element={<Room />} />
             <Route path="/rooms" element={<Rooms />} />
+            <Route path="/payment/:bookingId" element={<PaymentConfirm />} />
             <Route path="/search" element={<Navigate to="/rooms" replace />} />
             <Route path="/properties" element={<Navigate to="/rooms" replace />} />
             <Route path="/wishlist" element={<Wishlist />} />
@@ -147,13 +154,20 @@ function AppContent() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route
-              path="host"
+              path="/host"
               element={
                 <RoleRoute allow={["host", "admin"]}>
-                  <Host />
+                  <HostLayout />
                 </RoleRoute>
               }
-            />
+            >
+              <Route index element={<HostOverview />} />
+              <Route path="listings" element={<HostListings />} />
+              <Route path="reservations" element={<HostReservation />} />
+              <Route path="messages" element={<Messages embedded />} />
+              <Route path="transactions" element={<TransactionHistory />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+            </Route>
             <Route path="help" element={<Help />} />
             <Route path="how-it-works" element={<HowItWorks />} />
             <Route path="rental-guide" element={<RentalGuide />} />
@@ -180,7 +194,9 @@ export default function App() {
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <AuthProvider>
         <ThemeProvider>
-          <AppContent />
+          <ToastProvider>
+            <AppContent />
+          </ToastProvider>
         </ThemeProvider>
       </AuthProvider>
     </GoogleOAuthProvider>

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Building2, Home, DoorClosed, Castle, Bed, Leaf } from "lucide-react";
+import { Building2, Home, DoorClosed, Castle, Bed, Leaf, Check } from "lucide-react";
+import StepBar from "./StepBar";
+import Button from "../ui/Button";
 
 const propertyTypes = [
   { id: "apartment", name: "Apartment", icon: Building2,  desc: "Modern urban living" },
@@ -10,28 +12,6 @@ const propertyTypes = [
   { id: "hostel",    name: "Hostel",    icon: Bed,        desc: "Budget friendly stays" },
   { id: "cottage",   name: "Cottage",   icon: Leaf,       desc: "Countryside getaway" },
 ];
-
-// ── Step indicator ─────────────────────────────────────────────────────────────
-const steps = ["Type", "Amenities", "Description", "Facilities", "Safety", "Post"];
-const StepBar = ({ current }) => (
-  <div className="max-w-6xl mx-auto px-6 pt-8 pb-2">
-    <div className="flex items-center gap-2">
-      {steps.map((s, i) => (
-        <div key={s} className="flex items-center gap-2 flex-1">
-          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-            i < current ? "bg-primary text-white" :
-            i === current ? "bg-primary text-white ring-4 ring-primary/20" :
-            "bg-bg-secondary text-text-muted border border-text-muted/20"
-          }`}>
-            {i < current ? "✓" : i + 1}
-          </div>
-          <span className={`text-xs font-semibold hidden sm:block ${i === current ? "text-primary" : "text-text-muted"}`}>{s}</span>
-          {i < steps.length - 1 && <div className={`h-0.5 flex-1 rounded ${i < current ? "bg-primary" : "bg-text-muted/20"}`} />}
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 export default function AddProperty() {
   const navigate  = useNavigate();
@@ -88,7 +68,7 @@ export default function AddProperty() {
                 <p className="text-text-secondary text-sm">{type.desc}</p>
                 {selected === type.id && (
                   <div className="mt-3 inline-flex items-center gap-1 text-primary text-xs font-bold">
-                    <span>✓</span> Selected
+                    <Check className="w-3.5 h-3.5" /> Selected
                   </div>
                 )}
               </div>
@@ -97,13 +77,9 @@ export default function AddProperty() {
         </div>
 
         <div className="flex gap-4">
-          <button
-            onClick={handleNext}
-            disabled={!selected}
-            className="bg-primary hover:bg-primary-hover disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg hover:shadow-xl"
-          >
+          <Button size="lg" disabled={!selected} onClick={handleNext}>
             Next: Select Amenities →
-          </button>
+          </Button>
         </div>
         {!selected && <p className="text-text-muted text-sm mt-3">Please select a property type to continue</p>}
       </main>

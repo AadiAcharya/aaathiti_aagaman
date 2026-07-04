@@ -1,14 +1,101 @@
 @import "tailwindcss";
 
+/*
+ * "Midnight Teak" design tokens.
+ * Color tokens are declared here (dark values, matching the app's current
+ * default) so Tailwind v4 generates the color utilities (bg-background,
+ * text-text-primary, etc). The actual runtime color comes from the plain
+ * :root / .dark custom-property blocks below, which the cascade resolves
+ * per theme — so a component can write `bg-background` once and get the
+ * correct color in both light and dark mode with zero JS branching.
+ */
 @theme {
-  --color-background: #0a1628;
-  --color-bg-secondary: #1a2942;
-  --color-primary: #3b82f6;
-  --color-primary-hover: #2563eb;
-  --color-accent: #f59e0b;
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
+  --color-background: #0b1220;
+  --color-bg-secondary: #131c2e;
+  --color-bg-elevated: #1a2438;
+  --color-bg-sunken: #060b16;
+
+  --color-border: #24304a;
+  --color-border-strong: #34425f;
+
+  --color-primary: #2f6fed;
+  --color-primary-hover: #2358c4;
+  --color-primary-subtle: #16233d;
+
+  --color-accent: #caa15a;
+  --color-accent-hover: #b78d45;
+  --color-accent-subtle: #2a2415;
+
+  --color-success: #34a870;
+  --color-success-subtle: #123322;
+  --color-warning: #d99a2b;
+  --color-warning-subtle: #33270f;
+  --color-danger: #e0525f;
+  --color-danger-subtle: #351619;
+  --color-info: #4d8fe0;
+  --color-info-subtle: #142338;
+
+  --color-text-primary: #f7f8fa;
+  --color-text-secondary: #a7b0c2;
+  --color-text-muted: #6b7690;
+
+  /* Radius scale — extends Tailwind's default rounded-* utilities */
+  --radius-card: 1rem;
+  --radius-control: 0.625rem;
+  --radius-pill: 999px;
+
+  /* Shadow scale — extends Tailwind's default shadow-* utilities */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.24), 0 8px 24px -8px rgba(0, 0, 0, 0.35);
+  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.3), 0 24px 48px -16px rgba(0, 0, 0, 0.45);
+}
+
+/* Light mode (default — no .dark class on <html>) */
+:root {
+  --color-background: #faf8f4;
+  --color-bg-secondary: #f2ede4;
+  --color-bg-elevated: #ffffff;
+  --color-bg-sunken: #ece6da;
+
+  --color-border: #e3ddd0;
+  --color-border-strong: #cfc7b4;
+
+  --color-primary-subtle: #e7effd;
+  --color-accent-subtle: #f7eedc;
+  --color-success-subtle: #e5f6ee;
+  --color-warning-subtle: #fbf0dd;
+  --color-danger-subtle: #fbe9ea;
+  --color-info-subtle: #e9f1fc;
+
+  --color-text-primary: #1c2333;
+  --color-text-secondary: #4d5670;
+  --color-text-muted: #7c869c;
+
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 400ms;
+}
+
+/* Dark mode (.dark class toggled on <html> by ThemeContext) */
+.dark {
+  --color-background: #0b1220;
+  --color-bg-secondary: #131c2e;
+  --color-bg-elevated: #1a2438;
+  --color-bg-sunken: #060b16;
+
+  --color-border: #24304a;
+  --color-border-strong: #34425f;
+
+  --color-primary-subtle: #16233d;
+  --color-accent-subtle: #2a2415;
+  --color-success-subtle: #123322;
+  --color-warning-subtle: #33270f;
+  --color-danger-subtle: #351619;
+  --color-info-subtle: #142338;
+
+  --color-text-primary: #f7f8fa;
+  --color-text-secondary: #a7b0c2;
+  --color-text-muted: #6b7690;
 }
 
 @layer base {
@@ -20,6 +107,116 @@
   h3,
   .font-display {
     font-family: "Playfair Display", Georgia, serif;
+  }
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(64px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.9s var(--ease-premium, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+.animate-fade-down {
+  animation: fade-down 0.7s var(--ease-premium, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+.animate-hero-rise {
+  animation: hero-rise 1.1s var(--ease-premium, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+.animate-scale-in {
+  animation: scale-in var(--duration-base, 200ms) var(--ease-premium, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+.animate-toast-in {
+  animation: toast-in var(--duration-base, 200ms) var(--ease-premium, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+
+.skeleton {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-border) 25%,
+    var(--color-bg-secondary) 50%,
+    var(--color-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-fade-down,
+  .animate-hero-rise,
+  .animate-scale-in,
+  .animate-toast-in,
+  .animate-marquee,
+  .skeleton {
+    animation: none;
   }
 }
 

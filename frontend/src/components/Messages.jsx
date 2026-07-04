@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { messageAPI } from "../services/api";
-import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
-import { MessageCircle, Inbox, Home as HomeIcon, ArrowLeft, User } from "lucide-react";
+import { MessageCircle, Inbox, Home as HomeIcon, ArrowLeft, User, Send } from "lucide-react";
+import Spinner from "./ui/Spinner";
+import IconButton from "./ui/IconButton";
 
 // Avatar for a conversation - a room's photo when the conversation is about a
 // room (so guests/hosts can spot the right chat at a glance), else initials.
@@ -13,13 +14,13 @@ function ThreadAvatar({ room, fallbackLabel, size = "w-12 h-12" }) {
       <img
         src={room.image}
         alt={room.title || "Room"}
-        className={`${size} rounded-full object-cover flex-shrink-0 border border-primary/20`}
+        className={`${size} rounded-full object-cover flex-shrink-0 border border-border`}
       />
     );
   }
   return (
     <div
-      className={`${size} rounded-full bg-primary/30 flex-shrink-0 flex items-center justify-center border border-primary/20 font-bold text-primary`}
+      className={`${size} rounded-full bg-primary-subtle flex-shrink-0 flex items-center justify-center border border-border font-bold text-primary`}
     >
       {fallbackLabel?.[0]?.toUpperCase() || "?"}
     </div>
@@ -27,7 +28,6 @@ function ThreadAvatar({ room, fallbackLabel, size = "w-12 h-12" }) {
 }
 
 export default function Messages({ embedded = false }) {
-  const { theme } = useTheme();
   const { user: currentUser, role, isAuthenticated } = useAuth();
   const isHost = role === "host" || role === "admin";
   const navigate = useNavigate();
@@ -175,9 +175,6 @@ export default function Messages({ embedded = false }) {
   // room and need to know who's who at a glance.
   const threadLabel = (thread) => {
     const title = thread.room?.title || thread.other?.name || "Conversation";
-    // Only show a subtitle when it says something the title doesn't already -
-    // a host always needs to see which guest this is, but a guest without a
-    // room just has the other person's name as the title, so no need to repeat it.
     const subtitle = isHost ? thread.other?.name || null : null;
     return { title, subtitle };
   };
@@ -226,177 +223,117 @@ export default function Messages({ embedded = false }) {
   const content = (
     <>
       {!embedded && (
-        <div className="mb-8">
-          <h1
-            className={`text-3xl font-bold mb-2 ${
-              theme === "dark" ? "text-text-primary" : "text-gray-900"
-            }`}
-          >
-            Messages
-          </h1>
-          <p className={theme === "dark" ? "text-text-secondary" : "text-gray-600"}>
-            Your conversations
-          </p>
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-display font-bold text-text-primary mb-1">Messages</h1>
+          <p className="text-text-secondary">Your conversations</p>
         </div>
       )}
 
       {loading && (
-          <div className="flex justify-center py-16">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
-          </div>
-        )}
+        <div className="flex justify-center py-16">
+          <Spinner size="lg" />
+        </div>
+      )}
 
-        {error && <div className="text-center py-16 text-red-500">{error}</div>}
+      {error && <div className="text-center py-16 text-danger">{error}</div>}
 
-        {!loading && !error && (
+      {!loading && !error && (
+        <div className="rounded-card border border-border bg-bg-elevated overflow-hidden flex h-[calc(100vh-16rem)] min-h-[480px]">
+          {/* Thread list — always visible at desktop widths; on mobile, hidden once a thread is open */}
           <div
-            className={`rounded-xl border overflow-hidden flex flex-col h-[600px] ${
-              theme === "dark"
-                ? "bg-bg-secondary border-text-muted/20"
-                : "bg-white border-gray-200"
+            className={`w-full lg:w-80 shrink-0 border-r border-border flex-col ${
+              currentThread ? "hidden lg:flex" : "flex"
             }`}
           >
-            {!currentThread ? (
-              // ── Profile list: pick a conversation, Messenger-style ──────────
-              <>
-                <div
-                  className={`p-6 border-b ${
-                    theme === "dark"
-                      ? "border-text-muted/20 bg-gradient-to-r from-bg-secondary to-bg-secondary/70"
-                      : "border-gray-200 bg-gray-50"
-                  }`}
-                >
-                  <h2
-                    className={`text-xl font-bold flex items-center gap-2 ${
-                      theme === "dark" ? "text-text-primary" : "text-gray-900"
-                    }`}
-                  >
-                    <MessageCircle className="w-5 h-5" /> Conversations
-                  </h2>
-                </div>
+            <div className="px-5 py-4 border-b border-border">
+              <h2 className="text-base font-semibold text-text-primary flex items-center gap-2">
+                <MessageCircle className="w-4 h-4 text-primary" /> Conversations
+              </h2>
+            </div>
 
-                {threads.length === 0 ? (
-                  <div
-                    className={`flex-1 flex items-center justify-center ${
-                      theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                    }`}
-                  >
-                    <div className="text-center px-6">
-                      <Inbox className="w-8 h-8 mx-auto mb-2" />
-                      <p>No messages yet</p>
-                      <p className="text-xs mt-1">
-                        Visit a room and tap "Message Host" to start a conversation.
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="overflow-y-auto flex-1">
-                    {threads.map((thread) => {
-                      const last = thread.messages[thread.messages.length - 1];
-                      const unread = thread.messages.filter(
-                        (m) =>
-                          !m.isRead &&
-                          (m.recipient?._id || m.recipient) === currentUser?._id,
-                      ).length;
-                      const { title, subtitle } = threadLabel(thread);
-                      return (
-                        <div
-                          key={thread.key}
-                          onClick={() => setSelectedKey(thread.key)}
-                          className={`flex items-center gap-3 p-4 cursor-pointer border-b transition ${
-                            theme === "dark" ? "border-text-muted/10" : "border-gray-100"
-                          } ${
-                            theme === "dark" ? "hover:bg-bg-secondary/50" : "hover:bg-gray-50"
-                          }`}
-                        >
-                          <ThreadAvatar room={thread.room} fallbackLabel={title} />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-center">
-                              <h3
-                                className={`text-sm font-bold truncate ${
-                                  theme === "dark" ? "text-text-primary" : "text-gray-900"
-                                }`}
-                              >
-                                {title}
-                              </h3>
-                              {unread > 0 && (
-                                <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center flex-shrink-0">
-                                  {unread}
-                                </span>
-                              )}
-                            </div>
-                            {subtitle && (
-                              <p
-                                className={`text-xs truncate flex items-center gap-1 ${
-                                  theme === "dark" ? "text-primary" : "text-blue-600"
-                                }`}
-                              >
-                                {isHost ? (
-                                  <User className="w-3 h-3" />
-                                ) : (
-                                  <HomeIcon className="w-3 h-3" />
-                                )}{" "}
-                                {subtitle}
-                              </p>
-                            )}
-                            <p
-                              className={`text-xs truncate ${
-                                theme === "dark" ? "text-text-muted" : "text-gray-500"
-                              }`}
-                            >
-                              {last?.content || "No messages yet - say hello!"}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </>
+            {threads.length === 0 ? (
+              <div className="flex-1 flex items-center justify-center text-text-secondary">
+                <div className="text-center px-6">
+                  <Inbox className="w-7 h-7 mx-auto mb-2 text-text-muted" />
+                  <p className="text-sm">No messages yet</p>
+                  <p className="text-xs mt-1 text-text-muted">
+                    Visit a room and tap "Message Host" to start a conversation.
+                  </p>
+                </div>
+              </div>
             ) : (
-              // ── Chat window for the selected conversation ───────────────────
-              <>
-                <div
-                  className={`p-4 border-b flex items-center gap-3 ${
-                    theme === "dark" ? "border-text-muted/20" : "border-gray-200"
-                  }`}
-                >
-                  <button
-                    onClick={() => setSelectedKey(null)}
-                    className={`p-2 -ml-2 rounded-full transition ${
-                      theme === "dark" ? "hover:bg-white/10 text-text-primary" : "hover:bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    <ArrowLeft className="w-5 h-5" />
-                  </button>
-                  <ThreadAvatar
-                    room={currentThread.room}
-                    fallbackLabel={threadLabel(currentThread).title}
-                    size="w-10 h-10"
-                  />
-                  <div>
-                    <h3
-                      className={`font-bold ${
-                        theme === "dark" ? "text-text-primary" : "text-gray-900"
+              <div className="overflow-y-auto flex-1">
+                {threads.map((thread) => {
+                  const last = thread.messages[thread.messages.length - 1];
+                  const unread = thread.messages.filter(
+                    (m) => !m.isRead && (m.recipient?._id || m.recipient) === currentUser?._id,
+                  ).length;
+                  const { title, subtitle } = threadLabel(thread);
+                  const active = thread.key === selectedKey;
+                  return (
+                    <div
+                      key={thread.key}
+                      onClick={() => setSelectedKey(thread.key)}
+                      className={`flex items-center gap-3 p-4 cursor-pointer border-b border-border transition-colors duration-[var(--duration-fast)] ${
+                        active ? "bg-primary-subtle" : "hover:bg-bg-secondary"
                       }`}
                     >
-                      {threadLabel(currentThread).title}
-                    </h3>
+                      <ThreadAvatar room={thread.room} fallbackLabel={title} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-center gap-2">
+                          <h3 className="text-sm font-semibold truncate text-text-primary">{title}</h3>
+                          {unread > 0 && (
+                            <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center flex-shrink-0">
+                              {unread}
+                            </span>
+                          )}
+                        </div>
+                        {subtitle && (
+                          <p className="text-xs truncate flex items-center gap-1 text-primary">
+                            {isHost ? <User className="w-3 h-3" /> : <HomeIcon className="w-3 h-3" />} {subtitle}
+                          </p>
+                        )}
+                        <p className="text-xs truncate text-text-muted">
+                          {last?.content || "No messages yet — say hello!"}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Chat window */}
+          <div className={`flex-1 flex-col min-w-0 ${currentThread ? "flex" : "hidden lg:flex"}`}>
+            {!currentThread ? (
+              <div className="flex-1 flex items-center justify-center text-text-secondary">
+                <div className="text-center">
+                  <MessageCircle className="w-8 h-8 mx-auto mb-2 text-text-muted" />
+                  <p className="text-sm">Select a conversation to start chatting</p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="p-4 border-b border-border flex items-center gap-3">
+                  <IconButton
+                    icon={ArrowLeft}
+                    label="Back to conversations"
+                    className="lg:hidden -ml-2"
+                    onClick={() => setSelectedKey(null)}
+                  />
+                  <ThreadAvatar room={currentThread.room} fallbackLabel={threadLabel(currentThread).title} size="w-10 h-10" />
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-text-primary truncate">{threadLabel(currentThread).title}</h3>
                     {threadLabel(currentThread).subtitle && (
-                      <p className={`text-xs ${theme === "dark" ? "text-text-muted" : "text-gray-500"}`}>
-                        {threadLabel(currentThread).subtitle}
-                      </p>
+                      <p className="text-xs text-text-muted truncate">{threadLabel(currentThread).subtitle}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 space-y-4">
                   {currentThread.messages.length === 0 ? (
-                    <div
-                      className={`h-full flex items-center justify-center text-center ${
-                        theme === "dark" ? "text-text-secondary" : "text-gray-600"
-                      }`}
-                    >
+                    <div className="h-full flex items-center justify-center text-center text-text-secondary">
                       <p>Say hello to {currentThread.other?.name || "the host"}!</p>
                     </div>
                   ) : (
@@ -408,18 +345,12 @@ export default function Messages({ embedded = false }) {
                           <div
                             className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl text-sm ${
                               me
-                                ? "bg-primary text-white rounded-br-none"
-                                : theme === "dark"
-                                  ? "bg-background text-text-primary border border-primary/10 rounded-bl-none"
-                                  : "bg-white text-gray-900 border border-primary/10 rounded-bl-none"
+                                ? "bg-primary text-white rounded-br-md"
+                                : "bg-bg-secondary text-text-primary border border-border rounded-bl-md"
                             }`}
                           >
                             <p>{msg.content}</p>
-                            <p
-                              className={`text-xs mt-1 ${
-                                me ? "text-white/70" : theme === "dark" ? "text-text-muted" : "text-gray-500"
-                              }`}
-                            >
+                            <p className={`text-xs mt-1 ${me ? "text-white/70" : "text-text-muted"}`}>
                               {formatTime(msg.createdAt)}
                             </p>
                           </div>
@@ -430,11 +361,7 @@ export default function Messages({ embedded = false }) {
                   <div ref={bottomRef} />
                 </div>
 
-                <div
-                  className={`p-4 border-t ${
-                    theme === "dark" ? "border-text-muted/20" : "border-gray-200"
-                  }`}
-                >
+                <div className="p-4 border-t border-border">
                   <div className="flex items-center gap-3">
                     <input
                       type="text"
@@ -442,48 +369,30 @@ export default function Messages({ embedded = false }) {
                       onChange={(e) => setNewMessage(e.target.value)}
                       onKeyDown={handleKeyDown}
                       disabled={sending}
-                      placeholder="Type your message... (Enter to send)"
-                      className={`flex-1 px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 ${
-                        theme === "dark"
-                          ? "bg-background border-text-muted/30 text-text-primary placeholder-text-muted"
-                          : "bg-gray-100 border-gray-200 text-gray-900 placeholder-gray-500"
-                      }`}
+                      placeholder="Type your message… (Enter to send)"
+                      className="flex-1 px-4 py-3 rounded-[var(--radius-control)] border border-border bg-bg-sunken text-text-primary placeholder-text-muted outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-50"
                     />
                     <button
                       onClick={handleSend}
                       disabled={!newMessage.trim() || sending}
-                      className="w-11 h-11 rounded-full bg-primary hover:bg-primary-hover flex items-center justify-center flex-shrink-0 transition disabled:opacity-50"
+                      className="w-11 h-11 rounded-full bg-primary hover:bg-primary-hover flex items-center justify-center flex-shrink-0 transition-colors duration-[var(--duration-fast)] disabled:opacity-50"
                     >
-                      {sending ? (
-                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      ) : (
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                          />
-                        </svg>
-                      )}
+                      {sending ? <Spinner size="sm" className="text-white" /> : <Send className="w-4 h-4 text-white" />}
                     </button>
                   </div>
                 </div>
               </>
             )}
           </div>
-        )}
+        </div>
+      )}
     </>
   );
 
   if (embedded) return content;
 
   return (
-    <div
-      className={`min-h-screen transition-colors duration-300 ${
-        theme === "dark" ? "bg-background" : "bg-gray-50"
-      }`}
-    >
+    <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">{content}</div>
     </div>
   );

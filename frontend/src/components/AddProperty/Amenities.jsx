@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ChefHat, Car, Trees, Flower2, Wifi, Waves,
-  Dumbbell, MoveVertical, Umbrella, Bath, Flame, UtensilsCrossed,
+  Dumbbell, MoveVertical, Umbrella, Bath, Flame, UtensilsCrossed, Check,
 } from "lucide-react";
+import StepBar from "./StepBar";
+import Button from "../ui/Button";
 
 const ALL_AMENITIES = [
   { id: "Kitchen",       icon: ChefHat },
@@ -19,27 +21,6 @@ const ALL_AMENITIES = [
   { id: "Fireplace",     icon: Flame },
   { id: "BBQ Grill",     icon: UtensilsCrossed },
 ];
-
-const steps = ["Type", "Amenities", "Description", "Facilities", "Safety", "Post"];
-const StepBar = ({ current }) => (
-  <div className="max-w-6xl mx-auto px-6 pt-8 pb-2">
-    <div className="flex items-center gap-2">
-      {steps.map((s, i) => (
-        <div key={s} className="flex items-center gap-2 flex-1">
-          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-            i < current ? "bg-primary text-white" :
-            i === current ? "bg-primary text-white ring-4 ring-primary/20" :
-            "bg-bg-secondary text-text-muted border border-text-muted/20"
-          }`}>
-            {i < current ? "✓" : i + 1}
-          </div>
-          <span className={`text-xs font-semibold hidden sm:block ${i === current ? "text-primary" : "text-text-muted"}`}>{s}</span>
-          {i < steps.length - 1 && <div className={`h-0.5 flex-1 rounded ${i < current ? "bg-primary" : "bg-text-muted/20"}`} />}
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 export default function Amenities() {
   const navigate = useNavigate();
@@ -90,8 +71,8 @@ export default function Amenities() {
                 }`}
               >
                 {isSelected && (
-                  <div className="absolute top-3 right-3 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-xs font-bold">
-                    ✓
+                  <div className="absolute top-3 right-3 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white">
+                    <Check className="w-3.5 h-3.5" />
                   </div>
                 )}
                 <div className={`flex justify-center mb-4 transition-transform duration-300 ${isSelected ? "scale-110" : "group-hover:scale-110"}`}>
@@ -106,14 +87,12 @@ export default function Amenities() {
         </div>
 
         <div className="flex gap-4">
-          <button onClick={() => navigate("/add-property")}
-            className="px-6 py-3 text-text-primary bg-bg-secondary hover:bg-bg-secondary/80 rounded-xl font-bold border-2 border-text-muted/30 transition-all">
+          <Button variant="secondary" size="lg" onClick={() => navigate("/add-property")}>
             ← Back
-          </button>
-          <button onClick={handleNext}
-            className="px-8 py-3 text-white bg-primary hover:bg-primary-hover rounded-xl font-bold transition-all shadow-lg">
+          </Button>
+          <Button size="lg" onClick={handleNext}>
             Next: Add Description →
-          </button>
+          </Button>
         </div>
       </main>
     </div>
