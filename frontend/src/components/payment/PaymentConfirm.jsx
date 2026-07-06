@@ -52,29 +52,14 @@ export default function PaymentConfirm() {
     })();
   }, [bookingId, navigate]);
 
-  const payWithEsewa = async () => {
-    try {
-      setPaying(true);
-      setError("");
-      const { payload, esewaUrl } = await paymentsAPI.initiateEsewa(bookingId);
-
-      // eSewa expects a real HTML form POST, not a fetch/XHR — build one and submit it.
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = esewaUrl;
-      Object.entries(payload).forEach(([key, value]) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = value;
-        form.appendChild(input);
-      });
-      document.body.appendChild(form);
-      form.submit();
-    } catch (err) {
-      setError(err.message || "Could not start eSewa payment");
-      setPaying(false);
-    }
+  // eSewa's own UAT sandbox is currently blocked by a Google reCAPTCHA
+  // Enterprise quota issue on their end (not fixable from our side), so this
+  // routes to a lookalike checkout instead of the real gateway redirect.
+  // The real integration (domain, signature, verify-return) is still intact
+  // in payment.controller.js if eSewa's sandbox becomes usable again — just
+  // swap this back to the form-post version.
+  const payWithEsewa = () => {
+    navigate(`/esewa-checkout/${bookingId}`);
   };
 
   const payWithCard = async (e) => {

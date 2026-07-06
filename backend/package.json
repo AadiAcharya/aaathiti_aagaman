@@ -7,6 +7,8 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "seed": "node src/utils/seed.js",
+    "seed:more": "node src/utils/addNepaliRooms.js",
+    "seed:more:photos": "node src/utils/updateNepaliRoomPhotos.js",
     "test": "jest --runInBand"
   },
   "dependencies": {

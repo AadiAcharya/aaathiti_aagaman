@@ -134,7 +134,7 @@ exports.cancelBooking = async (req, res) => {
       return res.status(400).json({ success: false, message: 'A completed stay cannot be cancelled' });
     }
 
-    // Admins can force-cancel past the cutoff; guests can't cancel same-day/last-minute
+    // Admins bypass the cutoff, guests don't
     if (req.user.role !== 'admin') {
       const hoursUntilCheckIn = (new Date(booking.checkIn) - Date.now()) / (1000 * 60 * 60);
       if (hoursUntilCheckIn < CANCELLATION_CUTOFF_HOURS) {
@@ -153,9 +153,7 @@ exports.cancelBooking = async (req, res) => {
     if (wasPaid) booking.paymentStatus = 'refunded';
     await booking.save();
 
-    // Attributed to the host (same convention as the charge transaction created
-    // at payment time) so the host's revenue chart and transaction history both
-    // reflect the money moving back out.
+    // Attributed to the host, same as the charge transaction
     if (wasPaid) {
       await Transaction.create({
         user:        booking.host,
